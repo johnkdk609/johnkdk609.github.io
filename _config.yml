@@ -28,6 +28,13 @@ description:           >
   Hydejack is a boutique Jekyll theme for hackers, nerds, and academics,
   with a focus on personal sites that are meant to impress.
 
+# Theme
+# --------------------------------------------------------------------------------------
+
+#theme: jekyll-theme-hydejack
+remote_theme: hydecorp/hydejack@v9
+
+
 # A shorter description for the sidebar.
 tagline:               Change `tagline` in `_config.yml`
 
