@@ -32,7 +32,7 @@ description:           >
 # --------------------------------------------------------------------------------------
 
 #theme: jekyll-theme-hydejack
-remote_theme: hydecorp/hydejack@v9
+remote_theme: hydecorp/hydejack
 
 
 # A shorter description for the sidebar.
