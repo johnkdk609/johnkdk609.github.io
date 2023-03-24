@@ -3,7 +3,7 @@ layout: post
 title: "구현 예제 4-1"
 date: 2023-03-24 11:46:00 +0900
 categories: algorithm
-description: "[이것이 취업을 위한 코딩 테스트다] p. 110 예제 4-1"
+description: \<이것이 취업을 위한 코딩 테스트다\> p. 110 예제 4-1
 tags:
   - implementation
   - algorithm
