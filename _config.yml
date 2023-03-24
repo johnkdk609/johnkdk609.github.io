@@ -165,7 +165,6 @@ kramdown:
   math_engine_opts:    {}
   footnote_backlink:   '&#x21a9;&#xfe0e;'
 
-
 # 3rd Party Integrations
 # ----------------------------------------------------------------------------------------
 
@@ -423,3 +422,10 @@ jekyll_compose:
       links:
         - title: Project Link
           url: https://example.com
+          
+markdown: kramdown
+kramdown:
+    highlighter: rouge
+    syntax_highlighter_opts:
+        block:
+            line_numbers: true
