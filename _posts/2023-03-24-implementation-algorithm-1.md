@@ -11,7 +11,7 @@ tags:
 ---
 직접 푼 코드는 이러하다.
 
-~~~python
+```python
 n = int(input())
 data = list(map(str, input().split()))
 
@@ -45,13 +45,13 @@ for dir in data:
         y= n
 
 print(x, y)
-~~~
+```
 
 우선 "U", "D", "L", "R" 중 어떤 것이 나올 때 움직이는 함수 move를 만들었다. 그리고 반복문을 사용해 최종적으로 위치를 알아냈다. 그런데 원래는 continue를 사용해서 범위 밖으로 나갔을 때를 배제하려고 했는데, 그게 잘 안 됐었다.
 
 답안지를 보니
 
-~~~python
+```python
 n = int(input())
 x, y = 1, 1
 plans = input().split()
@@ -70,13 +70,13 @@ for plan in plans:
             continue
 
         x, y = nx, ny
-~~~
+```
 
 이런 식으로 상대적으로 간결하게 되어 있었다. 원래 내 답안에서 continue 를 사용하려면, 추가로 nx, ny의 변수를 설정해주면 되겠다는 것을 알았다.
 
 최종적으로 조금 더 간결해진 내 답안은,
 
-~~~python
+```python
 n = int(input())
 data = list(map(str, input().split()))
 
@@ -104,6 +104,6 @@ for dir in data:
         continue
 
     x, y = nx, ny
-~~~
+```
 
 이러하다. 답안지에서처럼 함수를 따로 만들지 않고 바로 리스트로 움직이는 정도를 설정하는 방법도 고려해봐야겠다.
