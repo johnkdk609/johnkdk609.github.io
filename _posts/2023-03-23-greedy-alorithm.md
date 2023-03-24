@@ -13,7 +13,7 @@ author: John Kim
 
 내 답안은,
 
-~~~
+```python
 n, m, k = map(int, input().split())
 data = list(map(int, input().split()))
 
@@ -43,7 +43,7 @@ for i in range(m):
         bigNumber += second_data
 
 print(bigNumber)
-~~~
+```
 
 이렇게 된다. 파이썬의 내장 함수인 sort를 그냥 쓸 수도 있지만, 이전에 공부했던 quick sort의 코드를 사용했다.
 
@@ -56,7 +56,7 @@ print(bigNumber)
 
 결론적으로, 코드는 다음과 같다.
 
-~~~
+```python
 n, m, k = map(int, input().split())
 data = list(map(int, input().split()))
 
@@ -70,6 +70,6 @@ count = m // (k + 1) * k + m % (k + 1)
 result = count * first + (m - count) * second
 
 print(result)
-~~~
+```
 
 이렇게 수학적인 사고력으로 문제를 푸는 것도 고려해봐야겠다.
