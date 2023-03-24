@@ -13,7 +13,7 @@ tags:
 
 직접 푼 코드는 이러하다.
 
-```(python)
+```python
 n = int(input())
 data = list(map(str, input().split()))
 
@@ -53,7 +53,7 @@ print(x, y)
 
 답안지를 보니
 
-```(python)
+```python
 n = int(input())
 x, y = 1, 1
 plans = input().split()
@@ -78,7 +78,7 @@ for plan in plans:
 
 최종적으로 조금 더 간결해진 내 답안은,
 
-```(python)
+```python
 n = int(input())
 data = list(map(str, input().split()))
 
