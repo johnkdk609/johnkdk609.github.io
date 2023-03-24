@@ -13,7 +13,7 @@ author: John Kim
 
 내 답안은,
 
-~~~python
+~~~
 n, m, k = map(int, input().split())
 data = list(map(int, input().split()))
 
@@ -56,7 +56,7 @@ print(bigNumber)
 
 결론적으로, 코드는 다음과 같다.
 
-~~~python
+~~~
 n, m, k = map(int, input().split())
 data = list(map(int, input().split()))
 
