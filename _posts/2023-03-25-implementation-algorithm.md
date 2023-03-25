@@ -6,7 +6,7 @@ tag:
   - Implementation
   - python list comprehension
 data: 2023-03-23 11:16:00 +09:00
-description: /<이것이 취업을 위한 코딩 테스트다/> p.118 실전 문제 3
+description: \<이것이 취업을 위한 코딩 테스트다\> p.118 실전 문제 3
 ---
 이 문제에서 캐릭터가 한 번 다녀간 장소를 어떻게 저장해둘지 고민을 했는데, 처음에는 집합을 이용해서 삽입을 하려 했다.
 
@@ -22,7 +22,7 @@ while문으로 돌리면서 적정 타이밍에 반복문을 끝내야 하는데
 
 답안은 이러하다.
 
-```python L1-Lx
+```python
 # N, M을 공백으로 구분하여 입력 받기
 n, m = map(int, input().split())
 
