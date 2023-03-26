@@ -3,8 +3,6 @@ layout: post
 title: "그리디 알고리즘 - 2. 큰 수의 법칙"
 description: \<이것이 취업을 위한 코딩 테스트다\> p.92 실전 문제 2
 categories: algorithm
-tags:
-  - greedy
 date: 2023-03-23 20:38:00 +0900
 author: John Kim
 ---
