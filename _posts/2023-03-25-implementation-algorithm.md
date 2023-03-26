@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 구현 실전 문제 3. 게임 개발
-categories: algorithm
+categories: Algorithm
 data: 2023-03-23 11:16:00 +09:00
 description: \<이것이 취업을 위한 코딩 테스트다\> p.118 실전 문제 3
 ---
