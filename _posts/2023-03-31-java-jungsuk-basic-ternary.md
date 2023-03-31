@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 조건 연산자 (conditional expression)
+title: 조건 연산자 (ternary operator)
 categories: Java
 date: 2023-03-31 23:47:00 +09:00
 description: Java의 정석 기초편 ch. 3 연산자
