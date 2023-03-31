@@ -54,8 +54,8 @@ menu:
     url:               /example/
   - title:             Documentation
     url:               /docs/
-  - title:             About
-    url:               /about/
+#  - title:             About
+#    url:               /about/
   - title:             Algorithm
     url:               /algorithm/
   - title:             Java
