@@ -9,7 +9,7 @@ description: Java의 정석 기초편 ch. 3 연산자
 
 일반적으로 단항 연산자는 피연산자의 왼쪽에 위치하지만, 증가 연산자 '++'와 감소 연산자 '--'는 양쪽 모두 가능하다.
 
-피연산자의 왼쪽에 위치하면 **'전위형(prefix)'**, 오른쪽에 위치하면 **'후위형(postfix)'**이라고 한다.
+피연산자의 왼쪽에 위치하면 '전위형(prefix)', 오른쪽에 위치하면 '후위형(postfix)'이라고 한다.
 
 
 #### 전위형
@@ -97,5 +97,3 @@ public class Practice {
 이 코드의 출력값은 다음과 같다.
 
 <img width="175" alt="image" src="https://user-images.githubusercontent.com/88493727/229149784-031ebb7a-7027-4e68-86be-27831e0f2a79.png">
-
-public class Practice {
