@@ -1,6 +1,6 @@
 ---
 layout: list
-title: JAVA
-slug: JAVA
+title: java
+slug: java
 description: things I learned about JAVA
 ---
