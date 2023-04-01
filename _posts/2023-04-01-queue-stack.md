@@ -5,6 +5,7 @@ categories: Data-Structure
 date: 2023-04-01 17:55:00 +09:00
 description: FastCampus 개발자 취업 합격 패스 Chapter 05, 06
 ---
+큐와 스택 각각에 대해 알아두어야 할 것들을 간략하게 적어보았다.
 
 ### 큐 (Queue)
 
