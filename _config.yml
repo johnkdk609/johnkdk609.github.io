@@ -366,10 +366,10 @@ plugins:
 
 # Used on index and about sites
 social:
-#   name:                <firstname> <lastname>
+  name:                Dongkyu Kim
   links:
 #     - https://twitter.com/<username>
-     - https://github.com/johnkdk609
+    - https://github.com/johnkdk609
 
 
 # Plugin Configs
