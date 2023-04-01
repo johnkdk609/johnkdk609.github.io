@@ -56,6 +56,8 @@ menu:
     url:               /docs/
 #  - title:             About
 #    url:               /about/
+  - title:             Data Structure
+    url:               /data-structure/
   - title:             Algorithm
     url:               /algorithm/
   - title:             Java
