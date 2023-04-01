@@ -3,7 +3,7 @@ layout: post
 title: 배열 자료구조의 특징과 파이썬에서의 리스트
 description: FastCampus 개발자 취업 합격 패스 Chapter 04. 배열
 date: 2023-04-01 13:50:00 +09:00
-categories: Data Structure
+categories: Data-Structure
 ---
 **배열(Array)**이란, 데이터를 나열하고 각 데이터를 인덱스에 대응하도록 구성한 데이터 구조이다.
 
