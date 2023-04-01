@@ -1,10 +1,11 @@
 ---
 layout: post
-title: 큐와 스택의 특징 및 활용
+title: "큐와 스택의 특징 및 활용"
 categories: Data-Structure
 date: 2023-04-01 17:55:00 +09:00
 description: FastCampus 개발자 취업 합격 패스 Chapter 05, 06
 ---
+
 ### 큐 (Queue)
 
 큐와 관련한 용어
