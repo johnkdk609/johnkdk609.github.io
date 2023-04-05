@@ -62,7 +62,7 @@ description: FastCampus 개발자 취업 합격 패스 Chapter 11. 힙
 
 * 보통 삭제는 최상단 노드 (root node)를 삭제하는 것이 일반적이다.
   * 힙의 용도는 최댓값 또는 최솟값을 root node에 놓고, 최댓값과 최솟값을 바로 꺼내 쓸 수 있도록 하는 것이기 때문
-* 상단의 데이터 삭제 시, 가장 최하단부 왼쪽에 위치한 노드 (일반적으로 가장 마지막에 추가한 노드)를 root node로 이동
+* 상단의 데이터 삭제 시, 가장 최하단부 오른쪽에 위치한 노드 (일반적으로 가장 마지막에 추가한 노드)를 root node로 이동
 * root node의 값이 child node보다 작을 경우, root node의 child node 중 가장 큰 값을 가진 노드와 root node의 위치를 바꿔주는 작업을 반복한다. (swap)
 
 <img src="https://www.fun-coding.org/00_Images/heap_remove.png" width="700px" alt="heap_pop" />
