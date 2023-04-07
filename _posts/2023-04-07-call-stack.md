@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 호출스택(call stack)과 매개변수, 
+title: 호출스택 (call stack)
 categories: Java
 description: Java의 정석 기초편 ch. 6 객체지향 프로그래밍 1
 date: 2023-04-07 17:31:00 +09:00
