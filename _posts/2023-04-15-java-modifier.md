@@ -38,11 +38,11 @@ static이 붙은 멤버변수와 메서드, 그리고 초기화 블럭은 인스
   <tr>
     <td rowspan="2">static</td>
     <td style="text-align:center">멤버변수</td>
-    <td>- 모든 인스턴스에 공통적으로 사용되는 클래스 변수가 된다.</br>- 클래스 변수는 인스턴스를 생성하지 않고도 사용 가능하다.</br>- 클래스가 메모리에 로드될 때 생성된다.</td>
+    <td>- 모든 인스턴스에 공통적으로 사용되는 클래스 변수가 된다.<br>- 클래스 변수는 인스턴스를 생성하지 않고도 사용 가능하다.<br>- 클래스가 메모리에 로드될 때 생성된다.</td>
   </tr>
   <tr>
     <td style="text-align:center">메서드</td>
-    <td>- 인스턴스를 생성하지 않고도 호출이 가능한 static 메서드가 된다.</br>- static 메서드 내에서는 인스턴스 멤버들을 직접 사용할 수 없다.</td>
+    <td>- 인스턴스를 생성하지 않고도 호출이 가능한 static 메서드가 된다.<br>- static 메서드 내에서는 인스턴스 멤버들을 직접 사용할 수 없다.</td>
   </tr>
 </table>
 
@@ -81,7 +81,7 @@ final은 '마지막의' 또는 '변경될 수 없는'의 의미를 가지고 있
   <tr>
     <td rowspan="4" style="text-align:center">final</td>
     <td style="text-align:center">클래스</td>
-    <td>변경될 수 없는 클래스, 확장될 수 없는 클래스가 된다.</br>그래서 final로 지정된 클래스는 다른 클래스의 조상이 될 수 없다.</td>
+    <td>변경될 수 없는 클래스, 확장될 수 없는 클래스가 된다.<br>그래서 final로 지정된 클래스는 다른 클래스의 조상이 될 수 없다.</td>
   </tr>
   <tr>
     <td style="text-align:center">메서드</td>
