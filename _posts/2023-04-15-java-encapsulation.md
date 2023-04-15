@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 캡슐화와 접근 제어자
+title: 캡슐화(encapsulation)와 접근 제어자
 description: Java의 정석 기초편 ch. 7 객체지향 프로그래밍 2
 categories: Java
 date: 2023-04-15 19:01:00 +09:00
