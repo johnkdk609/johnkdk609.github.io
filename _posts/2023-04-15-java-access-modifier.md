@@ -18,7 +18,7 @@ date: 2023-04-15 18:41:00 +09:00
 
 접근 범위가 넓은 쪽에서 좁은 쪽의 순으로 왼쪽부터 나열하면 다음과 같다.
 
-#### public > protected > (default) > private
+**public > protected > (default) > private**
 
 <table>
   <tr>
