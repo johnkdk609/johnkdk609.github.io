@@ -72,7 +72,7 @@ toString()으로 배열의 모든 요소를 문자열로 편하게 출력할 수
 
 ```java
 int[] arr = {0, 1, 2, 3, 4};
-int[][] arr2D = {{11, 12}, {21, 22}};
+int[][] arr2D = { {11, 12}, {21, 22} };
 
 System.out.println(Arrays.toString(arr));         // [0, 1, 2, 3, 4]
 System.out.println(Arrays.deepToString(arr2D));   // [[11, 12], [21, 22]]
@@ -81,8 +81,8 @@ System.out.println(Arrays.deepToString(arr2D));   // [[11, 12], [21, 22]]
 equals()는 두 번째 배열에 저장된 모든 요소를 비교해서 같으면 true, 다르면 false를 반환한다. equals()도 일차원 배열에만 사용 가능하므로, 다차원 배열의 비교에는 deepEquals()를 사용해야 한다.
 
 ```java
-String[][] str2D = new String[][]{{"aaa", "bbb"}, {"AAA", "BBB"}};
-String[][] str2D2 = new String[][]{{"aaa", "bbb"}, {"AAA", "BBB"}};
+String[][] str2D = new String[][]{ {"aaa", "bbb"}, {"AAA", "BBB"} };
+String[][] str2D2 = new String[][]{ {"aaa", "bbb"}, {"AAA", "BBB"} };
 
 System.out.println(Arrays.equals(str2D, str2D2));       // false
 System.out.println(Arrays.deepEquals(str2D, str2D2));   // true
@@ -121,7 +121,7 @@ import java.util.*;
 class Ex11_6 {
 	public static void main(String[] args) {
 		int[]	   arr   = {0,1,2,3,4};
-		int[][]	arr2D = {{11,12,13}, {21,22,23}};
+		int[][]	arr2D = { {11,12,13}, {21,22,23} };
 
 		System.out.println("arr="+Arrays.toString(arr));
 		System.out.println("arr2D="+Arrays.deepToString(arr2D));
@@ -151,8 +151,8 @@ class Ex11_6 {
 			System.out.println(new String(graph)+i);
 		}
 
-		String[][] str2D  = new String[][]{{"aaa","bbb"},{"AAA","BBB"}};
-		String[][] str2D2 = new String[][]{{"aaa","bbb"},{"AAA","BBB"}};
+		String[][] str2D  = new String[][]{ {"aaa","bbb"}, {"AAA","BBB"} };
+		String[][] str2D2 = new String[][]{ {"aaa","bbb"}, {"AAA","BBB"} };
 
 		System.out.println(Arrays.equals(str2D, str2D2));     // false
 		System.out.println(Arrays.deepEquals(str2D, str2D2)); // true
