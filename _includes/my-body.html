@@ -105,16 +105,3 @@ Example code for using Matamo as alternative analytics solution.
 </script>
 {% endif %}
 {% endcomment %}
-
-{% assign current_post = page %}
-{% assign posts = site.posts | where: "layout", "post" | sort: "date" %}
-{% for post in posts %}
-  {% if post.url == current_post.url %}
-    {% if forloop.index > 1 %}
-      <a href="{{ posts[forloop.index0 - 1].url }}">Previous Post: {{ posts[forloop.index0 - 1].title }}</a>
-    {% endif %}
-    {% if forloop.index < posts.size %}
-      <a href="{{ posts[forloop.index0 + 1].url }}">Next Post: {{ posts[forloop.index0 + 1].title }}</a>
-    {% endif %}
-  {% endif %}
-{% endfor %}
