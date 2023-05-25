@@ -46,6 +46,7 @@ class Car2 {
 		this.door = door;
 	}
 }
+
 class Ex6_13 {
 	public static void main(String[] args) {
 		Car2 c1 = new Car2();	
