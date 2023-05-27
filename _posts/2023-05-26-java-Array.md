@@ -309,3 +309,187 @@ class Ex5_1 {
 [I@724af044
 abcd
 ```
+
+
+## 배열의 활용(1) - 총합과 평균
+
+```java
+class Ex5_2 {
+	public static void main(String[] args) {
+		int   sum = 0;      // 총합을 저장하기 위한 변수 
+		float average = 0f; // 평균을 저장하기 위한 변수 
+
+		int[] score = {100, 88, 100, 100, 90};
+
+		for (int i=0; i < score.length ; i++ ) {
+			sum += score[i];
+		}
+		average = sum / (float)score.length ; // 계산 결과를 float타입으로 얻으려 형변환 
+
+		System.out.println("총합 : " + sum);
+		System.out.println("평균 : " + average);
+	}
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+총합 : 478
+평균 : 95.6
+```
+
+for문을 이용해서 배열에 저장된 값을 모두 더한 결과를 배열의 개수로 나누어서 평균을 구하는 예제이다. 평균을 구하기 위해서 전체 합을 배열의 길이인 score.length로 나누었다.
+
+이때 int타입과 int타입 간의 연산은 int타입으로 결과를 얻기 때문에 정확한 평균값은 얻지 못하므로 score.length를 float타입으로 변환하여 나눗셈을 하였다.
+
+```
+478 / 5 → 95
+478 / (float)5 → 478 / 5.0f → 478.0f / 5.0f → 95.6f
+```
+
+
+## 배열의 활용(2) - 최댓값과 최솟값
+
+```java
+class Ex5_3 { 
+	public static void main(String[] args) { 
+		int[] score = { 79, 88, 91, 33, 100, 55, 95 }; 
+
+		int max = score[0]; // 배열의 첫 번째 값으로 최댓값을 초기화 한다. 
+		int min = score[0]; // 배열의 첫 번째 값으로 최솟값을 초기화 한다. 
+
+		for(int i=1; i < score.length;i++) {	// 배열의 두 번째 요소부터 읽기 위해서 변수 i의 값을 1로 초기화 했다. 
+			if(score[i] > max) { 
+				max = score[i]; 
+			} else if(score[i] < min) { 
+				min = score[i]; 
+			} 
+		} // end of for 
+
+		System.out.println("최댓값 :" + max);       
+		System.out.println("최솟값 :" + min);       
+	} // end of main 
+} // end of class
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+최댓값 :100
+최솟값 :33
+```
+
+배열에 저장된 값 중에서 최댓값과 최솟값을 구하는 예제이다. 배열의 첫 번째 요소 'score\[0\]'의 값으로 최댓값을 의미하는 변수 max와 최솟값을 의미하는 변수 min을 초기화 하였다.
+
+그 다음 반복문을 통해서 배열의 두 번째 요소 'score\[1\]'부터 max와 비교하기 시작한다. 만일 배열에 담긴 값이 max에 저장된 값보다 크다면, 이 값을 max에 저장한다.
+
+이런 식으로 배열의 마지막 요소까지 비교하고 나면 max에는 배열에 담긴 값 중에서 최댓값이 저장된다. 최솟값 min도 같은 방식으로 얻을 수 있다.
+
+
+## 배열의 활용(3) - 섞기(shuffle)
+
+```java
+import java.util.Arrays;
+
+class Ex5_4 {
+	public static void main(String[] args) {
+		int[] numArr = {0,1,2,3,4,4,5,6,7,8,9};
+		System.out.println(Arrays.toString(numArr));
+
+		for (int i=0; i < 100; i++ ) {
+			int n = (int)(Math.random() * 10);  // 0~9 중의 한 값을 임의로 얻는다. 
+			int tmp = numArr[0];	//
+			numArr[0] = numArr[n];	//
+			numArr[n] = tmp;	// numArr[0]과 numArr[n]의 값을 서로 바꾼다.
+		}
+		System.out.println(Arrays.toString(numArr));
+	} // main의 끝 
+}
+```
+
+위 코드의 출력 결과 예시는 다음과 같다.
+
+```
+[0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9]
+[4, 2, 0, 7, 4, 6, 8, 1, 5, 3, 9]
+```
+
+길이가 10인 배열 numArr을 생성하고 0~9의 숫자로 차례대로 초기화하여 출력한다. 그 다음 random()을 이용해서 배열의 임의의 위치에 있는 값과 배열의 첫 번째 요소 'numArr\[0\]'의 값을 교환하는 일을 100번 반복해서 배열의 요소가 뒤섞이게 한다.
+
+만일 random()을 통해 얻은 값 n이 3이라면, 아래의 그림처럼 두 값이 서로 바뀐다.
+
+```java
+① tmp = numArr[0];	// numArr[0]의 값을 변수 tmp에 저장한다.
+```
+
+<img width="700" alt="[자바의 정석 - 기초편] ch5-10,11 배열의 활용(3)~(4)" title="[자바의 정석 - 기초편] ch5-10,11 배열의 활용(3)~(4)" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5b9eb589-d787-43e1-aec0-2f847e227296">
+
+```java
+② numArr[0] = numArr[3];	// numArr[3]의 값을 numArr[0]에 저장한다.
+```
+
+<img width="700" alt="[자바의 정석 - 기초편] ch5-10,11 배열의 활용(3)~(4)" title="[자바의 정석 - 기초편] ch5-10,11 배열의 활용(3)~(4)" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f2daf2de-4629-4fbe-8888-c68b4d48f70f">
+
+```java
+③ numArr[3] = tmp;	// tmp의 값을 numArr[3]에 저장한다.
+```
+
+<img width="700" alt="[자바의 정석 - 기초편] ch5-10,11 배열의 활용(3)~(4)" title="[자바의 정석 - 기초편] ch5-10,11 배열의 활용(3)~(4)" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/b63e7cbe-2f74-43b0-bad2-522345f3bcd0">
+
+
+## 배열의 활용(4) - 로또 번호 만들기
+
+```java
+class Ex5_5 { 
+	public static void main(String[] args) { 
+		int[] ball = new int[45];  // 45개의 정수값을 저장하기 위한 배열 생성      
+
+		// 배열의 각 요소에 1~45의 값을 저장한다. 
+		for(int i=0; i < ball.length; i++)       
+			ball[i] = i+1;    // ball[0]에 1이 저장된다. 
+
+		int tmp = 0;   // 두 값을 바꾸는 데 사용할 임시변수 
+		int j = 0;     // 임의의 값을 얻어서 저장할 변수 
+
+		// 배열의 i번째 요소와 임의의 요소에 저장된 값을 서로 바꿔서 값을 섞는다.  
+		// 0번째 부터 5번째 요소까지 모두 6개만 바꾼다. 
+		for(int i=0; i < 6; i++) {       
+			j = (int)(Math.random() * 45); // 0~44 범위의 임의의 값을 섞는다. 
+			tmp     = ball[i]; 
+			ball[i] = ball[j]; 
+			ball[j] = tmp; 
+		} 
+
+		// 배열 ball의 앞에서부터 6개의 요소를 출력한다. 
+		for(int i=0; i < 6; i++) 
+			System.out.printf("ball[%d]=%d%n", i, ball[i]); 
+	} 
+}
+```
+
+위 코드의 출력 결과 예시는 다음과 같다.
+
+```
+ball[0]=38
+ball[1]=20
+ball[2]=18
+ball[3]=5
+ball[4]=45
+ball[5]=42
+```
+
+로또번호를 생성하는 예제이다. 길이가 45인 배열에 1부터 45까지의 값을 담은 다음 반복문을 이용해서 배열의 인덱스가 i인 값(ball\[i\])과 random()에 의해서 결정된 임의의 위치에 있는 값과 자리를 바꾸는 것을 6번 반복한다. 이것은 마치 1부터 45까지의 번호가 쓰인 카드를 잘 섞은 다음 맨 위의 6장을 꺼내는 것과 같다고 할 수 있다.
+
+45개의 요소 중에서 앞에 6개의 요소만 임의의 위치에 있는 요소와 자리를 바꾸면 된다.
+
+```java
+// 배열의 인덱스가 i인 요소와 임의의 요소에 저장된 값을 서로 바꿔서 값을 섞는다.
+// 0번째부터 5번째 요소까지 모두 6개만 바꾼다.
+for (int i = 0; i < 6; i++) {
+	j = (int)(Math.random() * 45);	// 0~44 범위의 임의의 값을 섞는다.
+	tmp = ball[i];		//
+	ball[i] = ball[j];	//
+	ball[j] = tmp;		// ball[i]와 ball[j]의 값을 서로 바꾼다. 
+}
+```
