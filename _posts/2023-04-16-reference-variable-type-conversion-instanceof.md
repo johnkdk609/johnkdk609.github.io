@@ -53,7 +53,7 @@ class Ex7_7 {
 		fe.water();
 		car = fe;    			// car = (Car)fe;에서 형변환이 생략됨. 
 //		car.water();			// 컴파일 에러. Car 타입의 참조변수로는 water()를 호출할 수 없다. 
-		fe2 = (FireEngine)car;	// 자손 타입 <- 조상 타입. 형변환 생략 불가 
+		fe2 = (FireEngine)car;		// 자손 타입 <- 조상 타입. 형변환 생략 불가 
 		fe2.water();
 	}
 }
