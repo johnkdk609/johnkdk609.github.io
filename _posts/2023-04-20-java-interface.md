@@ -136,7 +136,7 @@ class Fighter extends Unit implements Fightable {
 ```java
 Fightable method() {
   // ...
-  Fighter f = new Fighter();
+  Fighter f = new Fighter();    //
   return f;                     // 이 두 문장을 한 문장으로 바꾸면 다음과 같다. return new Fighter();
 }
 ```
