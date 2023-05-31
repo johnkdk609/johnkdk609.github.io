@@ -236,7 +236,7 @@ class Outer {
 	}
 
 	static class StaticInner {
-//      스태틱 클래스는 외부 클래스의 인스턴스 멤버에 접근할 수 없다. 
+//      	스태틱 클래스는 외부 클래스의 인스턴스 멤버에 접근할 수 없다. 
 //		int siv = outerIv;
 		static int scv = outerCv;
 	}
