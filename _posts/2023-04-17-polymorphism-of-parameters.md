@@ -81,19 +81,19 @@ Tv 클래스와 Computer 클래스는 Product 클래스의 자손이므로 위�
 
 ```java
 class Product {
-	int price;			// 제품의 가격 
+	int price;		// 제품의 가격 
 	int bonusPoint;		// 제품 구매 시 제공하는 보너스 점수 
 
 	Product(int price) {
 		this.price = price;
-		bonusPoint = (int)(price/10.0);	// 보너스 점수는 제품 가격의 10% 
+		bonusPoint = (int)(price/10.0);		// 보너스 점수는 제품 가격의 10% 
 	}
 }
 
 class Tv1 extends Product {
 	Tv1() {
 		// 조상 클래스의 생성자 Product(int price)를 호출한다. 
-		super(100);		// Tv의 가격을 100만원으로 한다. 
+		super(100);	// Tv의 가격을 100만원으로 한다. 
 	}
 
 	// Object클래스의 toString()을 오버라이딩 한다. 
@@ -106,9 +106,9 @@ class Computer extends Product {
 	public String toString() { return "Computer"; }
 }
 
-class Buyer {	// 고객, 물건을 사는 사람 
-	int money = 1000;		// 소유 금액 
-	int bonusPoint = 0;		// 보너스 점수 
+class Buyer {			// 고객, 물건을 사는 사람 
+	int money = 1000;	// 소유 금액 
+	int bonusPoint = 0;	// 보너스 점수 
 
 	void buy(Product p) {
 		if(money < p.price) {
