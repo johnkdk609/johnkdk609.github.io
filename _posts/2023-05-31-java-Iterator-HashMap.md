@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Iterator\<E\>, HashMap\<K, V\>
+title: Iterator<E>, HashMap<K, V>
 description: Java의 정석 기초편 ch. 12 지네릭스, 열거형, 애너테이션
 categories: Java
 date: 2023-05-31 16:50:00 +09:00
