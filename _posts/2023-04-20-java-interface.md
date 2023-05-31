@@ -57,7 +57,7 @@ interface Attackable {
   void attack(Unit u);
 }
 
-interface Fightable extends Movable, Avoidable { }
+interface Fightable extends Movable, Attackable { }
 ```
 
 클래스의 상속과 마찬가지로 자손 인터페이스(Fightable)는 조상 인터페이스(Movable, Attackable)에 정의된 멤버를 모두 상속받는다.
