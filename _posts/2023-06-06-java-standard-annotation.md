@@ -161,7 +161,7 @@ AnnotationEx2.java21: warnings: [deprecation] oldField in NewClass has been depr
 ```
 
 
-## FunctionalInterface
+## @FunctionalInterface
 
 '함수형 인터페이스(functional interface)'를 선언할 때, 이 어노테이션을 붙이면 컴파일러가 '함수형 인터페이스'를 올바르게 선언했는지 확인하고, 잘못된 경우 에러를 발생시킨다. 필수는 아니지만, 붙이면 실수를 방지할 수 있으므로 '함수형 인터페이스'를 선언할 때는 이 어노테이션을 반드시 붙여야 한다. 
 
