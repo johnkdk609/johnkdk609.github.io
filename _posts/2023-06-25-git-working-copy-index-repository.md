@@ -1,6 +1,6 @@
 ---
 layout: post
-title: working copy & index & repository
+title: working copy & index & repository
 description: 지옥에서 온 Git 섹션 5. working copy & index & repository
 categories: Git
 date: 2023-06-25 23:33:00 +0900
