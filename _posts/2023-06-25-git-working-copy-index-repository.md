@@ -18,14 +18,14 @@ git reset이라는 명령어를 사용할 때 옵션이 몇 가지 있다. ```gi
   <tr>
     <td></td>
     <td></td>
-    <td>git reset --soft</td>
+    <td align="right">git reset --soft</td>
   </tr>
   <tr>
     <td></td>
-    <td colspan="2" text-align="right">git reset --mixed</td>
+    <td colspan="2" align="right">git reset --mixed</td>
   </tr>
   <tr>
-    <td colspan="3" text-align="right">git reset --hard</td>
+    <td colspan="3" align="right">git reset --hard</td>
   </tr>
 </table>
 
