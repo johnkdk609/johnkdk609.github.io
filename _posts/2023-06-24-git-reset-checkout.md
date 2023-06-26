@@ -1,6 +1,6 @@
 ---
 layout: post
-title: reset checkout
+title: reset, checkout
 description: 지옥에서 온 Git 섹션 5. reset checkout
 categories: Git
 date: 2023-06-24 23:06:00 +0900
