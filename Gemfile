@@ -8,7 +8,7 @@ source "https://rubygems.org"
 #
 # This will help ensure the proper Jekyll version is running.
 # Happy Jekylling!
-gem "jekyll", "~> 4.1"
+gem "jekyll", "~> 3.9.3"
 
 gem "jekyll-theme-hydejack", "~> 9.1"
 
@@ -33,21 +33,21 @@ gem "duktape"
 gem "webrick"
 
 group :jekyll_plugins do
-  gem "jekyll-default-layout"
-  gem "jekyll-feed"
-  gem "jekyll-optional-front-matter"
-  gem "jekyll-paginate"
-  gem "jekyll-readme-index"
-  gem "jekyll-redirect-from"
-  gem "jekyll-relative-links"
-  gem "jekyll-seo-tag"
-  gem "jekyll-sitemap"
-  gem "jekyll-titles-from-headings"
-  gem "jekyll-include-cache"
+  gem "jekyll-default-layout", "~> 0.1.4"
+  gem "jekyll-feed", "~> 0.15.1"
+  gem "jekyll-optional-front-matter", "~> 0.3.2"
+  gem "jekyll-paginate", "~> 1.1.0"
+  gem "jekyll-readme-index", "~> 0.3.0"
+  gem "jekyll-redirect-from", "~> 0.16.0"
+  gem "jekyll-relative-links", "~> 0.6.1"
+  gem "jekyll-seo-tag", "~> 2.8.0"
+  gem "jekyll-sitemap", "~> 1.4.0"
+  gem "jekyll-titles-from-headings", "~> 0.5.3"
+  gem "jekyll-include-cache", "~> 0.2.1"
 
   # Non-Github Pages plugins:
-  gem "jekyll-last-modified-at"
-  gem "jekyll-compose"
+  gem "jekyll-last-modified-at", "~> 1.0.0"
+  gem "jekyll-compose", "~> 1.0.0"
 end
 
 gem 'wdm' if Gem.win_platform?
