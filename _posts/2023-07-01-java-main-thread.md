@@ -9,7 +9,7 @@ main메서드의 작업을 수행하는 것도 쓰레드이며, 이를 main쓰�
 
 아래 그림은 main메서드가 종료된 후의 호출스택을 표현한 것이다.
 
-![image](https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5df1ea19-08bb-4c30-8357-8bf0b5b3d4cf)
+![image](https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/47216a01-1462-490a-9285-f4336e4d5876)
 
 지금까지는 main메서드가 수행을 마치면 프로그램이 종료되었으나, 위의 그림에서와 같이 main메서드가 수행을 마쳤다 하더라도 다른 쓰레드가 아직 작업을 마치지 않은 상태라면 프로그램이 종료되지 않는다.
 
