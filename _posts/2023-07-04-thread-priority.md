@@ -85,7 +85,7 @@ for (int i = 0; i < 300; i++) {
 
 이전의 예제와는 달리 우선순위가 높은 th2의 실행시간이 th1에 비해 상당히 늘어났다.
 
-<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/9b62fc14-6fa9-409f-ab62-b9d0cfa045fe" width="500px" title="[자바의 정석 - 기초편] ch13-14~17 쓰레드의우선순위. 쓰레드 그룹" alt="쓰레드의 우선순위에 따른 할당되는 시간의 차이">
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/9b62fc14-6fa9-409f-ab62-b9d0cfa045fe" width="600px" title="[자바의 정석 - 기초편] ch13-14~17 쓰레드의우선순위. 쓰레드 그룹" alt="쓰레드의 우선순위에 따른 할당되는 시간의 차이">
 
 위 그림은 쓰레드의 우선순위에 따른 할당되는 시간의 차이를 나타낸 것이다.
 
