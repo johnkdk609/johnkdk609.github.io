@@ -289,3 +289,85 @@ class RunImplEx10 implements Runnable {
 ***
 ***
 ```
+
+
+## join()과 yield()
+
+### join() - 다른 쓰레드의 작업을 기다린다.
+
+쓰레드 자신이 하던 작업을 잠시 멈추고 다른 쓰레드가 지정된 시간동안 작업을 수행하도록 할 때 join()을 사용한다.
+
+```java
+void join()
+void join(long millis)
+void join(long millis, int nanos)
+```
+
+시간을 지정하지 않으면, 해당 쓰레드가 작업을 모두 마칠 때까지 기다리게 된다. 작업 중에 다른 쓰레드의 작업이 먼저 수행되어야할 필요가 있을 때 join()을 사용한다.
+
+```java
+try {
+    th1.join();     // 현재 수행중인 쓰레드가 쓰레드 th1의 작업이 끝날 때까지 기다린다.
+} catch (InterruptedException e) {}
+```
+
+join()도 sleep()처럼 interrupt()에 의해 대기상태에서 벗어날 수 있으며, join()이 호출되는 부분을 try-catch문으로 감싸야 한다. join()은 여러모로 sleep()과 유사한 점이 많은데, sleep()과 다른 점은 join()은 현재 쓰레드가 아닌 특정 쓰레드에 대해 동작하므로 static메서드가 아니라는 것이다.
+
+(join()은 자신의 작업 중간에 다른 쓰레드의 작업을 참여(join)시킨다는 의미로 이름 지어진 것이다.)
+
+
+### yield() - 다른 쓰레드에게 양보한다.
+
+yield()는 쓰레드 자신에게 주어진 실행시간을 다음 차례의 쓰레드에게 양보(yield)한다.
+
+예를 들어 스케줄러에 의해 1초의 실행시간을 할당받은 쓰레드가 0.5초의 시간동안 작업한 상태에서 yield()가 호출되면, 나머지 0.5초는 포기하고 다시 실행대기상태가 된다.
+
+yield()와 interrupt()를 적절히 사용하면, 프로그램의 응답성을 높이고 보다 효율적인 실행이 가능하게 할 수 있다.
+
+
+## join()과 yield() 예제
+
+```java
+class Ex13_11 {
+	static long startTime = 0;
+
+	public static void main(String args[]) {
+		ThreadEx11_1 th1 = new ThreadEx11_1();
+		ThreadEx11_2 th2 = new ThreadEx11_2();
+		th1.start();
+		th2.start();
+		startTime = System.currentTimeMillis();
+
+		try {
+			th1.join();	// main쓰레드가 th1의 작업이 끝날 때까지 기다린다. 
+			th2.join();	// main쓰레드가 th2의 작업이 끝날 때까지 기다린다. 
+		} catch(InterruptedException e) {}
+
+		System.out.print("소요시간:" + (System.currentTimeMillis() - Ex13_11.startTime));
+	} // main
+}
+
+class ThreadEx11_1 extends Thread {
+	public void run() {
+		for(int i=0; i < 300; i++) {
+			System.out.print(new String("-"));
+		}
+	} // run()
+}
+
+class ThreadEx11_2 extends Thread {
+	public void run() {
+		for(int i=0; i < 300; i++) {
+			System.out.print(new String("|"));
+		}
+	} // run()
+}
+```
+
+위 코드의 실행 결과는 다음과 같다.
+
+```
+-----------||||||||||||||||||---|||||||||||||||||||||||||||||||||||||||||||||||||||||||||-------------------------------------------------------------------|||||||||||||-----------------|||||||||||||||||||||||||||||||||||---------||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||-------------------------------------------------------------------------|-||||||||||||||||-----------------------------------------------|||||||||||||||||||||||||||||||||||||||||----------------------|||||||||||||||||--------------------------------------------------소요시간:10
+```
+
+join()을 사용하지 않았으면 main쓰레드는 바로 종료되었겠지만, join()으로 쓰레드 th1과 th2의 작업을 마칠 때까지 main쓰레드가 기다리도록 했다. 그래서 main쓰레드가 두 쓰레드의 작업에 소요된 시간을 출력할 수 있다.
