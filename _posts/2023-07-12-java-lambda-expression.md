@@ -117,13 +117,13 @@ int a -> a * a  // ERROR
     </tr>
     <tr>
         <td rowspan="3">
-            <pre>
-                <code>
+<pre>
+<code>
 int max(int a, int b) {
     return a > b ? a : b;
 }
-                </code>
-            </pre>
+</code>
+</pre>
         </td>
         <td>
 <pre>
