@@ -5,7 +5,7 @@ description: Java의 정석 기초편 ch. 9 java.lang패키지와 유용한 클�
 categories: Java
 date: 2023-05-01 14:17:00 +09:00
 ---
-java.lang패키지는 자바 프로그래밍에서 가장 기본이 되는 클래스들을 포함하고 있다. 그렇기 때문에 java.lang패키지의 클래스들은 import문 없이도 사용할 수 있게 되어 있다. 그동안 String클래스나 System클래스를 import문 없이 사용할 수 있었던 이유가 바로 java, lang패키지에 속한 클래스들이기 때문이었던 것이다. 우선 java.lang패키지의 여러 클래스들 중에서도 자주 사용되는 클래스 몇 가지만을 골라서 학습해보자.
+java.lang패키지는 자바 프로그래밍에서 가장 기본이 되는 클래스들을 포함하고 있다. 그렇기 때문에 java.lang패키지의 클래스들은 import문 없이도 사용할 수 있게 되어 있다. 그동안 String클래스나 System클래스를 import문 없이 사용할 수 있었던 이유가 바로 java.lang패키지에 속한 클래스들이기 때문이었던 것이다. 우선 java.lang패키지의 여러 클래스들 중에서도 자주 사용되는 클래스 몇 가지만을 골라서 학습해보자.
 
 
 ## Object클래스
