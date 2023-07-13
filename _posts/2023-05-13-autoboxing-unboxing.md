@@ -22,8 +22,26 @@ int sum = i + iObj;   // 에러. 기본형과 참조형 간의 덧셈 불가(JDK
     <th>컴파일 후의 코드</th>
   </tr>
   <tr>
-    <td>int i = 5;<br>Integer iObj = new Integer(7);<br><br>int sum = i + iObj;</td>
-    <td>int i = 5;<br>Integer iObj = new Integer(7);<br><br>int sum = i + iObj.intValue();</td>
+    <td>
+<pre>
+<code>
+int i = 5;
+Integer iObj = new Integer(7);
+
+int sum = i + iObj;
+</code>
+</pre>
+	</td>
+    <td>
+<pre>
+<code>
+int i = 5;
+Integer iObj = new Integer(7);
+
+int sum = i + iObj.intValue();
+</code>
+</pre>
+	</td>
   </tr>
 </table>
 
