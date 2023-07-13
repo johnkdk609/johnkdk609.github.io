@@ -62,7 +62,7 @@ public final class Integer extends Number implements Comparable {
 		<td>long</td>
 		<td>Long</td>
 		<td>Long(long value)<br>Long(String s)</td>
-		<td>Long l = new Lone(100);<br>Long l2 = new Long("100");</td>
+		<td>Long l = new Long(100);<br>Long l2 = new Long("100");</td>
 	</tr>
 	<tr>
 		<td>float</td>
