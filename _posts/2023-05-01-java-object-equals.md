@@ -51,7 +51,7 @@ Object클래스는 모든 클래스의 최고 조상이기 때문에 Object클�
 	</tr>
 	<tr>
 		<td>public void wait()<br>public void wait(long timeout)<br>public void wait(long timeout, int nanos)</td>
-		<td>다른 쓰레드가 notify()나 notifyAll()을 호출할 때까지 현재 쓰레드를 무한히 또는 지정된 시간(timeout, nanos)동안 기다리게 한다. (timeout은 천 분의 1초, nanos는 10^9분의 1초)</td>
+		<td>다른 쓰레드가 notify()나 notifyAll()을 호출할 때까지 현재 쓰레드를 무한히 또는 지정된 시간(timeout, nanos)동안 기다리게 한다. (timeout은 천 분의 1초, nanos는 10⁹분의 1초)</td>
 	</tr>
 </table>
 
