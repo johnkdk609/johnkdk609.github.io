@@ -115,8 +115,24 @@ intg2 + i3 = 40
     <th>컴파일 후의 코드</th>
   </tr>
   <tr>
-    <td>Integer intg = (Integer)i;<br>Object obj = (Object)i;<br>Long lng = 100L;</td>
-    <td>Integer intg = Integer.valueOf(i);<br>Object obj = (Object)Integer.valueOf(i);<br>Long lng = new Long(100L);</td>
+    <td>
+<pre>
+<code>
+Integer intg = (Integer)i;
+Object obj = (Object)i;
+Long lng = 100L;
+</code>
+</pre>
+	</td>
+    <td>
+<pre>
+<code>
+Integer intg = Integer.valueOf(i);
+Object obj = (Object)Integer.valueOf(i);
+Long lng = new Long(100L);
+</code>
+</pre>
+	</td>
   </tr>
 </table>
 
