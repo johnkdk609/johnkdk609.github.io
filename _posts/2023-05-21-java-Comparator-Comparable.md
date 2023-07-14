@@ -178,7 +178,7 @@ class DescComp implements Comparator {
 Arrays.sort(arr);   // Integer가 가지고 있는 기본 정렬 기준 compareTo()로 정렬
 ```
 
-정렬할 때는 아래와 같이 정렬 기준을 매개변수로 제공하던가 아니면 위와 같이 정렬 대상에 저장된 객체가 정렬 기준을 가지고 있어야 한다. 그렇지 않으면 예외가 발생한다.
+정렬할 때는 아래와 같이 정렬 기준을 매개변수로 제공하든가 아니면 위와 같이 정렬 대상에 저장된 객체가 정렬 기준을 가지고 있어야 한다. 그렇지 않으면 예외가 발생한다.
 
 ```java
 Arrays.sort(arr, new DescComp());   // DescComp의 compare()로 정렬
