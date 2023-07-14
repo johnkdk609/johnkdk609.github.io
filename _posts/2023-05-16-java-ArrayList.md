@@ -24,6 +24,132 @@ public class ArrayList extends AbstractList implements List, RandomAccess, Clone
 위의 코드는 ArrayList의 소스코드 일부인데 ArrayList는 elementData라는 이름의 Object배열을 멤버변수로 선언하고 있다는 것을 알 수 있다. 선언된 배열의 타입이 모든 객체의 최고조상인 Object이기 때문에 모든 종류의 객체를 담을 수 있다.
 
 
+## ArrayList의 메서드
+
+<table>
+	<tr>
+		<th>메서드</th>
+		<th>설명</th>
+	</tr>
+	<tr>
+		<td>ArrayList</td>
+		<td>크기가 0인 ArrayList를 생성</td>
+	</tr>
+	<tr>
+		<td>ArrayList(Collection c)</td>
+		<td>주어진 컬렉션이 저장된 ArrayList를 생성</td>
+	</tr>
+	<tr>
+		<td>ArrayList(int initialCapacity)</td>
+		<td>지정된 초기용량을 갖는 ArrayList를 생성</td>
+	</tr>
+	<tr>
+		<td>boolean add(Object o)</td>
+		<td>ArrayList의 마지막에 객체를 추가. 성공하면 true</td>
+	</tr>
+	<tr>
+		<td>void add(int index, Object element)</td>
+		<td>지정된 위치(index)에 객체를 저장</td>
+	</tr>
+	<tr>
+		<td>boolean addAll(Collection c)</td>
+		<td>주어진 컬렉션의 모든 객체를 저장한다.</td>
+	</tr>
+	<tr>
+		<td>boolean addAll(int index, Collection c)</td>
+		<td>지정된 위치부터 주어진 컬렉션의 모든 객체를 저장한다.</td>
+	</tr>
+	<tr>
+		<td>void clear()</td>
+		<td>ArrayList를 완전히 비운다.</td>
+	</tr>
+	<tr>
+		<td>Object clone()</td>
+		<td>ArrayList를 복제한다.</td>
+	</tr>
+	<tr>
+		<td>boolean contains(Object o)</td>
+		<td>지정된 객체(o)가 ArrayList에 포함되어 있는지 확인</td>
+	</tr>
+	<tr>
+		<td>void ensureCapacity(int minCapacity)</td>
+		<td>ArrayList의 용량이 최소한 minCapacity가 되도록 한다.</td>
+	</tr>
+	<tr>
+		<td>Object get(int index)</td>
+		<td>지정된 위치(index)에 저장된 객체를 반환한다.</td>
+	</tr>
+	<tr>
+		<td>int indexOf(Object o)</td>
+		<td>지정된 객체가 저장된 위치를 찾아 반환한다.</td>
+	</tr>
+	<tr>
+		<td>boolean isEmpty()</td>
+		<td>ArrayList가 비어있는지 확인</td>
+	</tr>
+	<tr>
+		<td>Iterator iterator()</td>
+		<td>ArrayList의 Iterator객체를 반환</td>
+	</tr>
+	<tr>
+		<td>int lastIndexOf(Object o)</td>
+		<td>객체(o)가 저장된 위치를 끝부터 역방향으로 검색해서 반환</td>
+	</tr>
+	<tr>
+		<td>ListIterator listItertor()</td>
+		<td>ArrayList의 ListIterator를 반환</td>
+	</tr>
+	<tr>
+		<td>ListIterator listIterator(int index)</td>
+		<td>ArrayList의 지정된 위치부터 시작하는 ListIterator를 반환</td>
+	</tr>
+	<tr>
+		<td>Object remove(int index)</td>
+		<td>지정된 위치(index)에 있는 객체를 제거한다.</td>
+	</tr>
+	<tr>
+		<td>boolean remove(Object o)</td>
+		<td>지정한 객체를 제거한다.(성공하면 true, 실패하면 false)</td>
+	</tr>
+	<tr>
+		<td>boolean removeAll(Collection c)</td>
+		<td>지정한 컬렉션에 저장된 것과 동일한 객체들을 ArrayList에서 제거한다.</td>
+	</tr>
+	<tr>
+		<td>boolean retainAll(Collection c)</td>
+		<td>ArrayList에 저장된 객체 중에서 주어진 컬렉션과 공통된 것들만을 남기고 나머지는 삭제한다.</td>
+	</tr>
+	<tr>
+		<td>Object set(int index, Object element)</td>
+		<td>주어진 객체(element)를 지정된 위치(index)에 저장한다.</td>
+	</tr>
+	<tr>
+		<td>int size()</td>
+		<td>ArrayList에 저장된 객체의 개수를 반환한다.</td>
+	</tr>
+	<tr>
+		<td>void sort(Comparator c)</td>
+		<td>지정된 정렬기준(c)으로 ArrayList를 정렬</td>
+	</tr>
+	<tr>
+		<td>List subList(int fromIndex, int toIndex)</td>
+		<td>fromIndex부터 toIndex 사이에 저장된 객체를 반환한다.</td>
+	</tr>
+	<tr>
+		<td>Object[] toArray()</td>
+		<td>ArrayList에 저장된 모든 객체들을 객체배열로 반환한다.</td>
+	</tr>
+	<tr>
+		<td>Object[] toArray(Object[] a)</td>
+		<td>ArrayList에 저장된 모든 객체들을 객체배열 a에 담아 배열한다.</td>
+	</tr>
+	<tr>
+		<td>void trimToSize()</td>
+		<td>용량을 크기에 맞게 줄인다.(빈 공간을 없앤다.)</td>
+	</tr>
+</table>
+
+
 ## ArrayList 예제 코드
 
 ```java
