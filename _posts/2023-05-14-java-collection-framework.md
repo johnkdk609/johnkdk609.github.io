@@ -5,7 +5,7 @@ description: Java의 정석 기초편 ch. 11 컬렉션 프레임웍
 categories: Java
 date: 2023-05-14 22:53:00 +09:00
 ---
-컬렉션 프레임워크(Collection Framework)란, '**데이터 군을 저장하는 클래스들을 표준화한 설계**'를 뜻한다. 컬렉션(collection)은 다수의 데이터, 즉 데이터 그룹을, 프레임워크(framework)은 표준화된 프로그래밍 방식을 의미한다.
+컬렉션 프레임워크(Collection Framework)란, '**데이터 군을 저장하는 클래스들을 표준화한 설계**'를 뜻한다. 컬렉션(collection)은 다수의 데이터 즉 데이터 그룹을, 프레임워크(framework)은 표준화된 프로그래밍 방식을 의미한다.
 
 (Java API문서에서는 컬렉션 프레임워크를 '데이터 군(group)을 다루고 표현하기 위한 단일화된 구조(architecture)'라고 정의하고 있다.)
 
