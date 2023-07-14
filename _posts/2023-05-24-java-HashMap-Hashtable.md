@@ -31,8 +31,26 @@ HashMap은 Entry라는 내부 클래스를 정의하고, 다시 Entry타입의 �
     <th>객체지향적인 코드</th>
   </tr>
   <tr>
-    <td>Object[] key;<br>Object[] value;</td>
-    <td>Entry[] table;<br><br>class Entry {<br>&nbsp;&nbsp;Object key;<br>&nbsp;&nbsp;Object value;<br>}</td>
+    <td>
+<pre>
+<code>
+Object[] key;
+Object[] value;
+</code>
+</pre>
+	</td>
+    <td>
+<pre>
+<code>
+Entry[] table;
+
+class Entry {
+	Object key;
+	Object value;
+}
+</code>
+</pre>
+	</td>
   </tr>
 </table>
 
