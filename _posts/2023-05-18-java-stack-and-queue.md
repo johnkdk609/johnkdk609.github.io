@@ -72,7 +72,7 @@ date: 2023-05-18 17:52:00 +09:00
   </tr>
   <tr>
     <td>Object peek()</td>
-    <td>삭제 없이 요소를 읽어 온다. Queue가 비어있으며 null을 반환</td>
+    <td>삭제 없이 요소를 읽어 온다. Queue가 비어있으면 null을 반환</td>
   </tr>
 </table>
 
@@ -200,7 +200,7 @@ expression:(2+3)*1
 
 입력한 수식의 괄호가 올바른지를 체크하는 예제이다. '('를 만나면 스택에 넣고 ')'를 만나면 스택에서 '('를 꺼낸다. ')'를 만나서 '('를 꺼내려 할 때 스택이 비어있거나 수식을 검사하고 난 후에도 스택이 비어있지 않으면 괄호가 잘못된 것이다.
 
-')'를 만나서 '('를 꺼내려 할 때 스택이 비어있으면 EmptyStackException이 발생하므로 try-catch문을 이용해서 EmptyStackException이 발생하면 괄호가 일치하지 않는다믄 메시지를 출력하도록 했다.
+')'를 만나서 '('를 꺼내려 할 때 스택이 비어있으면 EmptyStackException이 발생하므로 try-catch문을 이용해서 EmptyStackException이 발생하면 괄호가 일치하지 않는다는 메시지를 출력하도록 했다.
 
 
 ## Stack과 Queue의 활용 예제 2
