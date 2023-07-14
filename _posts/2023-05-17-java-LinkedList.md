@@ -21,7 +21,7 @@ date: 2023-05-17 12:50:00 +09:00
 
 <img width="750" alt="[자바의 정석 - 기초편] ch11-12~14 LinkedList" title="[자바의 정석 - 기초편] ch11-12~14 LinkedList" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/6457a1b7-16e5-4d08-942b-011c7cfd4a0a">
 
-위의 그림에서 알 수 있듯이 링크드 리스트의 각 요소(node)들은 자신과 연결된 다음 요소에 대한 참조(주소값)와 데이터로 구성되어 있다.
+위의 그림에서 알 수 있듯이 링크드 리스트의 각 요소(node)들은 자신과 연결된 다음 요소에 대한 참조(주솟값)와 데이터로 구성되어 있다.
 
 ```java
 class Node {

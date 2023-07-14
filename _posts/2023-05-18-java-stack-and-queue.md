@@ -14,6 +14,7 @@ date: 2023-05-18 17:52:00 +09:00
 
 ## Stack과 Queue의 메서드
 
+### Stack의 메서드
 <table>
   <tr>
     <th>메서드</th>
@@ -41,7 +42,8 @@ date: 2023-05-18 17:52:00 +09:00
   </tr>
 </table>
 
-위 표는 Stack의 메서드이다.
+
+### Queue의 메서드
 
 <table>
   <tr>
@@ -73,8 +75,6 @@ date: 2023-05-18 17:52:00 +09:00
     <td>삭제 없이 요소를 읽어 온다. Queue가 비어있으며 null을 반환</td>
   </tr>
 </table>
-
-위 표는 Queue의 메서드이다.
 
 
 ## Stack과 Queue 예제
