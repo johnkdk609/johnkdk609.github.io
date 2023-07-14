@@ -106,7 +106,7 @@ for (int i = 0; i < list.size(); i++) {
 
 ## Map과 Iterator
 
-Map인터페이스를 구현한 컬렉션 클래스는 키(key)와 값(value)을 쌍(pair)으로 저장하고 있기 때문에 itertor()를 직접 호출할 수 없고, 그 대신 keySet()이나 entrySet()과 같은 메서드를 통해서 키와 값을 각각 따로 Set의 형태로 얻어온 후에 다시 iterator()를 호출해야 Iterator를 얻을 수 있다.
+Map인터페이스를 구현한 컬렉션 클래스는 키(key)와 값(value)을 쌍(pair)으로 저장하고 있기 때문에 iterator()를 직접 호출할 수 없고, 그 대신 keySet()이나 entrySet()과 같은 메서드를 통해서 키와 값을 각각 따로 Set의 형태로 얻어온 후에 다시 iterator()를 호출해야 Iterator를 얻을 수 있다.
 
 ```java
 Map map = new HashMap();
@@ -128,13 +128,13 @@ Iterator it = eSet.iterator();
 ① map.entrySet()의 실행 결과가 Set이므로
 ```java
 Iterator it = map.entrySet().itertor();
--> Itertor it = Set인스턴스.iterator();
+→ Itertor it = Set인스턴스.iterator();
 ```
 
 ② map.entrySet()를 통해 얻은 Set인스턴스의 iterator()를 호출해서 Iterator인스턴스를 얻는다.
 ```java
 Iterator it = Set인스턴스.iterator();
--> Iterator it = Iterator인스턴스;
+→ Iterator it = Iterator인스턴스;
 ```
 
 ③ 마지막으로 Iterator인스턴스의 참조가 it에 저장된다.
