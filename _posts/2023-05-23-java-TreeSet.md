@@ -99,7 +99,7 @@ class Ex11_14 {
 		TreeSet set = new TreeSet();
 
 		String from = "b";
-		String to	= "d";
+		String to = "d";
 
 		set.add("abc");      set.add("alien");    set.add("bat");
 		set.add("car");      set.add("Car");      set.add("disc");
