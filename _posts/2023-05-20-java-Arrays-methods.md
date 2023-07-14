@@ -29,7 +29,7 @@ static String toString(Object[] a)
 copyOf()는 배열 전체를, copyOfRange()는 배열의 일부를 복사해서 새로운 배열을 만들어 반환한다. 늘 그렇듯이 copyOfRange()에 지정된 범위의 끝은 포함되지 않는다.
 
 ```java
-int[] arr = {1, 2, 3, 4, 5};
+int[] arr = {0, 1, 2, 3, 4};
 int[] arr2 = Arrays.copyOf(arr, arr.length);  // arr2 = [0, 1, 2, 3, 4]
 int[] arr3 = Arrays.copyOf(arr, 3);           // arr3 = [0, 1, 2]
 int[] arr4 = Arrays.copyOf(arr, 7);           // arr4 = [0, 1, 2, 3, 4, 0, 0]
@@ -52,7 +52,7 @@ Arrays.setAll(arr, (i) -> (int)(Math.random()*5)+1);    // arr = [1, 5, 2, 1, 1]
 
 ### 배열의 정렬과 검색 - sort(), binarySearch()
 
-sort()는 배열을 정렬할 때, 그리고 배열에 저장된 요소를 검색할 때는 binarySearch()를 사용한다. binarySearch()는 배열에서 지정된 값이 저장된 위치(index)를 찾아서 반환하는데, 반드시 배열이 정렬된 상태이어야 올바른 결과를 얻는다. 그리고 만일 검색한 값과 일치하는 요소들이 여러 개 있다면, 이 중에서 어떤 것의 위치가 반환될지는 알 수 없다. 
+sort()는 배열을 정렬할 때, 그리고 배열에 저장된 요소를 검색할 때는 binarySearch()를 사용한다. binarySearch()는 배열에서 지정된 값이 저장된 위치(index)를 찾아서 반환하는데, **반드시 배열이 정렬된 상태이어야 올바른 결과를 얻는다.** 그리고 만일 검색한 값과 일치하는 요소들이 여러 개 있다면, 이 중에서 어떤 것의 위치가 반환될지는 알 수 없다. 
 
 ```java
 int[] arr = {3, 2, 0, 1, 4};
@@ -78,7 +78,7 @@ System.out.println(Arrays.toString(arr));         // [0, 1, 2, 3, 4]
 System.out.println(Arrays.deepToString(arr2D));   // [[11, 12], [21, 22]]
 ```
 
-equals()는 두 번째 배열에 저장된 모든 요소를 비교해서 같으면 true, 다르면 false를 반환한다. equals()도 일차원 배열에만 사용 가능하므로, 다차원 배열의 비교에는 deepEquals()를 사용해야 한다.
+equals()는 두 배열에 저장된 모든 요소를 비교해서 같으면 true, 다르면 false를 반환한다. equals()도 일차원 배열에만 사용 가능하므로, 다차원 배열의 비교에는 deepEquals()를 사용해야 한다.
 
 ```java
 String[][] str2D = new String[][]{ {"aaa", "bbb"}, {"AAA", "BBB"} };
@@ -189,8 +189,8 @@ arr7=[4, 2, 3, 2, 1]
 false
 true
 chArr=[A, D, C, B, E]
-index of B =-2
+index of B =-2				← 정렬하지 않아서 잘못된 결과가 나왔음.
 = After sorting =
 chArr=[A, B, C, D, E]
-index of B =1
+index of B =1				← 정렬한 후라서 올바른 결과가 나왔음.
 ```
