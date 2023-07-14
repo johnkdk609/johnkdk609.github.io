@@ -232,7 +232,7 @@ class Ex11_18 {
 				int value = (int)map.get(data[i]);
 				map.put(data[i], value+1);  // 기존에 존재하는 키면 기존 값을 1증가
 			} else {
-				map.put(data[i], 1);	    // 긱존에 존재하지 않는 키는 값을 1로 저장		
+				map.put(data[i], 1);	    // 기존에 존재하지 않는 키는 값을 1로 저장		
 			}
 		}
 
