@@ -5,7 +5,7 @@ description: Java의 정석 기초편 ch. 14 람다와 스트림
 categories: Java
 date: 2023-07-15 23:05:00 +0900
 ---
-여러 조건식을 논리 연산자인 &&(and), ||(or), !(not)으로 연결해서 하나의 식을 구성할 수 있는 것처럼, 여러 Predicate를 and(), or(), negate()로 연결해서 하나의 새로운 Predicate로 결합할 수 있다.
+여러 조건식을 논리 연산자인 &&(and), \|\|(or), !(not)으로 연결해서 하나의 식을 구성할 수 있는 것처럼, 여러 Predicate를 and(), or(), negate()로 연결해서 하나의 새로운 Predicate로 결합할 수 있다.
 
 ```java
 Predicate<Integer> p = i -> i < 100;
