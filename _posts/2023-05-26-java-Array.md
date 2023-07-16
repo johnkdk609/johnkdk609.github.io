@@ -276,16 +276,16 @@ class Ex5_1 {
 		int[] iArr3 = {100, 95, 80, 70, 60};
 		char[] chArr = {'a', 'b', 'c', 'd'};
 
-		for (int i=0; i < iArr1.length ; i++ ) {
+		for (int i=0; i < iArr1.length; i++) {
 			iArr1[i] = i + 1; // 1~10의 숫자를 순서대로 배열에 넣는다. 
 		}
 
-		for (int i=0; i < iArr2.length ; i++ ) {
+		for (int i=0; i < iArr2.length; i++) {
 			iArr2[i] = (int)(Math.random()*10) + 1; // 1~10의 값을 배열에 저장 
 		}
 
 		// 배열에 저장된 값들을 출력한다. 
-		for(int i=0; i < iArr1.length;i++) {
+		for(int i=0; i < iArr1.length; i++) {
 			System.out.print(iArr1[i]+",");	
 		}
 		System.out.println();
@@ -321,7 +321,7 @@ class Ex5_2 {
 
 		int[] score = {100, 88, 100, 100, 90};
 
-		for (int i=0; i < score.length ; i++ ) {
+		for (int i = 0; i < score.length; i++) {
 			sum += score[i];
 		}
 		average = sum / (float)score.length ; // 계산 결과를 float타입으로 얻으려 형변환 
@@ -394,7 +394,7 @@ import java.util.Arrays;
 
 class Ex5_4 {
 	public static void main(String[] args) {
-		int[] numArr = {0,1,2,3,4,4,5,6,7,8,9};
+		int[] numArr = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 		System.out.println(Arrays.toString(numArr));
 
 		for (int i=0; i < 100; i++ ) {
@@ -411,8 +411,8 @@ class Ex5_4 {
 위 코드의 출력 결과 예시는 다음과 같다.
 
 ```
-[0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9]
-[4, 2, 0, 7, 4, 6, 8, 1, 5, 3, 9]
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[8, 2, 5, 9, 1, 0, 7, 6, 3, 4]
 ```
 
 길이가 10인 배열 numArr을 생성하고 0~9의 숫자로 차례대로 초기화하여 출력한다. 그 다음 random()을 이용해서 배열의 임의의 위치에 있는 값과 배열의 첫 번째 요소 'numArr\[0\]'의 값을 교환하는 일을 100번 반복해서 배열의 요소가 뒤섞이게 한다.
@@ -447,7 +447,7 @@ class Ex5_5 {
 
 		// 배열의 각 요소에 1~45의 값을 저장한다. 
 		for(int i=0; i < ball.length; i++)       
-			ball[i] = i+1;    // ball[0]에 1이 저장된다. 
+			ball[i] = i + 1;    // ball[0]에 1이 저장된다. 
 
 		int tmp = 0;   // 두 값을 바꾸는 데 사용할 임시변수 
 		int j = 0;     // 임의의 값을 얻어서 저장할 변수 
@@ -462,7 +462,7 @@ class Ex5_5 {
 		} 
 
 		// 배열 ball의 앞에서부터 6개의 요소를 출력한다. 
-		for(int i=0; i < 6; i++) 
+		for (int i=0; i < 6; i++) 
 			System.out.printf("ball[%d]=%d%n", i, ball[i]); 
 	} 
 }
