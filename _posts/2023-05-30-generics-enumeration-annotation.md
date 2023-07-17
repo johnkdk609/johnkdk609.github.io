@@ -166,7 +166,7 @@ List<Tv> list = new LinkedList<Tv>();   // OK. 다형성. LinkedList가 List를 
 그러면 ArrayList에 Product의 자손 객체만 저장할 수는 없을까? 그럴 때는 제네릭 타입이 Product인 ArrayList를 생성하고, 이 ArrayList에 Product의 자손인 Tv와 Audio의 객체를 저장하면 된다.
 
 ```java
-ArrayList<Product> list = newArrayList<Product>();
+ArrayList<Product> list = new ArrayList<Product>();
 list.add(new Product());
 list.add(new Tv());       // OK.
 list.add(new Audio());    // OK.
