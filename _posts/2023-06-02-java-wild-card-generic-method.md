@@ -55,9 +55,9 @@ System.out.println(Juicer.makeJuice(new FruitBox<Apple>()));    // OK
 ```java
 import java.util.ArrayList;
 
-class Fruit2		       	{ public String toString() { return "Fruit";}}
-class Apple2 extends Fruit2	{ public String toString() { return "Apple";}}
-class Grape2 extends Fruit2	{ public String toString() { return "Grape";}}
+class Fruit2		       	{ public String toString() { return "Fruit"; }}
+class Apple2 extends Fruit2	{ public String toString() { return "Apple"; }}
+class Grape2 extends Fruit2	{ public String toString() { return "Grape"; }}
 
 class Juice {
 	String name;
@@ -70,7 +70,7 @@ class Juicer {
 	static Juice makeJuice(FruitBox2<? extends Fruit2> box) {
 		String tmp = "";
 
-		for(Fruit2 f : box.getList()) 
+		for (Fruit2 f : box.getList()) 
 			tmp += f + " ";
 		return new Juice(tmp);
 	}
@@ -99,7 +99,7 @@ class Box2<T> {
 	T get(int i)     { return list.get(i);  }
 	ArrayList<T> getList() { return list;   }
 	int size()       { return list.size();  }
-	public String toString() { return list.toString();}
+	public String toString() { return list.toString(); }
 }
 ```
 
