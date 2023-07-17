@@ -31,7 +31,7 @@ class Ex12_2 {
 
 		Iterator<Student> it = list.iterator();
 		while (it.hasNext()) {
-		//      Student s = (Student)it.next(); // 지네릭스를 사용하지 않으면 형변환 필요 
+		//      Student s = (Student)it.next(); // 제네릭스를 사용하지 않으면 형변환 필요.
 			Student s = it.next();
 			System.out.println(s.name);
 		}

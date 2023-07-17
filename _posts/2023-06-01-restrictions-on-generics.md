@@ -48,11 +48,11 @@ class FruitBox<T extends Fruit & Eatable> { ... }
 import java.util.ArrayList;
 
 class Fruit implements Eatable {
-	public String toString() { return "Fruit";}
+	public String toString() { return "Fruit"; }
 }
-class Apple extends Fruit { public String toString() { return "Apple";}}
-class Grape extends Fruit { public String toString() { return "Grape";}}
-class Toy                 { public String toString() { return "Toy"  ;}}
+class Apple extends Fruit { public String toString() { return "Apple"; }}
+class Grape extends Fruit { public String toString() { return "Grape"; }}
+class Toy                 { public String toString() { return "Toy"  ; }}
 
 interface Eatable {}
 
@@ -71,9 +71,9 @@ class Ex12_3 {
 //		appleBox.add(new Grape());  // 에러. Grape는 Apple의 자손이 아님 
 		grapeBox.add(new Grape());
 
-		System.out.println("fruitBox-"+fruitBox);
-		System.out.println("appleBox-"+appleBox);
-		System.out.println("grapeBox-"+grapeBox);
+		System.out.println("fruitBox-" + fruitBox);
+		System.out.println("appleBox-" + appleBox);
+		System.out.println("grapeBox-" + grapeBox);
 	}  // main
 }
 
@@ -116,7 +116,9 @@ class Box<T> {
 }
 ```
 
-static멤버는 타입 변수에 지정된 타입, 즉 대입된 타입의 종류에 관계없이 동일한 것이어야 하기 때문이다. 즉, 'Box\<Apple\>.item'과 'Box\<Grape\>.item'이 다른 것이어서는 안 된다는 뜻이다. 그리고 제네릭 타입의 배열을 생성하는 것도 허용되지 않는다. 제네릭 배열 타입의 참조변수를 선언하는 것은 가능하지만, 'new T\[10\]'과 같이 배열을 생성하는 것은 안 된다는 뜻이다. 
+static멤버는 타입 변수에 지정된 타입, 즉 대입된 타입의 종류에 관계없이 동일한 것이어야 하기 때문이다. 즉, 'Box\<Apple\>.item'과 'Box\<Grape\>.item'이 다른 것이어서는 안 된다는 뜻이다. 
+
+그리고 제네릭 타입의 배열을 생성하는 것도 허용되지 않는다. 제네릭 배열 타입의 참조변수를 선언하는 것은 가능하지만, 'new T\[10\]'과 같이 배열을 생성하는 것은 안 된다는 뜻이다. 
 
 ```java
 class Box<T> {
