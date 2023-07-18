@@ -107,19 +107,19 @@ class Ex12_8 {
 		Class<Ex12_8> cls = Ex12_8.class;
 
 		TestInfo anno = cls.getAnnotation(TestInfo.class);
-		System.out.println("anno.testedBy()="+anno.testedBy());
-		System.out.println("anno.testDate().yymmdd()=" +anno.testDate().yymmdd());
-		System.out.println("anno.testDate().hhmmss()=" +anno.testDate().hhmmss());
+		System.out.println("anno.testedBy()=" + anno.testedBy());
+		System.out.println("anno.testDate().yymmdd()=" + anno.testDate().yymmdd());
+		System.out.println("anno.testDate().hhmmss()=" + anno.testDate().hhmmss());
 
-		for(String str : anno.testTools())
-			System.out.println("testTools="+str);
+		for (String str : anno.testTools())
+			System.out.println("testTools=" + str);
 
 		System.out.println();
 
 		// Ex12_8에 적용된 모든 애너테이션을 가져온다.
 		Annotation[] annoArr = cls.getAnnotations();
 
-		for(Annotation a : annoArr)
+		for (Annotation a : annoArr)
 			System.out.println(a);
 	} // main의 끝
 }
