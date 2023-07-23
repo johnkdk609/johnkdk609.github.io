@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Optional<T>
+title: Optional&#60;T&#62;
 description: Java의 정석 기초편 ch. 14 람다와 스트림
 categories: Java
 date: 2023-07-23 09:08:00 +0900
