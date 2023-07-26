@@ -9,13 +9,13 @@ date: 2023-07-25 17:09:00 +0900
 
 컬렉터는 Collector인터페이스를 구현한 것으로, 직접 구현할 수도 있고 미리 작성된 것을 사용할 수도 있다. Collectors클래스는 미리 작성된 다양한 종류의 컬렉터를 반환하는 static메서드를 가지고 있으며, 이 클래스를 통해 제공되는 컬렉터만으로도 많은 일들을 할 수 있다.
 
-> collect() - 스트림의 최종연산. 매개변수로 컬렉터를 필요로 한다.
-> Collector - 인터페이스. 컬렉터는 이 인터페이스를 구현해야 한다.
+> collect() - 스트림의 최종연산. 매개변수로 컬렉터를 필요로 한다.\
+> Collector - 인터페이스. 컬렉터는 이 인터페이스를 구현해야 한다.\
 > Collectors - 클래스. static메서드로 미리 작성된 컬렉터를 제공한다.
 
 collect()는 매개변수의 타입이 Collector인데, 매개변수가 Collector를 구현한 클래스의 객체이어야 한다는 뜻이다. 그리고 collect()는 이 객체에 구현된 방법대로 스트림의 요소를 수집한다.
 
-(sort() 할 때, Comparator가 필요한 것처럼 collect() 할 때는 Collectot가 필요하다.)
+(sort() 할 때, Comparator가 필요한 것처럼 collect() 할 때는 Collector가 필요하다.)
 
 ```java
 Object collect(Collector collector)     // Collector를 구현한 클래스의 객체를 매개변수로
@@ -50,4 +50,73 @@ Map<String, Person> map = personStream.collect(Collectors.toMap(p -> p.getRegId(
 Student[] stuNames = studentStream.toArray(Student[]::new);     // OK
 Student[] stuNames = studentStream.toArray();       // ERROR
 Object[] stuNames = studentStream.toArray();        // OK.
+```
+
+
+## 스트림의 통계 - counting(), summingInt()
+
+앞서 살펴보았던 최종 연산들이 제공하는 통계 정보를 collect()로 똑같이 얻을 수 있다. collect()를 사용하지 않고도 쉽게 얻을 수 있는데, 굳이 collect()를 사용하는 방법을 알아보는 이유는 collect()의 사용법을 알아보기 위함이다. 나중에 groupingBy()와 함께 사용할 때 비로소 이 메서드들이 왜 필요한지 알게 될 것이다. 보다 간결한 코드를 위해 Collectors의 static메서드를 호출할 때는 'Collectors.'를 생략하였다. static import가 되어 있도록 가정한다.
+
+(summingInt() 외에도 summingLong(), summingDouble()이 있다. averagingInt()도 마찬가지이다.)
+
+```java
+long count = stuStream.count();
+long count = stuStream.collect(counting());     // Collectors.counting()
+
+long totalScore = stuStream.mapToInt(Student::getTotalScore).sum();
+long totalScore = stuStream.collect(summingInt(Student::getTotalScore));
+
+Optional<Student> topStudent = stuStream.max(Comparator.comparingInt(Student::getTotalScore));
+Optional<Student> topStudent = stuStream.collect(maxBy(Comparator.comparingInt(Student::getTotalScore)));
+
+IntSummaryStatistics stat = stuStream.mapToInt(Student::getTotalScore).summaryStatistics();
+IntSummaryStatistics stat = stuStream.collect(summarizingInt(Student::getTotalScore));
+```
+
+summingInt()와 summarizingInt()를 혼동하지 않도록 주의해야 한다.
+
+
+## 스트림을 리듀싱 - reducing()
+
+리듀싱 역시 collect()로 가능하다. IntStream에는 매개변수 3개짜리 collect()만 정의되어 있으므로 boxed()를 통해 IntStream을 Stream&#60;Integer&#62;로 변환해야 매개변수 1개짜리 collect()를 쓸 수 있다.
+
+```java
+IntStream intStream = new Random().ints(1, 46).distinct().limit(6);
+
+OptionalInt max = intStream.reduce(Integer::max);
+Optional<Integer> max = intStream.boxed().collect(reducing(Integer::max));
+
+long sum = intStream.reduce(0, (a, b) -> a + b);
+long sum = intStream.boxed().collect(reducing(0, (a, b) -> a + b));
+
+int grandTotal = stuStream.map(Student::getTotalScore).reduce(0, Integer::sum);
+int grandTotal = stuStream.collect(reducing(0, Student::getTotalScore, Integer::sum));
+```
+
+Collectors.reducing()에는 아래와 같이 3가지 종류가 있다. 세 번째 메서드만 제외하고 reduce()와 같다. 세 번째 것은 위의 예에서 알 수 있듯이 map()과 reduce()를 하나로 합쳐놓은 것 뿐이다.
+
+```java
+Collector reducing(BinaryOperator<T> op)
+Collector reducing(T identity, BinaryOperator<T> op)
+Collector reducing(U identity, Function<T, U> mapper, BinaryOperator<U> op)
+```
+
+위의 메서드 목록은 와일드 카드를 제거하여 간략히 한 것이다.
+
+
+## 스트림을 문자열로 결합 - joining()
+
+joining()은 문자열 스트림의 모든 요소를 하나의 문자열로 연결해서 반환한다. 구분자를 지정해줄 수도 있고, 접두사와 접미사도 지정 가능하다. 스트림의 요소가 String이나 StringBuffer처럼 CharSequence의 자손인 경우에만 결합이 가능하므로 스트림의 요소가 문자열이 아닌 경우에는 먼저 map()을 이용해서 스트림의 요소를 문자열로 변환해야 한다.
+
+```java
+String studentNames = stuStream.map(Student::getName).collect(joining());
+String studentNames = stuStream.map(Student::getName).collect(joining(","));
+String studentNames = stuStream.map(Student::getName).collect(joining(",", "[", "]"));
+```
+
+만일 map() 없이 스트림에 바로 joining() 하면, 스트림의 요소에 toString()을 호출한 결과를 결합한다.
+
+```java
+// Student의 toString()으로 결합
+String studentInfo = stuStream.collect(joining(","));
 ```
