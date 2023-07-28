@@ -254,7 +254,7 @@ Map<Student.Level, Long> stuByLevel = stuStream.collect(groupingBy(s -> {
         return Student.Level.MID;
     else
         return Student.Level.LOW;
-}, countin()));
+}, counting()));
 // [MID] - 8명, [HIGH] - 8명, [LOW] - 2명
 ```
 
