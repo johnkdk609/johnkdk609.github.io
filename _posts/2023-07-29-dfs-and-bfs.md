@@ -2,7 +2,7 @@
 layout: post
 title: DFS, BFS
 description: 이것이 취업을 위한 코딩 테스트다 with 파이썬
-categories: algorithm
+categories: Algorithm
 date: 2023-07-29 23:36:00 +0900
 ---
 탐색 알고리즘 DFS / BFS 에 대해 알아보겠다.
