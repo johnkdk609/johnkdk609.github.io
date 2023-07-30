@@ -107,7 +107,7 @@ date: 2023-07-30 22:54:00 +0900
         <td colspan="3">8. 스트림 → 컬렉션</td>
     </tr>
     <tr>
-        <td rowpan="3">Stream&#60;T&#62;<br>IntStream<br>LongStream<br>DoubleStream</td>
+        <td rowspan="3">Stream&#60;T&#62;<br>IntStream<br>LongStream<br>DoubleStream</td>
         <td>Collection&#60;T&#62;</td>
         <td>collect(Collectors.toCollection(Supplier factory))</td>
     </tr>
