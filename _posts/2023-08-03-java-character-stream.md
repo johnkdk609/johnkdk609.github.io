@@ -9,7 +9,7 @@ date: 2023-08-03 10:39:00 +0900
 
 이 점을 보완하기 위해서 문자기반의 스트림이 제공된다. 문자 데이터를 입출력할 때는 바이트기반 스트림 대신 문자기반 스트림을 사용해야 한다.
 
-> InputStream → Reader
+> InputStream → Reader\
 > OutputStream → Writer
 
 <table>
