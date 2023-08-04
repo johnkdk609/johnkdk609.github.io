@@ -26,7 +26,7 @@ date: 2023-08-04 15:33:00 +0900
         <th>Writer</th>
     </tr>
     <tr>
-        <td>abstract void write(int b)<br>void write(byte[] b)<br>void write(byte[] b, int off, int len)<br><br></td>
+        <td>abstract void write(int b)<br>void write(byte[] b)<br>void write(byte[] b, int off, int len)<br><br><br></td>
         <td>void write(int c)<br>void write(char[] cbuf)<br>abstract void write(char[] cbuf, int off, int len)<br>void write(String str)<br>void write(String str, int off, int len)</td>
     </tr>
 </table>
