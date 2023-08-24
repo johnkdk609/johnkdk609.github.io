@@ -147,8 +147,163 @@ File f = new File(dir, "Ex15_15.java");
 새로운 파일을 생성하기 위해서는 File인스턴스를 생성한 다음, 출력스트림을 생성하거나 createNewFile()을 호출해야 한다.
 
 > 1. 이미 존재하는 파일을 참조할 때 :\
-> File f = new File("c:\\jdk1.8\\work\\ch15", "Ex15_15.java");\
+> File f = new File("c:\\jdk1.8\\work\\ch15", "Ex15_15.java");
 >
 > 2. 기존에 없는 파일을 새로 생성할 때 :\
 > File f = new File("c:\\jdk1.8\\work\\ch15", "NewFile.java");\
 > f.createNewFile();    // 새로운 파일이 생성된다.
+
+
+## File 예제 2
+
+```java
+import java.io.*;
+
+class Ex15_16 {
+	public static void main(String[] args) {
+		if(args.length != 1) {
+			System.out.println("USAGE : java Ex15_16 DIRECTORY");
+			System.exit(0);
+		}
+
+		File f = new File(args[0]);
+
+		if(!f.exists() || !f.isDirectory()) {
+			System.out.println("유효하지 않은 디렉토리입니다.");
+			System.exit(0);
+		} 
+
+		File[] files = f.listFiles();
+
+		for(int i=0; i < files.length; i++) {
+			String fileName = files[i].getName();
+			System.out.println(
+files[i].isDirectory() ? "["+fileName+"]" : fileName);
+		}
+	} // main
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+C:\jdk1.8\work\ch15>java Ex15_16
+USAGE : java Ex15_16 DIRECTORY
+
+C:\jdk1.8\work\ch15>java Ex15_16 work
+유효하지 않은 디렉토리입니다.
+
+C:\jdk1.8\work\ch15>java Ex15_16 c:\jdk1.8
+[bin]
+COPYRIGHT
+[db]
+[docs]
+[include]
+[javafx-8u60-apidocs]
+javafx-8u60-apidocs.zip
+javafx-src.zip
+... 중간 생략 ...
+release
+[src]
+src.zip
+THIRDPARTYLISENCEREADME-JAVAFX.txt
+THIRDPARTYLISENCEREADME.txt
+[work]
+```
+
+지정한 디렉토리(폴더)에 포함된 파일과 디렉토리의 목록을 보여주는 예제이다.
+
+
+## File 예제 3
+
+```java
+import java.io.*;
+
+class Ex15_17 {
+	static int deletedFiles = 0;
+
+	public static void main(String[] args) {
+		if(args.length != 1) {
+			System.out.println("USAGE : java Ex15_17 Extension");
+			System.exit(0);
+		}
+
+		String currDir = System.getProperty("user.dir");
+
+		File dir = new File(currDir);
+		String ext = "." + args[0];
+
+		delete(dir, ext);
+		System.out.println(deletedFiles + "개의 파일이 삭제되었습니다.");
+	} // end of main
+
+	public static void delete(File dir, String ext) {
+		File[] files = dir.listFiles();
+
+		for(int i=0; i < files.length; i++)
+			if(files[i].isDirectory()) {
+				delete(files[i], ext);
+			} else {
+				String filename = files[i].getAbsolutePath();
+
+				if(filename.endsWith(ext)) {
+					System.out.print(filename);
+					if(files[i].delete()) {
+						System.out.println(" - 삭제 성공");
+						deletedFiles++;     
+					} else
+						System.out.println(" - 삭제 실패");
+				} 
+			} // if(files[i].isDirectory()) {
+	} // end of delete
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+C:\jdk1.8\work\ch15\temp>java Ex15_17 bak
+C:\jdk1.8\work\ch15\temp\Ex15_17.java.bak - 삭제 성공
+C:\jdk1.8\work\ch15\temp\temptemp\Ex15_17.java.bak - 삭제 성공
+... 중간 생략 ...
+4개의 파일이 삭제되었습니다.
+```
+
+이 예제 역시 재귀호출을 이용해서 지정된 디렉토리와 하위 디렉토리에 있는 파일 중에서 지정된 확장자를 가진 파일을 delete()를 호출해서 삭제한다. delete()는 해당 파일을 삭제하는데 성공하면 true를 실패하면 false를 반환한다.
+
+
+## File 예제 4
+
+```java
+import java.io.*; 
+
+class Ex15_18 { 
+	public static void main(String[] args) { 
+		if (args.length != 1) { 
+			System.out.println("Usage: java Ex15_18 DIRECTORY"); 
+			System.exit(0); 
+		} 
+
+		File dir = new File(args[0]); 
+
+		if(!dir.exists() || !dir.isDirectory()) {
+			System.out.println("유효하지 않은 디렉토리입니다.");
+			System.exit(0);
+		} 
+
+		File[] list = dir.listFiles(); 
+
+		for (int i = 0; i < list.length; i++) { 
+			String fileName = list[i].getName(); 
+			// 파일명 
+			String newFileName = "0000" + fileName; 
+			newFileName = newFileName.substring(newFileName.length() - 7); 
+			list[i].renameTo(new File(dir, newFileName)); 
+		} 
+	} // end of main 
+}
+```
+
+renameTo(File f)를 이용해서 파일의 이름을 바꾸는 간단한 예제이다. 여기서는 파일명이 숫자로 되어 있을 때 앞에 '0000'을 붙인 다음 substring()으로 이름의 길이를 맞춰 주는 내용으로 작성하였다. 
+
+파일이름이 '1.jpg', '2.jpg'와 같이 숫자로 되어 있는 경우, 파일이름으로 정렬을 하면 '1.jpg' 다음에 '2.jpg'가 아닌 '11.jpg'가 오게 된다. 이것을 바로 잡기 위해 파일이름 앞에 '0000'을 붙이면, 파일이름으로 정렬하였을 때 '00001.jpg' 다음에 '00002.jpg'가 온다.
