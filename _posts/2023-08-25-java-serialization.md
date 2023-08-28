@@ -190,3 +190,128 @@ public class UserInfo implements Serializable {
     transient Object obj = new Object();    // 직렬화 대상에서 제외된다.
 }
 ```
+
+
+## 직렬화와 역직렬화 예제 1
+
+아래 예제는 예제15-20에 사용될 UserInfo클래스의 소스이다. 그래서 예제15-20을 실행하기 전에 아래 예제를 먼저 컴파일해야 한다.
+
+```java
+public class UserInfo implements java.io.Serializable {
+	String name;
+	String password;
+	int age;
+
+	public UserInfo() {
+		this("Unknown", "1111", 0);
+	}
+
+	public UserInfo(String name, String password, int age) {
+		this.name = name;	
+		this.password = password;	
+		this.age = age;	
+	}
+
+	public String toString() {
+		return "("+ name + "," + password + "," + age + ")";
+	}
+}
+```
+
+
+## 직렬화와 역직렬화 예제 2
+
+```java
+import java.io.*;
+import java.util.ArrayList;
+
+public class Ex15_20 {
+	public static void main(String[] args) {
+		try {
+			String fileName = "UserInfo.ser";
+			FileOutputStream     fos = new FileOutputStream(fileName);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+			ObjectOutputStream out = new ObjectOutputStream(bos);
+			
+			UserInfo u1 = new UserInfo("JavaMan","1234",30);
+			UserInfo u2 = new UserInfo("JavaWoman","4321",26);
+
+			ArrayList<UserInfo> list = new ArrayList<>();
+			list.add(u1);
+			list.add(u2);
+
+			// 객체를 직렬화한다. 
+			out.writeObject(u1);
+			out.writeObject(u2);
+			out.writeObject(list);
+			out.close();
+			System.out.println("직렬화가 잘 끝났습니다.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	} // main
+} // class
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+직렬화가 잘 끝났습니다.
+```
+
+생성한 객체를 직렬화하여 파일(UserInfo.ser)에 저장하는 예제이다. 버퍼를 이용한 FileOutputStream을 기반으로 하는 ObjectOutputStream을 생성한 다음, writeObject()를 이용해서 객체를 ObjectInputStream에 출력하면 UserInfo.ser 파일에 객체가 직렬화되어 저장된다.
+
+객체를 직렬화하는 코드는 이처럼 허무하게 간단하지만, 객체에 정의된 모든 인스턴스변수에 대한 참조를 찾아들어가기 때문에 상당히 복잡하고 시간이 걸리는 작업이 될 수 있다.
+
+이 예제처럼 ArrayList와 같은 객체를 직렬화하면 ArrayList에 저장된 모든 객체들과 각 객체의 인스턴스변수가 참조하고 있는 객체들까지 모두 직렬화된다.
+
+(확장자를 직렬화(serialization)의 약자인 'ser'로 하는 것이 보통이지만 이에 대한 제약은 없다.)
+
+
+## 직렬화와 역직렬화 예제 3
+
+```java
+import java.io.*;
+import java.util.ArrayList;
+
+public class Ex15_21 {
+	public static void main(String[] args) {
+		try {
+			String fileName = "UserInfo.ser";
+			FileInputStream     fis = new FileInputStream(fileName);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+
+			ObjectInputStream in = new ObjectInputStream(bis);
+
+			// 객체를 읽을 때는 출력한 순서와 일치해야 한다. 
+			UserInfo u1 = (UserInfo)in.readObject();
+			UserInfo u2 = (UserInfo)in.readObject();
+			ArrayList list = (ArrayList)in.readObject();
+
+			System.out.println(u1);
+			System.out.println(u2);
+			System.out.println(list);
+			in.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	} // main
+} // class
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+(JavaMan,1234,30)
+(JavaWoman,4321,26)
+[(JavaMan,1234,30), (JavaWoman,4321,26)]
+```
+
+이 전의 예제에서 직렬화한 객체를 역직렬화하는 예제이다. 이전과 반대로 FileInputStream과 ObjectInputStream을, 그리고 writeObject() 대신 readObject()를 사용했다는 점을 제외하고는 거의 같다.
+
+ObjectInputStream의 readObject()로 직렬화한 객체를 역직렬화하였는데, readObject()의 리턴타입이 Object이므로 원래의 타입으로 형변환을 해주어야 한다.
+
+한 가지 주의해야할 점은 객체를 역직렬화할 때는 직렬화할 때의 순서와 일치해야 한다는 것이다. 예를 들어 객체 u1, u2, list의 순서로 직렬화 했다면, 역직렬화할 때도 u1, u2, list의 순서로 처리해야 한다.
+
+그래서 직렬화할 객체가 많을 때는 각 객체를 개별적으로 직렬화하는 것보다 ArrayList와 같은 컬렉션에 저장해서 직렬화하는 것이 좋다. 역직렬화할 때 ArrayList 하나만 역직렬화하면 되므로 역직렬화할 객체의 순서를 고려하지 않아도 되기 때문이다.
