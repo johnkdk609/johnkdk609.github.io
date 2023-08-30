@@ -62,7 +62,7 @@ menu:
     url:               /algorithm/
   - title:             Java
     url:               /java/
-  - title:             Spring / Spring boot
+  - title:             Spring & Spring Boot
     url:               /spring-springboot/
   - title:             Git
     url:               /git/
