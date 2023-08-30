@@ -1,17 +1,17 @@
 ---
 layout: post
-title: 스프링 부트 동작 원리
+title: 스프링 부트 (Spring Boot) 동작 환경
 description: 스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술
 categories: Spring-SpringBoot
 date: 2023-08-30 23:10:00 +0900
 ---
 스프링 부트의 동작 환경 그림은 다음과 같다
 
-<img width="1000" alt="동작 환경 그림" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3849d6e5-ba36-4796-952e-98e04fbc369d">
+<img width="1100" alt="동작 환경 그림" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3849d6e5-ba36-4796-952e-98e04fbc369d">
 
 먼저 웹 브라우저에서 localhost:8080/hello 라고 던지면, 톰캣이라는 웹서버를 내장하고 있는 스프링 부트는 서버에서 이것을 받는다. 그러면 '어 /hello네' 하면서 스프링에게 물어본다.
 
-<img width="1000" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/227eb061-4eaa-4916-bd2d-d4e6b34d8858">
+<img width="1100" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/d248969d-582d-4f02-966e-4e2993195f8c">
 
 그러면 스프링은 위와 같이 helloController의 @GetMapping("hello")을 찾는다. (이때 Get은 http get, post의 그 get이다.) hello URL에 매칭이 된 것이다.
 
@@ -19,7 +19,7 @@ date: 2023-08-30 23:10:00 +0900
 
 그리고 "hello"를 리턴한다. 이때의 "hello"는 resources:templates/hello.html의 hello이다.
 
-<img width="1000" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/08493cd4-5b58-44d1-87f9-7239ccbbbcb5">
+<img width="1100" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/08493cd4-5b58-44d1-87f9-7239ccbbbcb5">
 
 (이때 helloController쪽에서 return "hello";의 "hello"부분을 cmd를 누른 채 클릭하면 hello.html로 이동한다.)
 
@@ -36,7 +36,7 @@ date: 2023-08-30 23:10:00 +0900
 
 <img width="376" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/21746395-e1c6-40f8-a989-5df9b482913e">
 
-여기서 _hello_ 부분을 클릭하면 다음과 같이 나온다.
+여기서 밑줄 쳐진 hello를 클릭하면 다음과 같이 나온다.
 
 <img width="420" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2812c660-16ab-47c3-9d8d-7b3770806ad8">
 
