@@ -32,7 +32,7 @@ date: 2023-08-30 23:10:00 +0900
 
 자원(resources)에 있는 templates의 viewName, 즉 이 경우에 "hello"를 여는 것이다.
 
-바로 위 그림에서 hello.html을 보면, ```${data}```의 data는 helloController의 model에서의 key값인 것이다. key를 꺼내니까 value인 "hello!!"가 나오는 것이다.
+바로 위 그림에서 hello.html을 보면, ```${data}```의 'data'는 helloController의 model에서의 key이다. key를 꺼내니, value인 "hello!!"가 나온다.
 
 <img width="376" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/21746395-e1c6-40f8-a989-5df9b482913e">
 
