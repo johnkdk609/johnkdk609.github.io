@@ -16,7 +16,7 @@ date: 2023-08-31 21:41:00 +0900
 
 <img width="716" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7b118dee-8fff-4f36-bf3c-1b84b967458a">
 
-위의 그림에서 @ResponseBody는 html의 바디 태그를 의미하는 것이 아니라, http의 body 부분에 데이터를 직접 넣어주겠다는 것이다. 만약 name에 "spring"이라고 넣으면 이 경우 "hello spring"이라고 나타날 것이다. 즉, 이 문자가 내가 요청한 클라이언트에게 그대로 내려가는 것이다. MVC와 템플릿 엔진 방식과의 차이는 <u>뷰가 없다</u>는 것이다. 그냥 문자가 '그대로' 내려간다.
+위의 그림에서 @ResponseBody는 html의 바디 태그를 의미하는 것이 아니라, http의 body 부분에 데이터를 직접 넣어주겠다는 것이다. 만약 name에 "spring"이라고 넣으면 이 경우 "hello spring"이라고 나타날 것이다. 즉, 이 문자가 내가 요청한 클라이언트에게 그대로 내려가는 것이다. 'MVC와 템플릿 엔진 방식'과의 차이는 <u>뷰가 없다</u>는 것이다. 그냥 문자가 '그대로' 내려간다.
 
 서버를 실행한 후 localhost:8080/hello-string?name=spring 을 웹브라우저에 입력하면 다음과 같이 나타난다.
 
