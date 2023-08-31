@@ -36,7 +36,7 @@ date: 2023-08-30 23:10:00 +0900
 
 <img width="376" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/21746395-e1c6-40f8-a989-5df9b482913e">
 
-여기서 밑줄 쳐진 hello를 클릭하면 다음과 같이 나온다.
+여기서 <u>hello</u>를 클릭하면 다음과 같이 나온다.
 
 <img width="420" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2812c660-16ab-47c3-9d8d-7b3770806ad8">
 
