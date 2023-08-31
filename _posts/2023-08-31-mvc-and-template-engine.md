@@ -47,9 +47,9 @@ required라는 옵션이 있는데 default가 true이기 때문에 무조건 값
 
 <img width="478" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7a5bc70c-a631-4f2d-9318-c6718be1beff">
 
-?name=Spring!!! 이라고 넘어가면 컨트롤러에서 name은 "Spring!!!"으로 바뀌고 model에 담긴다. 
+?name=Spring!!! 이라고 넘기면 컨트롤러에서 name은 "Spring!!!"으로 바뀌고 model에 담긴다. 
 
-그리고 hello-template로 넘어가면 ${name}은 "Spring!!!"으로 바뀌어서 나간다.
+그리고 hello-template으로 넘어가면 ${name}은 "Spring!!!"으로 바뀌어서 화면에 출력된다.
 
 
 ## MVC와 템플릿 엔진 동작 원리
