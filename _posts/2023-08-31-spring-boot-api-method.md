@@ -2,7 +2,7 @@
 layout: post
 title: API
 description: 스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술
-categories: Java
+categories: Spring-SpringBoot
 date: 2023-08-31 21:41:00 +0900
 ---
 스프링 웹 개발의 API 방식에 대해 알아보겠다.
