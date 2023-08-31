@@ -35,7 +35,7 @@ HelloController에 컨트롤러를 하나 더 만들어보겠다.
 
 <img width="1309" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/e744cc24-b7d4-40fd-9c3b-60293049201c">
 
-'Required String parameter 'name' is not present' 즉, name이 있어야 한다는 것이다.
+'Required request parameter 'name' for method parameter type String is not present' 즉, name이 있어야 한다는 것이다.
 
 helloController의 helloMvc의 @RequestParam("name") 부분을 클릭하고 cmd + p 를 누르면 다음과 같이 옵션이 뜬다.
 
