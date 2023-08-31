@@ -73,11 +73,11 @@ date: 2023-08-31 21:41:00 +0900
 만약 단순 문자였으면 StringConverter가 동작하고, 객체라면 JsonConverter가 기본으로 동작한다. 객체이기에 JsonConverter가 동작한 경우, hello 객체를 JSON 스타일로 바꾼다. 이 JSON은 바꾼 것을 나를 요청한 웹브라우저에게든, 서버에게든 보내준다.
 
 정리하자면, @ResponseBody가 사용되면,
-* <b>HTTP의 BODY에 문자 내용을 직접 반환</b>
-* <b>viewResolver 대신에 HttpMessageConverter가 동작</b>
-* <b>기본 문자처리: StringHttpMessageConverter</b>
-* <b>기본 객체처리: MappingJackson2HttpMessageConverter</b>
-* <b>byte 처리 등등 기타 여러 HttpMessageConverter가 기본으로 등록되어 있음</b>
+> ● <b>HTTP의 BODY에 문자 내용을 직접 반환</b>\
+> ● <b>viewResolver 대신에 HttpMessageConverter가 동작</b>\
+> ● <b>기본 문자처리: StringHttpMessageConverter</b>\
+> ● <b>기본 객체처리: MappingJackson2HttpMessageConverter</b>\
+> ● <b>byte 처리 등등 기타 여러 HttpMessageConverter가 기본으로 등록되어 있음</b>
 
 이때 Jackson2의 경우 객체를 JSON으로 바꿔주는 대표적인 라이브러리이다. (버전 2)
 
