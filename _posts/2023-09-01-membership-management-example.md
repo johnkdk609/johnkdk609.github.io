@@ -187,3 +187,15 @@ public class MemoryMemberRepository implements MemberRepository {
 ```
 
 MemoryMemberRepository는 방금 만들었던 MemberRepository인터페이스를 implements 한 다음에, ```option + enter```를 누르고 'Implement methods'를 클릭한 다음, 전부 선택에서 OK를 하면 된다.
+
+먼저 save를 할 때 메모리이니 저장을 어딘가에 해둬야 한다. 그래서 Map을 쓸 것이다. key는 회원의 아이디니까 Long으로 하고 값은 Member로 할 것이다. 그리고 store이라 하고 ```new HashMap<>();```을 할 것이다. 그리고 sequence도 만들 것이다. sequence는 0, 1, 2, ... 이렇게 key값을 생성해주는 것이다. (실무에서는 동시성 문제 때문에 좀 더 고려해야할 것들이 있다.)
+
+이제 member을 save할 때, setId를 할 때 sequence값을 하나 올려줄 것이다. 그리고 ```store.put(member.getId(), member);``` 로 해서 넣고, member를 리턴한다. store에 넣기 전에 member의 id값을 세팅해주고 이름은 save하기 전에 넘어온 상태라고 보면 된다. Member클래스를 보면 id, name이 있는데 name은 고객이 회원가입할 때 적는 이름이고 id는 시스템이 정해주는 것이다. 그리고 저장된 결과를 반환(return member)해주는 것이다.
+
+findById의 경우 store에서 꺼내면 된다. ```return store.get(id);```로 해도 된다. 그런데 이 결과가 없으면 null이 반환될 것이다. 과거에는 그냥 이렇게 했는데, 요즘에는 null이 반환될 가능성이 있으면 Optional이라는 것으로 감싼다. ```return Optional.ofNullable(store.get(id));```로 수정하면 null이어도 감쌀 수 있다. 이렇게 감싸서 반환을 해주면 클라이언트에서 무언가 할 수 있다. (뒤에서 설명할 것이다.)
+
+findByName의 경우 람다를 이용할 것이다. ```.filter(member -> member.getName().equals(name))```으로 member.getName()이 파라미터로 넘어온 name과 같은지 확인한다. 같은 경우에만 필터링이 되고, 그 중에서 찾으면 반환을 한다. ```.findAny()```는 하나로도 찾는 것이다. 루프를 돌면서 하나 찾아지면 그냥 반환하고, 끝까지 돌렸는데 없으면 Optional에 null이 포함돼서 반환된다.
+
+findAll은 간단하다. ```return new ArrayList<>(store.values());```를 통해 윗줄에 ```private static Map<Long, Member> store = new HashMap<>();```의 Member들이 쭉 반환되는 것이다.
+
+이렇게 구현이 끝났다.
