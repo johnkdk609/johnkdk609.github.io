@@ -114,6 +114,8 @@ public class Member {
 
 Getter, Setter가 좋냐 싫냐 등등 여러 가지 이야기가 있지만 이번 예제에서는 단순하게 Getter, Setter를 사용할 것이다.
 
+<br><br>
+
 다음에는 회원 리포지토리 인터페이스를 만들 것이다. hello.hellospring 아래에 먼저 repository라는 패키지를 만들고, 인터페이스로 MemberRepository를 생성한다. 리포지토리란 저장소를 뜻하는데, 회원 객체를 저장하는 저장소를 만들 것이다.
 
 ![image](https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c0eb4333-e1b1-42e0-9084-3b8764481b3b)
@@ -140,6 +142,8 @@ public interface MemberRepository {
 }
 ```
 
+<br>
+
 맨 처음에 기능을 save를 만들 것이다. 회원을 저장하면 저장된 회원이 반환된다.
 
 그리고 Optional을 이용해서 findById 즉 아이디로 회원을 찾는 기능을 만들 것이다. 
@@ -155,6 +159,8 @@ Optional은 Java 8에 들어간 기능이다. findById, findByName로 가져올 
 이제 구현체를 만들 것이다. repository 패키지 아래에 MemoryMemberRepository라는 클래스를 만든다.
 
 ![image](https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/319f74ce-e5a0-49ef-a687-510719407957)
+
+<br>
 
 MemoryMemberRepository클래스의 코드는 다음과 같다.
 
