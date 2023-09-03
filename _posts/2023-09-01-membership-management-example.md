@@ -162,7 +162,7 @@ Optional은 Java 8에 들어간 기능이다. findById, findByName로 가져올 
 
 <br>
 
-MemoryMemberRepository클래스의 코드는 다음과 같다.
+<b>MemoryMemberRepository클래스</b>의 코드는 다음과 같다.
 
 ```java
 package hello.hellospring.repository;
