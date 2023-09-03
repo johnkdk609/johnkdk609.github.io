@@ -138,6 +138,8 @@ findAll은 지금까지 저장된 모든 회원의 리스트를 반환하는 것
 
 Optional은 Java 8에 들어간 기능이다. findById, findByName로 가져올 때 이게 null일 수 있다. 없으면 null이 반환될 것이다. 요즘에는 null을 그대로 반환하는 것 대신에 Optional로 감싸서 반환하는 것을 선호한다.
 
+<br>
+
 이제 구현체를 만들 것이다. repository 패키지 아래에 MemoryMemberRepository라는 클래스를 만든다.
 
 ![image](https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/319f74ce-e5a0-49ef-a687-510719407957)
