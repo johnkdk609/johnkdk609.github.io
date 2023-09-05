@@ -219,3 +219,184 @@ findByName의 경우 람다를 이용할 것이다. ```.filter(member -> member.
 findAll은 간단하다. ```return new ArrayList<>(store.values());```를 통해 윗줄에 ```private static Map<Long, Member> store = new HashMap<>();```의 Member들이 쭉 반환되는 것이다.
 
 이렇게 구현이 끝났다.
+
+
+## 회원 리포지토리 테스트 케이스 작성
+
+회원 리포지토리 테스트 케이스를 작성해볼 것이다. 방금 만든 회원 리포지토리 클래스가 내가 원하는 대로 정상적으로 동작할지 검증하는 방법이 있다. 이때 테스트 케이스를 작성해서 검증한다.
+
+개발한 기능을 실행해서 테스트할 때 자바의 main 메서드를 통해서 실행하거나, 웹 애플리케이션의 컨트롤러를 통해서 해당 기능을 실행한다. 이러한 방법은 준비하고 실행하는 데 오래 걸리고, 반복 실행하기 어렵고 여러 테스트를 한 번에 실행하기 어렵다는 단점이 있다.
+
+자바는 <b>JUnit</b>이라는 프레임워크로 테스트를 실행해서 이러한 문제를 해결한다.
+
+<br>
+
+먼저, src/test/java 하위에 respository라는 패키지를 만든다. 그리고 그 안에 MemoryMemberRepositoryTest클래스를 생성한다. 
+
+<img width="348" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7db7956f-787c-4e3f-8ceb-2b654d983c3b">
+
+<br>
+
+MemoryMemberRepositoryTest클래스의 코드는 다음과 같다.
+
+```java
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+class MemoryMemberRepositoryTest {
+
+    MemoryMemberRepository repository = new MemoryMemberRepository();
+
+    @AfterEach
+    public void afterEach() {
+        repository.clearStore();
+    }
+
+    @Test
+    public void save() {
+        Member member = new Member();
+        member.setName("spring");
+
+        repository.save(member);
+
+        Member result = repository.findById(member.getId()).get();
+        assertThat(result).isEqualTo(member);
+    }
+
+    @Test
+    public void findByName() {
+        Member member1 = new Member();
+        member1.setName("spring1");
+        repository.save(member1);
+
+        Member member2 = new Member();
+        member2.setName("spring2");
+        repository.save(member2);
+
+        Member result = repository.findByName("spring1").get();
+
+        assertThat(result).isEqualTo(member1);
+    }
+
+    @Test
+    public void findAll() {
+        Member member1 = new Member();
+        member1.setName("spring1");
+        repository.save(member1);
+
+        Member member2 = new Member();
+        member2.setName("spring2");
+        repository.save(member2);
+
+        List<Member> result = repository.findAll();
+
+        assertThat(result.size()).isEqualTo(2);
+    }
+
+}
+```
+
+일단 ```MemoryMemberRepository repository = new MemoryMemberRepository();```를 입력한다.
+
+그리고 이전에 만들었던 <b>save</b>기능이 동작하는지 테스트해볼 것이다. ```@Test```라는 어노테이션을 붙이면 테스트를 실행할 수 있다. member를 생성하고, ```repository.save(member);```로 저장한다. 그리고 반환 타입이 Optional이므로 ```Member result = repository.findById(member.getId()).get();```을 입력한다.
+
+이제 검증을 해볼 것인데, new 해서 저장한 것과 내가 DB에서 꺼낸 것이 똑같으면 참이다. 여기서 org.junit.jupiter.api가 제공하는 ```Assertions.assertEquals(member, result);```를 이용한다. 이때 앞의 member는 expected 즉 기대하는 것이고 뒤의 result는 actual 즉 실제 값이다.
+
+이제 실행을 해보면 녹색불이 뜬다.
+
+<img width="1221" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/ba497b91-b38e-44d1-aac9-b0ed2145d1ba">
+
+만약 실제 값인 actual을 null로 변경하고 다시 실행하면 다음과 같이 빨간색이 뜬다. 오류가 난 것이다. 
+
+<img width="1505" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/98313382-ef7a-4498-a80f-c33f8402ab47">
+
+```
+org.opentest4j.AssertionFailedError: 
+Expected :hello.hellospring.domain.Member@2002fc1d
+Actual   :null
+```
+
+Expected와 Actual이 다르다는 에러 메세지가 나타나는 것을 알 수 있다.
+
+<br>
+
+요즘에는 ort.assertj.core.api가 제공하는 Assertions.assertThat() 문법을 더 많이 사용한다. 좀 더 편하게 쓸 수 있다. ```Assertions.assertThat(member).isEqualTo(result);```로 좀 더 직관적으로 작성할 수 있는 것이다. ```option + enter```를 누르고 Assertions를 static import하면 위와 같이 Assertions없이 작성할 수 있다.
+
+다시 실행해보면 정상적으로 작동한다.
+
+<img width="1223" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1380ac0b-c810-4b41-9157-bb7a6561c199">
+
+실무에서는 이것을 빌드 툴과 엮어서 빌드할 때 테스트 케이스를 통과하지 않으면 다음 단계로 못 넘어가게 막아버린다.
+
+<br>
+
+그 다음에 테스트해야 하는 것은 <b>findByName</b>이다. 이름으로 찾는 메서드이다.
+
+member1을 생성해서 이름을 "spring1"로 repository에 저장하고, member2를 생성해서 이름을 "spring2"로 repository에 저장한다.
+
+```Optional<Member> result = repository.findByName("spring1").get();```를 입력해 spring1을 찾는다. 이제 ```assertThat(result).isEqualTo(member1);```을 통해 같은지 확인한다.
+
+실행하면 정상적으로 작동한다. 그런데 ```Member result = repository.findByName("spring2").get();```로 변경하면 이제 result는 member2이다. 실행하면 빨간불이 뜬다. 다른 객체가 뜬다는 것이다.
+
+<img width="1555" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2e0b6144-26c7-4b6c-a19a-a9a806e302fa">
+
+<br>
+
+이번에는 <b>findAll</b>를 테스트해볼 것이다.
+
+마찬가지로 member1을 생성해서 이름을 "spring1"로 repository에 저장하고, member2를 생성해서 이름을 "spring2"로 repository에 저장한다.
+
+그 다음에 ```List<Member> result = repository.findAll();```를 입력해 result를 만든다. 그리고 ```assertThat(result.size()).isEqualTo(2);```를 입력해 사이즈가 맞는지 확인한다. 실행하면 녹색불이 뜬다. 만약 isEqualTo(3)으로 변경하면 에러가 뜬다.
+
+<br>
+
+그런데 여기서 개별 메서드를 테스트하는 것이 아닌, 전체 테스트를 돌리면 findByName에서 에러가 발생한다.
+
+<img width="1558" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/300aba28-f768-4bfc-8d90-1f254b77d0e9">
+
+개별적으로는 문제 없이 동작했는데 전체 테스트를 돌리면 에러가 발생하는 것이다.
+
+테스트 순서는 보장이 안 된다. 모든 테스트는 순서와 상관 없이 메서드 별로 따로 동작하도록 설계해야 한다. (순서에 의존적으로 설계하면 안 된다.)
+
+위 사진을 보면 findAll()이 먼저 실행이 됐다. 이때 "spring1", "spring2"가 저장이 이미 된 것이다. 그래서 findByName()을 테스트할 때 다른 객체가 이전에 저장했던 "spring1"이 나와버리는 것이다.
+
+그래서 테스트가 하나 끝나면 이 데이터를 깔끔하게 clear해줘야 한다. 테스트가 끝날 때마다 repository를 깔끔하게 지워주는 코드를 넣어야 하는 것이다.
+
+어노테이션 ```@AfterEach```는 어떤 메서드가 실행이 끝날 때마다 어떤 동작을 하게끔 하는 콜백(callback) 메서드이다. save()가 끝나고, findByName()이 끝나고, findAll()이 끝날 때마다 호출이 되게 하는 것이다.
+
+MemoryMemberRepository클래스로 돌아가서 아래에 clearStore라는 메서드를 생성한다.
+
+```java
+public void clearStore() {
+    store.clear();
+}
+```
+
+clear()로 store를 싹 비우는 것이다. 다시 MemeoryMemberRepositoryTest클래스로 가서 afterEach() 메서드에 ```repository.clearStore();```를 입력한다. 이제 전체 테스트를 실행하면 녹색불이 뜬다.
+
+<img width="1216" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7cee68ee-3ef6-4e5b-8eeb-f0e7427df19e">
+
+<br>
+
+<b>테스트는 서로 순서와 관계 없이, 의존 관계 없이 설계되어야 한다.</b> 그러기 위해서는 하나의 테스트가 끝날 때마다 저장소가 공용 데이터들을 깔끔하게 지워야 한다.
+
+<br>
+
+이렇게 MemoryMemberRepository 개발을 먼저 한 후에 테스트 클래스를 작성하는 경우도 있지만, 반대로 테스트 클래스를 먼저 작성하고 MemoryMemberRepository를 작성할 수도 있다. 순서를 뒤집는 것이다.
+
+이런 방식을 <b>TDD(테스트 주도 개발)</b>이라고 한다. 무언가를 만들어야 할 때, 틀을 미리 만드는 것이다. 지금 내가 사용한 방식은 구현 클래스를 먼저 만들고 테스트를 만든 것이기 때문에 TDD는 아니다.
+
+테스트가 수십~수백개일 경우, 
+
+![image](https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/37e76cec-80c7-4100-be7c-d52adc97ecca)
+
+이렇게 클릭하여 테스트를 한꺼번에 자동으로 돌릴 수 있다.
+
+테스트 코드가 없이 개발하는 것은 나 혼자 개발할 때는 가능할 수도 있지만, 정말 많은 사람들이 개발하고 소스코드가 몇만~몇십만 라인을 넘어가면 테스트 코드 없이 개발하는 것이 불가능하다.

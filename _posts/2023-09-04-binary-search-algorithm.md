@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 이분 탐색 (Binary Search) 알고리즘
+title: 이진 탐색 (Binary Search) 알고리즘
 description: 이것이 취업을 위한 코딩 테스트다 with 파이썬
 categories: Algorithm
 date: 2023-09-04 16:47:00 +0900
