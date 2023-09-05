@@ -395,7 +395,7 @@ clear()로 store를 싹 비우는 것이다. 다시 MemeoryMemberRepositoryTest�
 
 테스트가 수십~수백개일 경우, 
 
-![image](https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/37e76cec-80c7-4100-be7c-d52adc97ecca)
+<img width="450" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/37e76cec-80c7-4100-be7c-d52adc97ecca">
 
 이렇게 클릭하여 테스트를 한꺼번에 자동으로 돌릴 수 있다.
 
