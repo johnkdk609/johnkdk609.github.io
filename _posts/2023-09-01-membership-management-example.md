@@ -237,7 +237,7 @@ findAll은 간단하다. ```return new ArrayList<>(store.values());```를 통해
 
 <br>
 
-MemoryMemberRepositoryTest클래스의 코드는 다음과 같다.
+<b>MemoryMemberRepositoryTest클래스</b>의 코드는 다음과 같다.
 
 ```java
 package hello.hellospring.repository;
