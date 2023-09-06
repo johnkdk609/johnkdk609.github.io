@@ -400,3 +400,100 @@ clear()로 store를 싹 비우는 것이다. 다시 MemeoryMemberRepositoryTest�
 이렇게 클릭하여 테스트를 한꺼번에 자동으로 돌릴 수 있다.
 
 테스트 코드가 없이 개발하는 것은 나 혼자 개발할 때는 가능할 수도 있지만, 정말 많은 사람들이 개발하고 소스코드가 몇만~몇십만 라인을 넘어가면 테스트 코드 없이 개발하는 것이 불가능하다.
+
+
+## 회원 서비스 개발
+
+이제 회원 서비스 클래스를 만들 것이다. 회원 서비스는 회원 리포지토리라는 도메인을 활용해서 실제 비즈니스 로직을 작성하는 부분이다.
+
+src/main/java/hello.hellospring 아래에 service라는 패키지를 만들고, 그 안에 MemberService클래스를 생성한다.
+
+<img width="273" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/384ae416-eefb-4b6c-8e2b-d334ef5eb6d9">
+
+<br>
+
+<b>MemberService클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.hellospring.service;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public class MemberService {
+
+    private final MemberRepository memberRepository;
+
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    /**
+     * 회원가입
+     */
+    public Long join(Member member) {
+        validateDuplicateMember(member);    // 중복 회원 검증
+        memberRepository.save(member);
+        return member.getId();
+    }
+
+    private void validateDuplicateMember(Member member) {
+        memberRepository.findByName(member.getName())
+                        .ifPresent(member1 -> {
+                            throw new IllegalStateException("이미 존재하는 회원입니다.");
+                        });
+    }
+
+    /**
+     * 전체 회원 조회
+     */
+    public List<Member> findMembers() {
+        return memberRepository.findAll();
+    }
+
+    public Optional<Member> findOne(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+
+}
+```
+
+일단 회원 서비스를 만들려면 회원 리포지토리가 있어야 한다. 그래서 ```private final MemberRepository memberRepository = new MemoryMemberRepository();```를 입력한다.
+
+그 다음에 <b>회원가입(join)</b>부터 만든다. 회원 가입은 memberRepository에 save만 호출하면 된다. 그리고 임의로 아이디를 반환하게 했다. 
+
+회원가입을 할 때 비즈니스 로직 중에 같은 이름이 있는 중복 회원이 안 된다고 했었다. 이것을 하려면 ```Optional<Member> result = memberRepository.findByName(member.getName());```으로 먼저 찾아본다. 이때 Optional로 반환이 됐다. 그러면 ```result.ifPresent(m -> { throw new IllegalException("이미 존재하는 회원입니다.") })``` 즉 null이 아니라 어떤 값이 있으면 동작하게 하는 것이다. Optional로 한 번 감싸면 Optional 안에 member가 있는 것이다. Optional에 여러 메서드가 있기 때문에 그것을 쓸 수 있다. (ifPresent 같은 메서드도 Optional 안에 있는 것들이다.)
+
+추가적으로 Optional에는 orElseGet() 메서드가 있는데, 값이 있으면 꺼내고 없으면 어떤 메서드를 실행하거나 default값을 꺼내도록 할 수 있다. 
+
+Optional을 사용할 때, Optional을 바로 반환하는 것이 (보기에) 별로 좋지 않다. 어차피 result가 반환됐기 때문에 바로 ifPresent가 들어갈 수 있다.
+
+```java
+memberRepository.findByName(member.getName())
+    .ifPresent(m -> {
+        throw new IllegalStateException("이미 존재하는 파일입니다.");
+    });
+```
+
+이렇게 수정하는 것이다. findByName을 하고 그 결과는 Optional member이니 바로 Optional member.ifPresent로 작성하는 것이다.
+
+여기서 findByName이라는 로직이 쭉 나온다. 이런 경우에는 메서드로 뽑는 것이 좋다. findByName이 사용된 부분을 마우스로 드래그 하고 단축키 ```ctrl + T```를 누르면 된다. 이 단축키를 누르면 리팩토링과 관련된 여러 가지 것들이 나온다. Extract Method를 누르고 이름을 'validateDuplicateMember'라고 입력하고 생성한다.
+
+결론적으로, "join을 하면 중복 회원 검증하고 통과하면 저장하는구나"하고 이해할 수 있는 것이다.
+
+<br>
+
+이제 <b>전체 회원 조회(findMembers)</b> 기능을 만들 것이다.
+
+앞서 작성했던 MemberRepository는 save, findById, findByName, findAll처럼 단순히 저장소에 넣었다 뺐다 하는 느낌이 있다. 그런데 서비스 클래스는 join, findMembers 등.. 네이밍이 좀 더 비즈니스에 가깝다. 보통 서비스 클래스는 비즈니스에 가까운 용어를 사용해야 한다. 그래야 개발자든 기획자든 소통이 잘 되고 매칭이 잘 되는 것이다. <b>서비스는 비즈니스에 의존적으로 설계하고 리포지토리는 서비스보다는 기계적으로, 개발스럽게 용어를 선택한다.</b>
+
+전체 회원 조회는 ```memberRepository.findAll()```을 하면 된다. 반환 타입은 List이다.
+
+<br>
+
+한 가지만 더 한다면, <b>findOne</b>을 만들어보겠다.
+
+memberId를 넘겨서 ```return memberRepository.findById(memberId);```를 입력하여 Optional로 감싸져 있는 Member객체를 돌려받는다.
