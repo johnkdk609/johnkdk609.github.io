@@ -497,3 +497,194 @@ memberRepository.findByName(member.getName())
 한 가지만 더 한다면, <b>findOne</b>을 만들어보겠다.
 
 memberId를 넘겨서 ```return memberRepository.findById(memberId);```를 입력하여 Optional로 감싸져 있는 Member객체를 돌려받는다.
+
+
+## 회원 서비스 테스트
+
+이번에는 회원 서비스 클래스를 테스트해볼 것이다. MemberService클래스에 들어가서, ```cmd + shift + T```를 누르면 'Create New Test...'라고 뜬다. Testing library는 JUnit5로 선택하고, Class name은 'MemberServiceTest'로 그대로 둔다. 그리고 하단의 Member는 모두 선택하고 OK를 눌러 생성한다.
+
+그러면 test/java/hello.hellospring.service 패키지 아래에 MemberServiceTest클래스가 생성된다. 그 안에 join, findMembers, findOne 모두 껍데기가 만들어져 있다.
+
+Test의 경우 메서드명을 과감하게 한글로 변경해도 된다. 가령 'join'을 '회원가입'으로 명명해도 되는 것이다. 그리고 빌드 될 때 테스트 코드는 실제 코드에 포함되지 않는다.
+
+<br>
+
+<b>MemberServiceTest클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.hellospring.service;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemoryMemberRepository;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+
+class MemberServiceTest {
+
+    MemberService memberService;
+    MemoryMemberRepository memberRepository;
+
+    @BeforeEach
+    public void beforeEach() {
+        memberRepository = new MemoryMemberRepository();
+        memberService = new MemberService(memberRepository);
+    }
+
+    @AfterEach
+    public void afterEach() {
+        memberRepository.clearStore();
+    }
+
+    @Test
+    void 회원가입() {
+        // given
+        Member member = new Member();
+        member.setName("spring");
+
+        // when
+        Long saveId = memberService.join(member);
+
+        // then
+        Member findMember = memberService.findOne(saveId).get();
+        Assertions.assertThat(member.getName()).isEqualTo(findMember.getName());
+    }
+
+    @Test
+    public void 중복_회원_예외() {
+        // given
+        Member member1 = new Member();
+        member1.setName("spring");
+
+        Member member2 = new Member();
+        member2.setName("spring");
+
+        // when
+        memberService.join(member1);
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.join(member2));
+
+        assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+/*
+        try {
+            memberService.join(member2);
+            fail();
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+        }
+*/
+
+        // then
+
+    }
+
+
+    @Test
+    void findMembers() {
+
+    }
+
+    @Test
+    void findOne() {
+    }
+}
+```
+
+우선 서비스가 있어야 하기 때문에, ```MemberServic memberService = new MemberService();```를 입력해 memberService를 생성한다.
+
+<br>
+
+<b>회원가입</b> 메서드를 테스트할 것이다. 그런데, given, when, then문법을 사용할 것이다.
+
+> **given** - 어떠한 상황이 주어졌고/
+> **when** - 이것을 실행했을 때/
+> **then** - 결과가 이것이 나와야 한다.
+
+마치 머리, 가슴, 배처럼 테스트는 보통 given, when, then으로 잘린다. 상황에 따라서 안 맞을 경우 변경을 하면 된다.
+
+우선 member를 생성하고 "hello"를 이름으로 세팅한다. 그리고 memberService에 join을 검증하는 것이기 때문에, ```Long saveId = memberService.join(member);```를 입력해 member객체를 넣는다.
+
+이제 then에서 검증을 해야 한다. Assertions를 입력하고 'org.assertj.core.api'를 클릭해 import한다.
+
+내가 저장한 것이 리포지토리에 있는 것이 맞는지 알고 싶다. 그래서 ```memberService.findOne(saveId).get();```를 findMember에 담는다. 그리고 ```Assertions.assertThat(member.getName()).isEqualTo(findMember.getName());```을 입력해 member의 이름이 findMember의 이름과 같은지 알아본다.
+
+이제 실행하면 녹색불이 뜬다.
+
+<img width="1233" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f648c272-e0fc-4071-9eb6-bc4fa0418bc0">
+
+그런데 사실 테스트는 정상 flow도 중요하지만 예외 flow가 훨씬 더 중요하다. join의 핵심은 저장이 되는 것도 중요하지만, 중복 회원 검증 로직을 잘 파서 예외가 발생하는지를 봐야 한다.
+
+<br>
+
+이제 <b>중복_회원_예외</b> 메서드를 테스트해볼 것이다.
+
+given부분에 member1을 생성하고 "spring"이라는 이름으로 세팅한다. 그리고 member2를 생성하고 또 이름을 "spring"으로 세팅한다.
+
+이제 when부분에 join을 두 번 한다. ```memberService.join(member1);```, ```memberService.join(member2);```를 입력한다. 이름이 "spring"으로 동일하기 때문에, MemberService의 validateDuplicateMember에 걸린다. 그래서 예외가 발생한다.
+
+<img width="717" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/079a371c-6c59-479c-8898-92aeb8e92d54">
+
+이 예외가 발생한 것을 try-catch문으로 잡을 수도 있다. memberService에 member2를 저장할 경우 fail하고, catch문으로 가서 IllegalStateException이 발생했을 경우 ```assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");```를 통해 예외 메세지가 동일한지 보는 것이다. 만약 "이미 존재하는 회원입니다." 부분을 조금만 수정해도 테스트는 실패한다.
+
+그런데 이것 때문에 try-catch문을 넣는 것이 애매하다. 좋은 문법이 따로 있다. 우선 생성한 try-catch문을 주석처리한다.
+
+when부분에 assertThrows를 입력한다. ```assertThrows(IllegalStateException.class, () -> memberService.join(member2));```를 입력한다. IllegalStateException이 발생하는 것을 기대하는 것인데, 오른쪽에 memberService.join(member2)의 로직을 태울 때 발생하는 것이다. 이제 테스트를 실행하면 성공한다.
+
+만약 IllegalStateException을 가령 NullPointerException으로 변경하면 테스트는 실패한다.
+
+메세지를 검증하기 위해서는 이것을 반환해야 한다. ```cmd + option + V```를 입력하고 이름을 'e'로 설정한다. e에 받아서 이것을 검증하는 것이다.
+
+이제 ```assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");```를 입력하고 테스트를 돌리면 된다.
+
+<br>
+
+만약에 앞서 테스트했던 '회원가입' 메서드에서 setName을 "spring"으로 했으면 한꺼번에 테스트를 돌릴 때 오류가 발생할 것이다. clear를 해줘야 하는데, 문제가 있다. clear를 해주고 싶은데 memberService밖에 없는 것이다. clear가 안 된다.
+
+그래서 ```MemoryMemberRepository memberRepository = new MemoryMemberRepository();```를 입력한다. 그리고 memberRepository를 clear해줘야 한다.
+
+```java
+@AfterEach
+public void afterEach() {
+    memberRepository.clearStore();
+}
+```
+
+위 코드를 입력해 각 테스트가 끝나고 나면 DB의 값을 날려준다. (```ctrl + R```을 누르면 이전에 실행했던 것을 그대로 실행해준다.)
+
+<br>
+
+그런데 조금 애매한 것이 있다. Test에서 하는 MemoryMemberRepository는 MemberService에 있는 memberRepository는 다른 객체이다. 이것을 두 개를 쓸 이유가 없고, 같은 것을 쓰는 것이 아무래도 낫다.
+
+MemoryMemberRepository에서 static으로 되어 있다. static은 인스턴스와 상관 없이 클래스 레벨에서 붙는 것이기 때문에 사실 크게 상관은 없지만, 그래도 new로 다른 객체의 리포지토리가 생성이 되면 다른 인스턴스이기 때문에 무언가 내용이 달라질 수도 있다.
+
+그래서 같은 인스턴스를 쓰게 바꿔야 한다. MemberService에서 new ~ 를 지운다.
+
+```java
+private final MemberRepository memberRepository;
+
+public MemberService(MemberRepository memberRepository) {
+    this.memberRepository = memberRepository;
+}
+```
+
+이렇게 수정한다. memberRepository를 직접 new 해서 생성하는 것이 아니라 외부에서 넣어주도록 바꾸는 것이다.
+
+이제 MemberServiceTest클래스에 다음과 같은 코드를 수정 및 삽입한다.
+
+```java
+MemberService memberService;
+MemoryMemberRepository memberRepository;
+
+@BeforeEach
+public void beforeEach() {
+    memberRepository = new MemoryMemberRepository();
+    memberService = new MemberService(memberRepository);
+}
+```
+
+이렇게 하면 테스트를 실행할 때마다 각각 생성을 해준다. ```@beforeEach``` 어노테이션은 각 테스트를 실행하기 전에 실행된다는 것이다. MemoryMemberRepository를 만들고 위에 memberRepository에 넣어놓는다.
+
+이것을 MemberService 입장에서 보면 직접 new로 생성하지 않고 외부에서 넣어준다. 이것을 <b>DI(Dependency Injection, 의존성 주입)</b>라고 한다.
