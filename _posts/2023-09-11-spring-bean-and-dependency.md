@@ -114,3 +114,49 @@ MemberService는 MemberRepository가 필요하다. 스프링이 뜰 때 '어 서
 <br>
 
 이제 메인 메서드를 실행해보면 문제 없이 잘 실행된다.
+
+하지만 현재 회원 컨트롤러와 관련된 어떤 기능도 없기 때문에 연결하는 것만 알아본 것이다.
+
+스프링 빈을 등록하는 2가지 방법이 있다.
+
+* <b>컴포넌트 스캔과 자동 의존관계 설정</b>
+* <b>자바 코드로 직접 스프링 빈 등록하기</b>
+
+지금까지 한 것은 '컴포넌트 스캔과 자동 의존관계 설정' 방식이다. ```@Controller```, ```@Service```, ```@Repository```를 사용하는 방식이 컴포넌트 스캔 방식이다. 
+
+왜 '컴포넌트 스캔 방식'이냐 하면, 사실 MemberService의 ```@Service```는 ```Component```라고 해야 한다. 그런데 ```cmd```를 누른 채 ```@Service```을 클릭해서 들어가면, 안에 ```@Component```라는 어노테이션이 등록되어 있다.
+
+<img width="892" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c492d059-b920-4440-ab3b-fb64b81fb29b">
+
+```@Controller```, ```@Repository``` 모두 안으로 들어가보면 위와 같이 ```@Component```라고 붙어 있다.
+
+스프링이 올라올 때, ```@Component```와 관련된 어노테이션이 있으면 다 스프링이 객체를 하나씩 생성을 해서 스프링 컨테이너에 등록한다. 이렇게 등록이 되어 있는 것이고, ```@Autowired```는 선을 연결해서 연관 관계를 만들어주는 것이다. MemberController가 MemberService를 쓸 수 있게 해주고, MemberService가 MemberRepository를 쓸 수 있게 되는 것이다.
+
+<br>
+
+그러면, '아무데나 ```@Component```가 있어도 될까?' 하는 의문점이 생길 수 있다. 예를 들어 내가 src/main/java 아래에 demo라는 패키지를 만들고, 그 안에 Demo라는 클래스를 생성한 다음 ```@Service```를 입력해 보겠다.
+
+<img width="859" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/00803175-bef4-4d45-b22a-6bef66c943fe">
+
+이거는 안 된다. 지금 내가 실행시킨 것은 HelloSpringApplication이다.
+
+<img width="291" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/34bb5ac5-704f-4206-83eb-2b5bbabb8732">
+
+HelloSpringApplication부터 시작해서 hello.hellospring패키지를 포함하는 파일들은 자동으로 스프링이 다 뒤져서 스프링 빈으로 등록한다. 그런데 파일 패키지와 동일하지 않은 것은 컴포넌트 스캔을 안 한다. 그래서 Demo클래스는 등록되지 않는다. (물론 어떤 설정을 해주면 될 수 있는데, 기본적으로 컴포넌트 스캔의 대상이 되지 않는다.) hello.hellospring패키지를 포함한, 패키지 하위만 따라 들어가는 것이다.
+
+
+## 컴포넌트 스캔과 자동 의존관계 설정 정리
+
+<b>컴포넌트 스캔 원리</b>
+
+* ```@Component``` 어노테이션이 있으면 스프링 빈으로 자동 등록된다.
+* ```@Controller``` 컨트롤러가 스프링 빈으로 자동 등록된 이유도 컴포넌트 스캔 때문이다.
+
+* ```@Component``` 어노테이션을 포함하는 다음 어노테이션도 스프링 빈으로 자동 등록된다.
+    * ```@Controller```
+    * ```@Service```
+    * ```@Repository```
+
+참고: 생성자에 ```@Autowired```를 사용하면 객체 생성 시점에 스프링 컨테이너에서 해당 스프링 빈을 찾아서 주입한다. 생성자가 1개만 있으면 ```@Autowired```는 생략할 수 있다.
+
+참고: 스프링은 스프링 컨테이너에 스프링 빈을 등록할 때, 기본으로 <b>싱글톤</b>으로 등록한다. (유일하게 하나만 등록해서 공유한다.) 따라서 같은 스프링 빈이면 모두 같은 인스턴스이다. 설정으로 싱글톤이 아니게 설정할 수 있지만, 특별한 경우를 제외하면 대부분 싱글톤을 사용한다.
