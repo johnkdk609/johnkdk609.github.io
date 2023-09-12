@@ -111,9 +111,9 @@ MemberService는 MemberRepository가 필요하다. 스프링이 뜰 때 '어 서
 
 위 그림처럼 helloController, memberController, memberRepository가 딱 연결이 되는 것이다.
 
-<br>
-
 이제 메인 메서드를 실행해보면 문제 없이 잘 실행된다.
+
+<br>
 
 하지만 현재 회원 컨트롤러와 관련된 어떤 기능도 없기 때문에 연결하는 것만 알아본 것이다.
 
