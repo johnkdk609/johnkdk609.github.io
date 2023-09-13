@@ -160,3 +160,103 @@ HelloSpringApplication부터 시작해서 hello.hellospring패키지를 포함�
 참고: 생성자에 ```@Autowired```를 사용하면 객체 생성 시점에 스프링 컨테이너에서 해당 스프링 빈을 찾아서 주입한다. 생성자가 1개만 있으면 ```@Autowired```는 생략할 수 있다.
 
 참고: 스프링은 스프링 컨테이너에 스프링 빈을 등록할 때, 기본으로 <b>싱글톤</b>으로 등록한다. (유일하게 하나만 등록해서 공유한다.) 따라서 같은 스프링 빈이면 모두 같은 인스턴스이다. 설정으로 싱글톤이 아니게 설정할 수 있지만, 특별한 경우를 제외하면 대부분 싱글톤을 사용한다.
+
+<br>
+
+## 자바 코드로 직접 스프링 빈 등록하기
+
+이번에는 자바 코드로 직접 스트링 빈을 등록해볼 것이다. ```@Service```, ```@Repository```, ```@Autowired``` 등을 사용하지 않고 하나하나 직접 스프링에 등록하는 방법이다.
+
+먼저, MemberService클래스에 ```@Service```, ```@Autowired``` 어노테이션을 지우고, MemoryMemberRepository에서도 ```@Repository```를 지운다. MemberController는 그대로 둔다.
+
+이제 스프링을 실행해보면, MemberService가 스프링 빈에 등록이 안 돼 있으니 컴포넌트 스캔이 안 되고 오류가 난다.
+
+<img width="1688" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c55cf483-9cd9-4bae-825c-79cf9ece2585">
+
+직접 등록하는 방법이 있다. 일단 hello.hellospring 패키지 아래에 SpringConfig 클래스 파일을 하나 만든다.
+
+<b>SpringConfig클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.hellospring;
+
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+import hello.hellospring.service.MemberService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SpringConfig {
+
+    @Bean
+    public MemberService memberService() {
+        return new MemberService(memberRepository());
+    }
+
+    @Bean
+    public MemberRepository memberRepository() {
+        return new MemoryMemberRepository();
+    }
+}
+```
+
+```@Configuration``` 어노테이션을 위에 붙이고 ```@Bean``` 어노테이션을 붙인다. '내가 스프링 빈을 등록할 거야'라는 의미로 이해하면 된다.
+
+이제 memberService를 생성한다. 이렇게 하면 스프링이 뜰 때 ```@Configuration```을 읽고 '어 이거는 스프링 빈에 등록하라는 것이네'하고 스프링이 인식한다. 그러면서 memberService 로직을 호출해서 스프링 빈에 등록한다.
+
+그런데 ```return new MemberService();```는 보아하니 생성자에서 무언가를 넣어줘야 한다. 빨간줄이 뜨는 소괄호 부분을 클릭하고 ```cmd + P```를 눌러보니 'MemberRepository memberRepository'라고 뜬다. memberRepository를 넣어줘야 하는 것이다.
+
+아래에 또 ```@Bean```을 입력하고 memberRepository를 등록한다. MemberRepository는 인터페이스이고, MemoryMemberRepository는 구현체이다. 이제 위에 ```MemberService();```의 괄호 안에 memberRepository를 넣어준다.
+
+그러면 뜰 때 memberService와 memberRepository를 전부 스프링 빈에 등록하고 스프링 빈에 등록된 memberRepsitory를 MemberService클래스에 넣어준다. 그렇게 아래와 같은 그림이 완성되는 것이다.
+
+<img width="650" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/57505eeb-4032-4b09-b60a-41e09054fac7">
+
+memberService와 memberRepository를 스프링이 올라올 때 ```@Bean```을 보고 컨테이너에 올리는 것이다. 그러면서 memberService는 memberRepository를 사용하도록 했다. 이전에 ```@Autowired``` 하던 것과 비슷하게 스프링 빈에 등록된 memberRepository를 딱 넣어준다.
+
+컨트롤러는 어쩔 수 없다. 컨트롤러는 어쨌든 스프링이 관리하는 것이기 때문에 ```@Controller```를 보고 컴포넌트 스캔에 올라간다. 컴포넌트 스캔이기 때문에 ```@Autowired```를 해주면 된다. 그러면 SpringConfig에 등록한 memberService를 넣어준다.
+
+이제 스프링이 정상적으로 실행된다.
+
+## 자바 코드로 직접 스프링 빈 등록하기 정리
+
+* 참고: 과거에는 자바 코드로 설정하지 않고 <b>XML</b>이라는 문서로 설정을 했다. 지금은 XML을 잘 사용하지 않고 거의 자바 코드로 설정한다.
+
+<br>
+
+* 참고: DI에는 필드 주입, setter 주입, 생성자 주입 이렇게 3가지 방법이 있다. 의존관계가 실행중에 동적으로 변하는 경우는 거의 없으므로 <b>생성자 주입</b>을 권장한다. (위에서 사용한 방법이 생성자 주입 방식이다.)
+
+필드 주입의 경우, MemberController에서 생성자를 빼고, 필드에다가 ```@Autowired```를 하는 것이다.
+
+<img width="602" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/302c8861-8ae8-4128-bf7c-6dd3601b15fb">
+
+그런데 ```@Autowired``` 부분에 물결이 쳐져 있다. 그 부분을 클릭하고 ```option + Enter```를 누르면 다음과 같이 뜬다.
+
+<img width="1027" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/0c67f70a-e0d4-4749-8c4b-f63a955941a5">
+
+'Create Constructor' 즉 생성자를 주입하라는 것이다. 필드 주입은 별로 좋지 않다. 왜냐하면 필드 주입은 무언가 바꿀 수 있는 방법이 없다. 스프링 뜰 때만 넣어주고 중간에 바꿀 수 있는 방법이 없는 것이다.
+
+setter 주입의 경우, 누군가가 MemberController를 호출했을 때 이것이 public으로 열려 있어야 한다. 중간에 잘못 바꾸면 문제가 생길 수 있다. 어플리케이션 로딩 시점에 바꾸는 것이지, 한 번 세팅이 되면 바꿀 일이 없기 때문이다.
+
+<br>
+
+* 참고: 실무에서는 주로 정형화된 컨트롤러, 서비스, 리포지토리 같은 코드는 컴포넌트 스캔을 사용한다. 그리고 정형화 되지 않거나, 상황에 따라 구현 클래스를 변경해야 하면 설정을 통해 스프링 빈으로 등록한다.
+
+'정형화된 코드'란 일반적으로 우리가 작성하는 컨트롤러, 서비스, 리포지토리 등을 말한다. 중요한 부분은 상황에 따라 구현 클래스를 변경해야 한다는 것이다.
+
+MemberRepository를 설계할 때 '아직 데이터 저장소가 선정되지 않았다'는 가상의 시나리오가 있었다.
+
+<img width="698" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f3d984f7-5b02-4ea2-9be5-f923a7ac3db0">
+
+일단 메모리로 만들고 나중에 교체하기로 했었다. 그래서 위와 같이 인터페이스를 설계하고 구현체로 MemoryMemberRepository를 사용하는 그림이 된 것이었다. 그런데 나중에 이 MemoryMemberRepository를 다른 리포지토리로 바꿔치기할 것이다. 기존에 운영 중인 코드를 하나도 손 대지 않고 바꿔치기할 수 있는 방법이 있다.
+
+MemoryMemberRepository를 데이터베이스에 실제로 연결하는 리포지토리로 바꿀 것인데, 기존 MemberService나 나머지 코드에 일절 손 대는 것 없이 바꿔치기할 수 있는 것이다. 그것을 하려면 구현체를 바꿔치기 해야 한다.
+
+나중에 데이터베이스에 연결하게 되면 다른 코드를 전혀 손 댈 것 없이 MemoryMemberRepository를 DbMemberRepository로 바꿔주기만 하면 된다.
+
+이것이 직접 설정 파일을 운영할 때의 장점이다. 컴포넌트 스캔을 사용하면 여러 코드를 바꿔야 하는데, 이 방법은 설정 파일만 조금 수정하면 된다.
+
+<br>
+
+* 주의: ```@Autowired```를 통한 DI는 ```helloController```, ```memberService``` 등과 같이 스프링이 관리하는 객체에서만 동작한다. 스프링 빈으로 등록하지 않고 내가 직접 생성한 객체에서는 동작하지 않는다.
