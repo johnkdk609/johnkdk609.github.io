@@ -75,6 +75,8 @@ resources/templates패키지 아래에 home.html 파일을 생성한다.
 
 위 그림을 봤을 때, 먼저 요청이 오면 스프링 컨테이너 안에 관련 컨트롤러가 있는지 먼저 찾고, 없으면 static 파일을 찾도록 되어 있다. 웰컴도 마찬가지이다. 먼저 localhost:8080 요청이 오면 먼저 HomeController에서 찾아본다. '어, 홈 화면에 매핑된 URL이 있네' 하면서 컨트롤러를 호출하고 끝난다. 그래서 기존에 만들었던 index.html은 무시된다. (물론, HelloController를 제거하면 다시 index.html이 등장한다.)
 
+<b>즉, 컨트롤러가 정적 파일보다 우선순위가 높다.</b>
+
 위의 home.html을 보면, 링크가 두 개 있다.
 
 ```html
@@ -83,3 +85,121 @@ resources/templates패키지 아래에 home.html 파일을 생성한다.
 ```
 
 /members/new의 회원 가입 화면으로 이동하는 것과, /members의 회원 목록 화면으로 이동하는 것이 있다.
+
+## 회원 웹 기능 - 등록
+
+이번에는 회원 웹 기능 중 '등록'을 만들 것이다.
+
+이전에 만들어놨던 MemberController에 들어가서, ```@GetMapping("/members/new")```를 기입한다. 이렇게 하면 직전에 만든 home.html에서 "/members/new"라는 URL로 이동한다. 그리고 "members/createMemberForm"을 리턴한다.
+
+templates 디렉토리에 members 디렉토리를 생성한다. 그리고 createMemberForm.html 파일을 members 디렉토리 안에 만든다.
+
+<img width="264" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/b8bbcad1-dd40-4bab-8be1-a02670b9d125">
+
+<b>createMemberForm.html</b>의 코드는 다음과 같다. (복사 붙여넣기 하였다.)
+
+```html
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="container">
+    <form action="/members/new" method="post">
+        <div class="form-group">
+            <label for="name">이름</label>
+            <input type="text" id="name" name="name" placeholder="이름을 입력하세요">
+        </div>
+        <button type="submit">등록</button>
+    </form>
+</div> <!-- /container -->
+</body>
+</html>
+```
+
+<br>
+
+이제 스프링을 구동해보겠다.
+
+웹 브라우저에서 localhost:8080로 들어간 다음, '회원 가입'을 클릭하면 localhost:8080/members/new로 들어간다.
+
+<img width="398" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/fbf9745c-7a48-4b47-bb22-face511dd62b">
+
+페이지 소스 보기를 클릭하면 아래와 같이 방금 했던 html이 렌더링 된다.
+
+<img width="727" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/84bba051-4ce7-4090-8901-85096a91836b">
+
+form태그가 있고, input태그에 이름만 입력하게 되어 있다. 예를 들어 이름을 "spring"으로 등록하면, 이 name이라는 key와 "spring"이라는 value가 서버로 넘어가게 된다. (일단은 등록한 후의 html 파일을 만들지 않았으니 등록을 했을 때 에러가 뜬다.)
+
+
+<br>
+
+이제 회원을 등록하는 컨트롤러를 만들 것이다. hello.hellospring/controller 패키지 아래에 MemberForm클래스를 생성한다.
+
+<b>MemberForm클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.hellospring.controller;
+
+public class MemberForm {
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+
+먼저 ```private String name;```을 기입하고, Getter Setter를 생성한다. (```cmd + N```을 누르면 된다.) 이렇게 하면 ```private String name;```의 name과 createMemberForm.html의 name과 매칭이 되면서 값이 들어온다.
+
+<img width="771" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5939acd1-d69a-4dc4-99fe-202033b2c009">
+
+<br>
+
+이제 MemberController에 ```@PostMapping("/members/new")```를 기입한다. 해당 부분 코드는 다음과 같다.
+
+```java
+@PostMapping("/members/new")
+public String create(MemberForm form) {
+    Member member = new Member();
+    member.setName(form.getName());
+
+    memberService.join(member);
+
+    return "redirect:/";
+}
+```
+
+create메서드에 form을 넣어준다. member를 생성하고, ```member.setName(form.getName());```를 입력해 form에서 get한 이름으로 member를 세팅한다. 그리고 memberService에 세팅된 member를 join(회원가입)시킨다. 그리고 리턴을 할 때 회원가입이 끝났으니 홈 화면으로 redirect한다.
+
+다시 스프링을 동작해보면, '회원 가입' 버튼을 누르고 "spring"을 등록하면 다시 홈 화면으로 돌아간다. 정상적으로 작동하고 있는 것이다.
+
+<br>
+
+이제 원리를 알아보겠다.
+
+먼저 회원 가입을 클릭해서 들어가면 /members/new로 들어가게 된다. /members/new를 URL에 직접 치면 http의 GET 방식이라고 한다. 그렇게 template 안에 있는 createMemberForm.html으로 이동하게 된다. viewResolver라는 것을 통해서 선택이 되고 Thymeleaf 템플릿 엔진이 createMemberForm.html을 렌더링 한다. (지금은 Thymeleaf가 크게 관여할 것이 없다.)
+
+createMemberForm.html이 뿌려질 때, form이라는 태그가 있다. 이 태그는 값을 입력할 수 있는 html태그이다. 이 form 안에서 보면 action="/members/new"라고 되어 있고 메서드는 post로 되어 있다. 그 안에 input이 있는데, input 타입이 text로 text를 입력할 수 있는 input이 생성된다는 뜻이다. 그리고 name이 중요한데 이 name이 서버로 넘어올 때 key가 된다. placeholder는 아무것도 없을 때 적히는 것이다.
+
+이 name에 "spring"이라고 적고 등록 버튼을 누르면, action URL인 "/members/new"에 POST 방식으로 넘어온다. /members/new에 POST 방식으로 넘어오면 MemberController의 ```@PostMapping("/members/new")```으로 간다.
+
+기본적으로 URL을 창에 직접 치는 것은 GetMapping이고, 데이터를 조회할 때 주로 쓴다. 반면 PostMapping은 데이터를 form 같은 데에 넣어서 전달할 때 사용한다. (보통 데이터를 조회할 때 GET 메서드를, 등록할 때 POST 메서드를 사용한다.)
+
+create라는 메서드가 호출이 되면서 값이 들어온다. 그런데 MemberForm을 보면 ```private String name;```의 name에 "spring"이라는 값이 들어가게 된다.
+
+createMemberForm.html의 ```name = "name"```을 보고 스프링이 MemberForm의 setName을 통해 값이 들어간다.
+
+<img width="771" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5939acd1-d69a-4dc4-99fe-202033b2c009">
+
+private이기 때문에 막 접근할 수는 없고 스프링이 setName이라는 Setter를 이용해서 값을 넣어주게 되고, 우리는 getName으로 꺼내면 된다.
+
+name을 한 번 찍어보겠다.
+
+<img width="935" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5e14d8b8-602b-46ad-b7eb-c612a4e298ce">
+
+위 그림과 같이 한 줄 추가한 다음 스프링을 동작한다. 그리고 이름에 "spring!"을 입력하고 등록하면 콘솔에 아래와 같이 뜨는 것을 볼 수 있다.
+
+<img width="1630" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f0c6c5b5-8942-4846-af8a-c0d579d9378f">
