@@ -202,7 +202,7 @@ name을 한 번 찍어보겠다.
 
 위 그림과 같이 한 줄 추가한 다음 스프링을 동작한다. 그리고 이름에 "spring!"을 입력하고 등록하면 콘솔에 아래와 같이 뜨는 것을 볼 수 있다.
 
-<img width="1630" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f0c6c5b5-8942-4846-af8a-c0d579d9378
+<img width="1630" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f0c6c5b5-8942-4846-af8a-c0d579d9378f">
 
 
 ## 회원 웹 기능 - 조회
