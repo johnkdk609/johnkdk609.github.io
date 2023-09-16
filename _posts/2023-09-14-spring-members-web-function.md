@@ -202,4 +202,68 @@ name을 한 번 찍어보겠다.
 
 위 그림과 같이 한 줄 추가한 다음 스프링을 동작한다. 그리고 이름에 "spring!"을 입력하고 등록하면 콘솔에 아래와 같이 뜨는 것을 볼 수 있다.
 
-<img width="1630" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f0c6c5b5-8942-4846-af8a-c0d579d9378f">
+<img width="1630" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f0c6c5b5-8942-4846-af8a-c0d579d9378
+
+
+## 회원 웹 기능 - 조회
+
+이번에는 회원 웹 기능 중 조회를 만들어볼 것이다. 홈 화면에서 '회원 목록'을 눌렀을 때 동작하면 된다.
+
+MemberController클래스에 ```@GetMapping("/members")```를 기입한다. 해당 부분 코드는 다음과 같다.
+
+```java
+@GetMapping("/members")
+public String list(Model model) {
+    List<Member> members = memberService.findMembers();
+    model.addAttribute("members", members);
+    return "members/memberList";
+}
+```
+
+```memberService.findMembers();```를 하면 member를 다 끌어올 수 있다. 그리고 ```model.addAttribute("members", members);```를 기입해서 멤버의 리스트를 model에 담아서 화면(view)에 넘길 것이다. "members/memberList"를 리턴하니, memberList.html을 만들어야 한다.
+
+<b>memberList.html</b>의 코드는 다음과 같다. (복사 붙여넣기 하였다.)
+
+```html
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="container">
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="member : ${members}">
+                <td th:text="${member.id}"></td>
+                <td th:text="${member.name}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div> <!-- /container -->
+</body>
+</html>
+```
+
+한 가지 짚고 넘어가야 하는 것이 있다. 여기서 thymeleaf 템플릿 엔진이 본격적으로 동작을 한다.
+
+일단 스프링을 실행하고, 회원 가입을 누른 다음 "spring1", "spring2"를 각각 등록한 다음 회원 목록 버튼을 누르면 다음과 같이 나타난다.
+
+<img width="333" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/a0d37ede-588f-4b49-8eb8-fe2b96859b1a">
+
+페이지 소스 보기를 해보면 다음과 같이 나타난다.
+
+<img width="442" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/bb210af8-f1c2-4ded-af6c-a56479d5ce64">
+
+위 그림을 보면 tr태그 안에 1, 2 이렇게 두 개가 렌더링 되어 있다. 위의 memberList.html 코드에서 ```${members}```의 members를 읽어들인다. 이 '${}'는 모델 안의 값을 꺼내는 것이다. 직전에 만든 MemberController의 ```@GetMapping("/members")```를 보면 model에 addAttribute로 key가 "members"이고 value인 members 안에는 리스트로 모든 회원을 다 조회해서 담아놨다. ```th:each```는 thymeleaf 문법으로, 루프를 돌면서 이 로직을 실행하는 것이다. 첫 번째 객체를 꺼내서 member에 담고, id와 name을 출력하는 것이다.
+
+<br>
+
+이렇게 해서 회원 조회까지 다 알아봤다.
+
+메모리에 있기 때문에, 서버를 내렸다가 다시 켜면 데이터가 다 지워진다. 우리는 이 데이터를 파일이나 데이터에 저장해야 한다.
