@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 효율적인 화폐 구성
-description: <이것이 취업을 위한 코딩 테스트다 with 파이썬> p. 226
+description: \<이것이 취업을 위한 코딩 테스트다 with 파이썬\> p. 226
 categories: Algorithm
 date: 2023-09-18 22:30:00 +0900
 ---
