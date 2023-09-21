@@ -289,3 +289,35 @@ public class SpringConfig {
 <img width="351" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7cece17a-4869-4f5b-a30e-b53f5db59b3a">
 
 이렇게 해서 데이터베이스에 접근하는 것이 굉장히 잘 동작하고 있는 것을 확인할 수 있다.
+
+<br>
+
+스프링을 쓰는 이유는 바로 이런 것 때문이다. (SpringConfig클래스의 코드 중)
+
+```java
+@Bean
+public MemberRepository memberRepository() {
+//        return new MemoryMemberRepository();
+    return new JdbcMemberRepository(dataSource);
+}
+```
+
+객체지향적인 설계가 좋다고 하는데, 왜 좋냐 하면 <b>다형성 즉 인터페이스를 두고 구현체를 바꿔 끼우는 것이 굉장히 편리하기 때문</b>이다. 스프링 컨테이너가 이것을 지원해준다. 그리고 DI(의존성 주입) 덕분에 이것을 굉장히 편리하게 할 수 있다.
+
+과거의 개발 스타일은 코드를 바꾸는 순간 MemberService 코드를 수정해야 했다. MemoryMemberRepository를 의존하는 것에서 JdbcMemberRepository를 의존하는 것으로 코드를 수정해야 하는 것이다. 만약 memberService가 여러 개면 다 고쳐야 했다.
+
+그런데 스프링에서는 기존의 코드는 하나도 손 대지 않고 오직 애플리케이션을 설정하는 어셈블리 코드만 손 대면 나머지 실제 애플리케이션과 관련된 코드는 하나도 손 댈 필요가 없는 것이다. 이것을 굉장히 편리하게 해주는 것이 스프링의 장점이다.
+
+<br>
+
+<img width="698" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/cbb58604-17fa-4403-96f9-83e22a05553f">
+
+위 그림을 보면, MemberService는 MemberRepository인터페이스를 의존하고 있다. 그리고 MemberRepository는 구현체로 MemoryMemberRepository와 JdbcMemberRepository를 두고 있다.
+
+<img width="696" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/23c920b0-ce2e-4ce1-a8aa-fd70931f8133">
+
+그런데, 위 그림을 보면 스프링 컨테이너에서 기존에 memory 버전의 memberRepository를 스프링 빈에 등록했다면, 이제 이것을 빼고 jdbc 버전의 memberRepository를 딱 등록한 것이다. 그리고 나머지는 손댈 것이 하나도 없다. 그러면 구현체만 이것으로 바뀌어서 잘 돌아간다.
+
+이것을 SOLID 중 <b>개방-폐쇄 원칙(OCP, Open-Closed Principle)</b>이라고 한다. 확장에는 열려있고 수정에는 닫혀있다는 것이다. 애플리케이션을 확장(기능 추가)할 수 있지만, 변경에는 닫혀 있는 것이다. 객체지향에서 말하는 다형성이라는 개념을 잘 활용하면 이렇게 기능을 완전히 변경해도 애플리케이션 전체를 수정할 필요가 없게 된다. (물론 조립하는 코드는 수정해야 한다. 하지만 실제 애플리케이션이 동작하는 데 필요한 코드들은 하나도 수정하지 않아도 된다.)
+
+<b>스프링의 DI(Dependency Injection)을 활용하면 기존 코드를 전혀 손대지 않고, 설정만으로 구현 클래스를 변경할 수 있다.</b>
