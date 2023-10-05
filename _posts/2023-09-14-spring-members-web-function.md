@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 회원 웹 기능
+title: 회원 관리 예제 - 웹 MVC 개발 - 회원 웹 기능
 description: 스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술
 categories: Spring-SpringBoot
 date: 2023-09-14 17:15:00 +0900

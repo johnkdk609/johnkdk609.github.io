@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 회원 관리 예제
+title: 회원 관리 예제 - 백엔드 개발
 description: 스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술
 categories: Spring-SpringBoot
 date: 2023-09-01 22:54:00 +0900

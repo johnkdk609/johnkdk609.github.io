@@ -1,6 +1,6 @@
 ---
 layout: post
-title: API
+title: 스프링 웹 개발 기초 - API
 description: 스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술
 categories: Spring-SpringBoot
 date: 2023-08-31 21:41:00 +0900
