@@ -80,3 +80,57 @@ public class SpringConfig {
 위에 ```private final MemberRepository memberRepository;```를 기입하고 Constructor를 받는다. 이렇게 하면 스프링 데이터 JPA가 만들어놓은 구현체가 등록이 된다. (생성자가 하나인 경우에는 생략해도 되지만, 그냥 ```@Autowired``` 어노테이션을 붙였다.)
 
 이제 memberService에 의존관계를 세팅해줘야 한다. 스프링 컨테이너에서 memberRepository를 찾는다. 그런데 지금 등록한 것이 없다. 그런데 하나가 있다. <b>SpringDataJpaMemberRepository</b>이다. 인터페이스만 만들어 놓고 JpaRepository를 extends 해두면 스프링 데이터 JPA가 인터페이스에 대한 구현체를 어떤 기술을 가지고 만들어 놓는다. 그리고 스프링 빈에 등록해둔다. 그래서 우리는 injection을 받을 수 있다.
+
+<br>
+
+이제 테스트를 돌려볼 것이다.
+
+MemberServiceIntegrationTest 클래스를 열고, 회원가입 메서드부터 돌려본다.
+
+<img width="1685" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/22ee999c-1bed-4a30-8d56-af48ffc18e8b">
+
+정상적으로 작동한다.
+
+통합 테스트도 마찬가지로 잘 작동한다.
+
+<br>
+
+## 원리 정리
+
+스프링 데이터 JPA가 SpringDataJpaMemberRepository 인터페이스를 보고 proxy라는 기술을 이용해 객체를 생성해서 스프링 빈으로 자동 등록해준다. 그러면 우리는 그것을 injection 해서 썼던 것이다.
+
+그러면 기본적인 save 등은 어디 갔는가?
+
+여기에 있다.
+
+<img width="699" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/15351c59-b18f-4f92-991f-4461ffb328bd">
+
+직전에 생성한 SpringDataJpaMemberRepository 인터페이스에서 JpaRepository를 extends 한다. 이 JpaRepository에 마우스 커서를 갖다 대고 ```Alt```를 누른 채 클릭하면 JpaRepository에 들어갈 수 있다.
+
+<br>
+
+JpaRepository 인터페이스에 들어가 보면 기본 메서드들이 다 제공된다. findAll(), findById(), save() 등등 다 있다. (사실 김영한 선생님이 처음 예제를 이것과 맞춰놓은 것이라고 한다.) 기본적인 CRUD와 단순 조회들이 다 제공되는 것이다.
+
+그래서 여기서는 우리가 생각할 수 있는 공통의 것들을 가져다 쓰면 된다.
+
+그런데 못 만드는 것이 있다.
+
+위 그림을 보면, 스프링 데이터 JPA가 기본적으로 JpaRepository에서 findAll(), save() 등이 다 제공되고, 스프링 데이터를 보면 (약간 옛날 버전이라서 차이가 조금 있기는 하지만) CrudRepository에서 기본적인 save 등이 다 제공된다. 머릿속으로 상상할 수 있는 공통화할 수 있는 것들을 제공해주기에 가져다 쓰면 되는 것이다.
+
+<br>
+
+그런데 아무리 개발자가 공통화를 해도 이것은 모두에게 통용되는 것이다. 그런데 예를 들어서 Member클래스에서 'name으로 찾고 싶다', 혹은 'email 이름으로 찾고 싶어'와 같은 것은 비즈니스가 다 다르기 때문에 공통화하는 것이 불가능하다. 그래서 공통 클래스로 제공할 수 없다.
+
+이름으로 찾는데 내 프로젝트야 "name"이지만 다른 회사에서는 "username" 이라고 할 수도 있고, 또 다른 객체가 매우 많다. 주문할 때에도 주문서 번호로 조회할 수도 있고, 고객이 주문한 상품 이름으로 조회하는 등 인터페이스로 공통화할 수 없는 것이다.
+
+그래서 스프링 데이터 JPA에게 ```findByName```을 직접 입력한다. 그러면 뒤에 "name"이 있으니, JPA가 어떤 식으로 query를 짜냐면 ```// select m from Member m where m.name = ?```으로 JPQL을 짜준다. 그러면 이게 SQL로 번역이 되어서 실행된다. 여기에 규칙이 있다. 인터페이스 이름만으로도 개발이 끝난 것이다. 
+
+<br>
+
+<b>스프링 데이터 JPA 제공 기능</b>은 다음과 같다.
+
+* 인터페이스를 통한 기본적인 CRUD
+* ```findByName()```, ```findByEmail()```처럼 이름만으로 조회 기능 제공
+* 페이징 기능 자동 제공
+
+(참고: 실무에서는 JPA와 스프링 데이터 JPA를 기본으로 사용하고, 복잡한 동적 쿼리는 Querydsl이라는 라이브러리를 사용하면 된다. Querydsl을 사용하면 쿼리도 자바 코드로 안전하게 작성할 수 있고, 동적 쿼리도 편리하게 작성할 수 있다. 이 조합으로 해결하기 어려운 쿼리는 JPA가 제공하는 네이티브 쿼리를 사용하거나, 앞서 학습한 스프링 JdbcTemplatefmf 사용하면 된다.)
