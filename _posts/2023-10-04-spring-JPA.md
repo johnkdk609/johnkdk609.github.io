@@ -153,15 +153,15 @@ public class JpaMemberRepository implements MemberRepository {
 
 findById메서드에서는 ```Member member = em.find(Member.class, id);```를 기입한다. 조회할 타입과 식별자(pk) 값을 넣어주면 조회가 되는 것이다. 리턴을 해야 하는데, Optional로 반환하기 때문에 ```return Optional.ofNullable(member);```를 기입하면 된다.
 
-findByName메서드의 경우 조금 특별한 jpql이라는 객체지향 query 언어를 써야 한다. (거의 SQL과 비슷하다.) findByName으로 하나만 찾으니 ```return result.stream().findAny()```를 기입해준다.
+findByName메서드의 경우 조금 특별한 JPQL이라는 객체지향 query 언어를 써야 한다. (거의 SQL과 비슷하다.) findByName으로 하나만 찾으니 ```return result.stream().findAny()```를 기입해준다.
 
-findAll메서드의 경우에도 jpql이라는 query 언어를 사용한다. 우리가 보통 테이블 대상으로 sql을 날리는데, 그게 아니라 객체를 대상으로 query를 날리는 것이다. 그러면 이게 sql로 번역이 된다. 정확하게 Entity를 대상으로 query를 날리는 것이다. 흥미로운 점은 sql의 경우 ```select * from ~~``` 이렇게 할 텐데, 이 경우 ```select m from ~~```으로 Member Entity 자체를 select 한다.
+findAll메서드의 경우에도 JPQL이라는 query 언어를 사용한다. 우리가 보통 테이블 대상으로 sql을 날리는데, 그게 아니라 객체를 대상으로 query를 날리는 것이다. 그러면 이게 sql로 번역이 된다. 정확하게 Entity를 대상으로 query를 날리는 것이다. 흥미로운 점은 sql의 경우 ```select * from ~~``` 이렇게 할 텐데, 이 경우 ```select m from ~~```으로 Member Entity 자체를 select 한다.
 
-findByName 혹은 findAll와 같이 List를 가지고 돌릴 때에는 pk 기반이 아니므로 jpql을 작성해줘야 한다.
+findByName 혹은 findAll와 같이 List를 가지고 돌릴 때에는 pk 기반이 아니므로 JPQL을 작성해줘야 한다.
 
 <br>
 
-이 JPA 기술을 스프링에 한 번 감싸서 제공하는 기술이 있는데, 그것이 '스프링 데이터 JPA'이다. 이것을 사용하면 jpql을 안 짜도 된다.
+이 JPA 기술을 스프링에 한 번 감싸서 제공하는 기술이 있는데, 그것이 '스프링 데이터 JPA'이다. 이것을 사용하면 JPQL을 안 짜도 된다.
 
 JPA를 쓸려면 주의해야 하는 점은 항상 서비스 계층에 ```@Transactional``` 어노테이션이 있어야 한다. 데이터를 저장하거나 변경할 때 필요한 것이다. 위에 붙이면 된다.
 
