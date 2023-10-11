@@ -47,7 +47,7 @@ group :jekyll_plugins do
 
   # Non-Github Pages plugins:
   gem "jekyll-last-modified-at", "~> 1.0.0"
-  gem "jekyll-compose", "~> 1.0.0"
+  gem "jekyll-compose", "0.12.0"
 end
 
 gem 'wdm' if Gem.win_platform?
