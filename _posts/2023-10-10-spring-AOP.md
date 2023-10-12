@@ -245,4 +245,4 @@ MemberService가 'EnhancerBySpringCGLIB' 되어 있다고 나타난다. 멤버 �
 
 <br>
 
-아예 자바에서는 컴파일 타임에 코드를 generate 해서 자바 코드를 위아래로 박아주는 기술도 있다.
+아예 자바에서는 컴파일 타임에 코드를 generate 해서 자바 코드를 위아래로 박아주는 기술도 있다.  
