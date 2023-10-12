@@ -44,6 +44,7 @@ group :jekyll_plugins do
   gem "jekyll-sitemap", "~> 1.4.0"
   gem "jekyll-titles-from-headings", "~> 0.5.3"
   gem "jekyll-include-cache", "~> 0.2.1"
+  gem 'github-pages', '~> 228'
 
   # Non-Github Pages plugins:
   gem "jekyll-last-modified-at", "~> 1.0.0"
