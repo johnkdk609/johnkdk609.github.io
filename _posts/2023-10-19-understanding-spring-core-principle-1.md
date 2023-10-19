@@ -1,0 +1,63 @@
+---
+layout: post
+title: 스프링 핵심 원리 이해 1 - 예제 만들기
+description: 스프링 핵심 원리 - 기본편
+categories: Spring-SpringBoot
+date: 2023-10-19 21:16:00 +0900
+---
+이번에는 역할과 구현을 나누어서, 즉 인터페이스와 그것을 구현하는 객체를 나눠서 개발하는 것을 해볼 것이다. 그런데 이것을 순수한 자바로만 개발할 것이다.
+
+## 목차
+
+1. 프로젝트 생성
+2. 비즈니스 요구사항과 설계
+3. 회원 도메인 설계
+4. 회원 도메인 개발
+5. 회원 도메인 실행과 테스트
+6. 주문과 할인 도메인 설계
+7. 주문과 할인 도메인 개발
+8. 주문과 할인 도메인 실행과 테스트
+
+실제 요구사항이 나중에 변경이 되었을 때 정말 유연하게 대처가 가능한지, 다형성, OCP, DIP가 잘 지켜지고 있는지를 보고, 문제가 있으면 그것을 다음 장 스프링 핵심 원리 이해 2에서 객체지향의 원리를 적용해가면서 문제를 해결할 것이다.
+
+## 1. 프로젝트 생성
+
+이번 시간에는 정말 순수한 자바로만 할 것이다. (스프링을 안 사용할 것이다.) 그런데 프로젝트 세팅을 할 때에는 일단 스프링 부트를 사용하면 편하기 때문에 그렇게 할 것이다. (또 나중에 스프링 적용할 때에도 이 라이브러리들이 필요하기는 하다.)
+
+사전 준비물
+- Java 11
+- IntelliJ
+
+스프링 부트 스타터 사이트(https://start.spring.io)로 이동해서 스프링 프로젝트를 생성한다.
+
+<img width="1491" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/802568e7-f0e3-4011-8704-77f10e68fb9f">
+
+위와 같이 설정한다. 오른쪽에 Dependencies는 아무것도 선택하지 않을 것이다. 아무것도 선택하지 않으면 스프링 부트가 스프링 코어 쪽 라이브러리랑 가장 간단한 몇 개만 가지고 구성해준다. 그리고 아래에 GENERATE 버튼을 누른다.
+
+그리고 다운로드 받아진 core.zip 파일의 압축을 푼 다음, IntelliJ IDE에서 core파일 안에 있는 build.gradle파일을 'Open as Project'로 연다.
+
+<br>
+
+이제 build.gradle 파일을 열어보면 다음과 같이 나온다.
+
+<img width="1126" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/8a65a02d-b6a3-4409-9f7b-2d1607de1a82">
+
+현재 의존관계가 ```spring-boot-starter``` 관련한 라이브러리와 테스트 관련한 것만 심플하게 들어가 있다. 스프링 핵심 라이브러리만 들어가 있는 것이다.
+
+<br>
+
+이제 main/java/hello.core 디렉토리 안에 있는 CoreApplication파일을 열고 Run을 해준다. 그러면 다음과 같이 된다.
+
+<img width="1724" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/59834362-e6ea-4531-b7f2-c6bab13ee7bf">
+
+하고 그냥 끝나야 한다. 내가 지금 스프링 웹 프로젝트를 넣은 것이 아니기 때문에 그냥 이렇게 실행하고 끝나버리는 것이 맞다.
+
+<br>
+
+한 가지 추가하자면, IntelliJ 상단에 IntelliJ IDEA → Settings.. 에 들어가서, 검색창에 gradle을 입력한 다음, Build and run using과 Run tests using을 Gradle에서 IntelliJ로 바꾼 다음 Apply를 누른다.
+
+<img width="976" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5dd83962-4c62-4f80-87ea-6f3ff6aa108b">
+
+이것을 돌릴 때 gradle을 통해서 돌리면 좀 느리다. 이렇게 변경하면 IntelliJ 통해서 바로 실행하기 때문에 빠르다.
+
+이 정도 세팅하면 프로젝트 환경 설정은 끝이다.
