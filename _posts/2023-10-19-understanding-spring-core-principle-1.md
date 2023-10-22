@@ -130,3 +130,95 @@ MemberService라는 역할을 인터페이스로 만들고, 그것에 대한 구
 <br>
 
 항상 그림은 개념적으로 크게 세 가지로 그려진다. <b>도메인 협력 관계</b>는 기획자들도 볼 수 있는 것이다. 이것을 바탕으로 개발자가 구체화해서 <b>클래스 다이어그램</b>을 만들어낸다. 이 클래스 다이어그램에는 인터페이스랑 구현체가 다 모인다. 클래스 다이어그램은 실제 서버를 실행하지 않고 클래스들만 분석해서 볼 수 있는 그림이다. 그런데 이 구현체들, 가령 MemoryMemberRepository를 넣을지 DbMemberRepository를 넣을지 등은 동적으로 결정되는 것이다. 즉 서버가 뜰 때 new ~ 해서 넣는 것을 결정하는 것이다. 그래서 클래스 다이어그램만으로는 판단하기 어렵다. 그래서 <b>객체 다이어그램</b>이라는 것이 따로 있다. 서버가 실제로 떠서 클라이언트가 실제로 사용하는 MemberServiceImpl, 그리고 MemoryMemberRepository 이렇게 인스턴스끼리의 참조를 알 수 있는 것이다.
+
+
+## 4. 회원 도메인 개발
+
+이제 본격적으로 회원 도메인을 개발해볼 것이다. 
+
+<img width="930" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/fb7d079f-7885-4911-896e-67899ff4de7b">
+
+위 다이어그램을 가지고 만들면 된다.
+
+<br>
+
+먼저, main/java/hello.core 안에 member 패키지를 만든다. 그리고 그 안에 등급인 Grade를 Enum으로 만든다. <b>Grade이넘</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.member;
+
+public enum Grade {
+    BASIC,
+    VIP
+}
+```
+
+요구사항에서 회원 등급에는 BASIC과 VIP 두 가지가 있다고 했기 때문이다.
+
+<br>
+
+이제 회원 엔티티를 만들 것이다. 마찬가지로 member패키지 안에 <b>Member클래스</b>를 만든다. <b>Member클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.member;
+
+public class Member {
+
+    private Long id;
+    private String name;
+    private String grade;
+
+    public Member(Long id, String name, String grade) {
+        this.id = id;
+        this.name = name;
+        this.grade = grade;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+}
+```
+
+우선 id, name, grade의 세 가지 회원의 속성을 기입한다. 그리고 단축키 ```cmd + N```을 입력하고 Constructor 버튼을 눌러서 생성자를 불러온다. 또, 같은 단축키를 누르고 Getter and Setter 버튼을 눌러 게터와 세터를 가져온다. 이제 이 메서드를 통해서 private의 값을 세팅할 수 있다.
+
+<br>
+
+이제 member패키지 안에 MemberRepository인터페이스를 생성한다. <b>MemberRepository인터페이스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.member;
+
+public interface MemberRepository {
+
+    void save(Member member);
+
+    Member findById(Long memberId);
+}
+```
+
+회원을 저장하는 save기능과 회원의 아이디로 회원을 찾는 findById기능 두 가지만 만들 것이다.
+
+<br>
+
+회원 저장소를 만들었으니 이제 구현체를 만들어야 한다. (인터페이스만으로 동작하지는 않기 때문이다.) 구현체는 member패키지 안에 MemoryMemberRepository클래스를 생성한다. (원래 인터페이스와 구현체는 같은 패키지에 두기보다는 다르게 두는 것이 설계 상 좋은데, 그러면 예제가 너무 복잡해지니 간단하게 같은 패키지에 넣겠다.)
