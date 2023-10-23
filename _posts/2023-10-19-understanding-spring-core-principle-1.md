@@ -222,3 +222,78 @@ public interface MemberRepository {
 <br>
 
 회원 저장소를 만들었으니 이제 구현체를 만들어야 한다. (인터페이스만으로 동작하지는 않기 때문이다.) 구현체는 member패키지 안에 MemoryMemberRepository클래스를 생성한다. (원래 인터페이스와 구현체는 같은 패키지에 두기보다는 다르게 두는 것이 설계 상 좋은데, 그러면 예제가 너무 복잡해지니 간단하게 같은 패키지에 넣겠다.)
+
+<b>MemoryMemberRepository클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.member;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class MemoryMemberRepository implements MemberRepository {
+
+    private static Map<Long, Member> store = new HashMap<>();
+
+    @Override
+    public void save(Member member) {
+        store.put(member.getId(), member);
+    }
+
+    @Override
+    public Member findById(Long memberId) {
+        return store.get(memberId);
+    }
+}
+```
+
+MemberRepository인터페이스를 구현한 것이니 ```implements MemberRepository```를 기입한다. 그리고 단축키 ```option + Enter```를 누르고 implement methods를 누른다. 그리고 저장소이니 Map 같은 것이 필요하다. 그래서 ```private static Map<Long, Member> store = new HashMap<>();```를 입력해서 저장소 store을 만든다. implement 된 메서드에는 생성한 저장소 store에 각각 getId, get(memberId)를 입력한다. 원래 오류처리 등을 해야 하는데, 그것은 이번 예제의 핵심이 아니니 그냥 넘어가겠다. 아직 데이터베이스는 확정되지 않았기 때문에 MemoryMemberRepository로 만들었다. 일단 개발을 진행할 수 있는 것이다.
+
+현재는 HashMap을 사용했는데, 사실은 동시성 이슈가 있을 수 있기 때문에 ConcurrentHashMap을 사용해야 한다. 실무에서는 동시성 이슈가 있어서 ConcurrentHashMap을 쓰겠지만, 예제이니 그냥 간단하게 HashMap을 쓰겠다.
+
+<br>
+
+이번에는 회원 서비스를 만들 것이다. hello.core/member 패키지 안에 MemberService 인터페이스를 생성한다. <b>MemberService인터페이스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.member;
+
+public interface MemberService {
+
+    void join(Member member);
+
+    Member findMember(Long memberId);
+
+}
+```
+
+MemberService에는 회원가입과 회원조회의 두 가지 기능이 있어야 한다. 그래서 join과 findMember 두 가지 기능을 추가하였다.
+
+<br>
+
+이제 인터페이스를 만들었으니 구현체를 만들어야 한다. 같은 member 패키지 안에 MemberServiceImpl 클래스를 생성한다. 관례 같은 것인데, 구현체가 하나만 있을 때에는 인터페이스 명 뒤에 Impl이라고 쓴다. <b>MemberServiceImpl클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.member;
+
+public class MemberServiceImpl implements MemberService {
+
+    private final MemberRepository memberRepository = new MemoryMemberRepository();
+
+    @Override
+    public void join(Member member) {
+        memberRepository.save(member);
+    }
+
+    @Override
+    public Member findMember(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+}
+```
+
+가입을 하고 회원을 찾으려면 앞에서 만들었던 MemberRepository 인터페이스가 필요하다. 그래서 ```private final MemberRepository memberRepository = new MemoryMemberRepository();```를 입력했다. 인터페이스만 가지고 있으면 nullpointerexception이 발생할 것이다. 만약 join메서드에서 ```memberRepository.save(member);```를 통해 save를 호출해도 구현체가 없는 null이면 nullpointerexception이 발생하는 것이다. 그래서 구현 객체를 선택해줘야 한다. 앞에서 만들었던 MemoryMemberRepository를 추가하는 것이다.
+
+(참고로, 자동완성 되는 단어에 대해 단축키 ```cmd + shift + Enter```를 누르면 마지막에 세미콜론(;)까지 입력해준다.)
+
+join을 해서 save를 호출하면 다형성에 의해서 MemoryMemberRepository에 있는 인터페이스가 아니라, MemoryMemberRepository의 오버라이드(```@Override```) 된 save가 호출된다.
