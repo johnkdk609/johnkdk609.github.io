@@ -166,9 +166,9 @@ public class Member {
 
     private Long id;
     private String name;
-    private String grade;
+    private Grade grade;
 
-    public Member(Long id, String name, String grade) {
+    public Member(Long id, String name, Grade grade) {
         this.id = id;
         this.name = name;
         this.grade = grade;
@@ -190,11 +190,11 @@ public class Member {
         this.name = name;
     }
 
-    public String getGrade() {
+    public Grade getGrade() {
         return grade;
     }
 
-    public void setGrade(String grade) {
+    public void setGrade(Grade grade) {
         this.grade = grade;
     }
 }
@@ -297,3 +297,50 @@ public class MemberServiceImpl implements MemberService {
 (참고로, 자동완성 되는 단어에 대해 단축키 ```cmd + shift + Enter```를 누르면 마지막에 세미콜론(;)까지 입력해준다.)
 
 join을 해서 save를 호출하면 다형성에 의해서 MemoryMemberRepository에 있는 인터페이스가 아니라, MemoryMemberRepository의 오버라이드(```@Override```) 된 save가 호출된다.
+
+
+## 5. 회원 도메인 실행과 테스트
+
+이번에는 우리가 만든 회원 도메인이 정상적으로 동작하는지 테스트를 해볼 것이다.
+
+<img width="1331" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/fc547cbf-7414-4668-9231-96f08ce9b4e9">
+
+위 그림을 만들 것이다. 클라이언트가 런타임에 동작을 하면, 클라이언트는 MemberServiceImpl이라는 회원 서비스를 사용하게 되고, 회원 서비스는 메모리 회원 저장소(MemoryMemberRepository)를 사용하게 된다. 클래스 다이어그램은 정적인 것이고, 객체 다이어그램은 동적인 것이다. 왜냐하면, 객체 다이어그램에서는 ```new ~``` 해서 실제로 들어가는 것을 알 수 있기 때문이다.
+
+<br>
+
+먼저 main/java/hello.core 패키지 안에 MemberApp 클래스를 생성한다. 여기서 잘 되는지 테스트를 간단하게 해볼 것이다. <b>MemberApp클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core;
+
+import hello.core.member.Grade;
+import hello.core.member.Member;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+
+public class MemberApp {
+
+    public static void main(String[] args) {
+        MemberService memberService = new MemberServiceImpl();
+        Member member = new Member(1L, "memberA", Grade.VIP);
+        memberService.join(member);
+
+        Member findMember = memberService.findMember(1L);
+        System.out.println("new member = " + member.getName());
+        System.out.println("find Member = " + findMember.getName());
+    }
+}
+```
+
+```psvm```을 입력하고 엔터를 치면 ```public static void main(String[] args)```가 완성된다. 그리고 ```MemberService memberService = new MemberServiceImple();```를 입력해 MemberServiceImpl을 선택한다. 그 다음에 ```new Member(1L, "memberA", Grade.VIP);```를 입력하고 ```cmd + option + V``` 단축키를 누르고 이름은 member로 만든다. 회원가입(join)을 하기 위해 만든 것이다. 그리고 ```memberService.join(member);```를 입력해서 회원가입을 한다. 아이디는 1(Long 타입이기 때문에 1L로 1 뒤에 L을 붙여줘야 한다. 그냥 1 하면 compile error이 발생한다.), 이름은 "memberA", 등급은 VIP로 설정한 것이다.
+
+이제 이 사람이 잘 가입이 되었는지 확인을 해보겠다. ```memberService.findMember(1L);```를 입력하고 ```cmd + option + V```를 누른 다음 이름은 findMember로 한다. 가입한 멤버와 find한 멤버가 똑같으면 내가 원하는 대로 될 것이다. 이제 단순하게 찍어볼 것이다. ```soutv```를 입력하고 엔터를 누르면 변수를 선택할 수 있다. 찾은 멤버 member와 findMember를 선택한다. 그리고 각자 ```.getName()```을 붙여 이름을 출력해볼 것이다. 이제 애플리케이션을 실행하면 콘솔창에 다음과 같이 나타난다.
+
+![image](https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/48627da8-55e8-45c7-93c2-0f936edd4b5b)
+
+원하는 결과가 제대로 나왔다.
+
+<br>
+
+이런 방법은 순수한 자바 코드의 자바 메서드를 실행한 것이고, 스프링 관련한 코드는 전혀 없다. 순수한 자바로만 개발을 한 것이다. 그런데 애플리케이션 로직으로 이렇게 메인 메서드를 테스트하는 것은 한계가 있고, 좋은 방법이 있다. 그래서 JUnit이라는 테스트 프레임워크를 사용할 것이다.
