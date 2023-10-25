@@ -344,3 +344,55 @@ public class MemberApp {
 <br>
 
 이런 방법은 순수한 자바 코드의 자바 메서드를 실행한 것이고, 스프링 관련한 코드는 전혀 없다. 순수한 자바로만 개발을 한 것이다. 그런데 애플리케이션 로직으로 이렇게 메인 메서드를 테스트하는 것은 한계가 있다. 그래서 더 나은 테스트 방법인 JUnit 테스트 프레임워크를 사용할 것이다.
+
+<br>
+
+test/java/hello.core 패키지 안에 member 패키지를 생성한다. 나중에 빌드해서 나갈 때에는 main의 코드만 나가고 테스트의 코드는 운영환경에 배포되지 않는다. 그리고 member패키지에 MemberServiceTest클래스를 생성한다. <b>MemberServiceTest클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.member;
+
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+public class MemberServiceTest {
+
+    MemberService memberService = new MemberServiceImpl();
+
+    @Test
+    void join() {
+        // given
+        Member member = new Member(1L, "memberA", Grade.VIP);
+
+        // when
+        memberService.join(member);
+        Member findMember = memberService.findMember(1L);
+
+        // then
+        Assertions.assertThat(member).isEqualTo(findMember);
+
+    }
+}
+```
+
+우선 ```@Test``` 어노테이션을 붙인다. 그리고 먼저 join을 만들 것이다. 여기서 given, when, then 즉, 어떤 환경이 주어졌고 무엇을 했을 때 이렇게 된다라는 것을 쪼개놓는다. given 부분에는 member를 생성한다. memberService가 없으므로 필드에 ```MemberService memberService = new MemberServiceImpl();```를 입력해 놓는다. 그리고 when 부분에서 memberService에 생성한 member를 join한 다음 ```memberService.findMember(1L);```를 입력해둔다. 이제 then부분에서 검증을 하면 된다. 검증은 Assertions라는 것이 있다. org.assertj.core.api를 사용하면 된다. ```Assertions.assertThat(member).isEqualTo(findMember);```를 입력하여 member가 findMember와 동일한지 본다.
+
+이제 실행을 하면 다음과 같이 녹색불이 뜨면서 성공한다.
+
+<img width="1231" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/94b51513-4e5c-4909-b747-1542e90ee57e">
+
+이렇게 해서 테스트까지 해봤다. 만약에 when부분에서 ```memberService.findMember(2L);```로 1L을 2L로 변경하면 다음과 같이 실행했을 때 실패한다.
+
+<img width="1318" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/45637bd9-2bfe-451f-a52d-e8958dc6b94e">
+
+요즘 애플리케이션 개발을 할 때 테스트는 선택이 아니다. 필수이다. 그만큼 테스트를 잘 작성하는 것이 중요하다. 
+
+<br>
+
+그런데 이 <b>회원 도메인 설계상의 문제점은 무엇일까?</b> 만약에 다른 저장소로 변경할 때 <u>OCP 원칙을 잘 준수할까?</u> <u>DIP는 잘 지키고 있을까?</u>
+
+결국 의존관계가 인터페이스 뿐만 아니라 구현까지 모두 의존하는 문제점이 있다.
+
+<img width="716" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/e2947665-9768-496f-841e-872f63b565a1">
+
+가령, 위 그림에서 MemberServiceImpl클래스를 보면, 왼쪽에서는 분명히 MemberRepository인터페이스를 의존하지만, 오른쪽에서는 MemoryMemberRepository클래스 즉 구현체를 의존하고 있다. 즉 MemberServiceImpl은 추상화에도 의존하고 구체화에도 의존하는 것이다. 변경이 있을 때 문제가 될 수 있고, 이는 DIP를 위반하고 있는 것이다.
