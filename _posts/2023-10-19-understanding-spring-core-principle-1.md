@@ -442,3 +442,29 @@ public class MemberServiceTest {
 <img width="966" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/16311f4e-f705-410a-b16f-4cb66f22c733">
 
 위 그림을 보면, 주문 서비스의 역할, 회원 저장소의 역할, 할인 정책 역할 즉 역할을 먼저 만들고 구현을 그 다음에 만들었다. 이렇게 역할과 구현을 분리했기 때문에 자유롭게 구현 객체를 조립할 수 있게 설계가 된 것이다. 덕분에 회원 저장소는 물론이고, 할인 정책도 유연하게 변경할 수 있다. 가령 위 그림에서 정액 할인 정책(무조건 1000원 할인해주는 것) 혹은 정률 할인 정책(구매한 가격의 10%를 할인해주는 것)을 선택할 수 있는 것이다.
+
+<br>
+
+실제 객체 레벨로 구현하면, 즉 주문 도메인 클래스 다이어그램으로 내리면 이렇게 된다.
+
+<img width="931" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2f80f819-eadc-43c6-9be0-3ddb2377e7cf">
+
+OrderService 인터페이스를 만들 것이고, 그것에 대한 구현체로 OrderServiceImpl을 만든다. (인터페이스에 대한 구현체가 딱 하나만 있을 경우 보통 인터페이스 명 뒤에 Impl을 붙인다.) 그리고 OrderServiceImpl이 MemberRepository인터페이스와 DiscountPolicy인터페이스를 쓰는 것이다. DiscountPolicy(할인정책) 역할이 구현으로 FixDiscountPolicy(고정 할인정책)와 RateDiscountPolicy(정률 할인정책)로 나뉘게 된다.
+
+<br>
+
+객체 다이어그램은 다음과 같다. 클래스 다이어그램과 다르게 객체 다이어그램은 실제 내가 new 해서 생성해서 애플리케이션을 띄워서 동적으로 객체들의 연관관계가 맺어지는 그림이다.
+
+<img width="945" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/06192d6f-2736-4147-b3f2-b10efa3303c6">
+
+클라이언트가 주문 서비스 구현체로 호출을 하면, new 해서 메모리 회원 저장소를 호출할 것이다. 그리고 할인 정책은 정액 할인 정책이 될 것이다.
+
+회원을 메모리에서 조회하고, 정액 할인 정책(고정 금액)을 지원해도 주문 서비스를 변경하지 않아도 된다. <u>역할들의 협력 관계를 그대로 재사용 할 수 있다.</u> 즉, MemoryMemberRepository에서 DbMemberRepository로 바뀌고, FixDiscountPolicy가 RateDiscountPolicy로 바뀌어도 주문 서비스 구현체를 변경할 필요가 없는 것이다.
+
+<br>
+
+나중에 주문 도메인 객체 다이어그램이 이렇게 바뀔 수 있다. 자체 DB를 쓰기로 했고, 정액 말고 퍼센트로 할인해주기로 한 것이다.
+
+<img width="936" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3c2a5db0-b172-4fae-b5c3-901a6567dde3">
+
+이렇게 해도, 회원을 메모리가 아닌 실제 DB에서 조회하고, 정률 할인 정책(주문 금액에 따라 % 할인)을 지원해도 주문 서비스를 변경하지 않아도 된다. 협력 관계를 그대로 재사용할 수 있는 것이다.
