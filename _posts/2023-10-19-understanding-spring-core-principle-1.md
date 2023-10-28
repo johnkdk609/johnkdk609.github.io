@@ -468,3 +468,134 @@ OrderService 인터페이스를 만들 것이고, 그것에 대한 구현체로 
 <img width="936" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3c2a5db0-b172-4fae-b5c3-901a6567dde3">
 
 이렇게 해도, 회원을 메모리가 아닌 실제 DB에서 조회하고, 정률 할인 정책(주문 금액에 따라 % 할인)을 지원해도 주문 서비스를 변경하지 않아도 된다. 협력 관계를 그대로 재사용할 수 있는 것이다.
+
+
+## 7. 주문과 할인 도메인 개발
+
+이번에는 주문과 할인 도메인을 개발해볼 것이다.
+
+먼저, 할인 정책을 들어가야 한다. hello.core 안에 discount 패키지를 생성한다. 그리고 그 안에 DiscountPolicy 인터페이스를 생성한다.
+
+<b>DiscountPolicy인터페이스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.discount;
+
+import hello.core.member.Member;
+
+public interface DiscountPolicy {
+
+    /**
+     * 
+     * @return 할인 대상 금액
+     */
+    int discount(Member member, int price);
+    
+}
+```
+
+파라미터로 member를 넘기고, price를 넘긴다. (단축키 F2를 누르면 오류가 난 곳으로 바로 이동한다.)
+
+<br>
+
+이제 이것에 대한 구현체를 만들어야 한다. discount패키지 안에 FixDiscountPolicy클래스를 생성한다.
+
+<b>FixDiscountPolicy클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.discount;
+
+import hello.core.member.Grade;
+import hello.core.member.Member;
+
+public class FixDiscountPolicy implements DiscountPolicy {
+
+    private int discountFixAmount = 1000;   // 1000원 할인
+
+    @Override
+    public int discount(Member member, int price) {
+        if (member.getGrade() == Grade.VIP) {
+            return discountFixAmount;
+        } else {
+            return 0;
+        }
+    }
+}
+```
+
+무조건 1000원을 할인해주는 고정 할인 정책이니까, ```private int discountFixAmount = 1000;```을 입력한다. 그런데 등급이 VIP이어야 하니까, ```member.getGrade() == Grade.VIP```를 조건으로 기입한다. (참고로 Enum타입은 '=='을 사용하는 것이 맞다.) VIP가 맞다면 discountFixAmount를 리턴하고, VIP가 아니면 0을 리턴한다.
+
+<br>
+
+이제 주문 쪽을 만들 것이다. 패키지명은 order로 한다. 그리고 그 안에 Order클래스를 생성한다. <b>Order클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.order;
+
+public class Order {
+
+    private Long memberId;
+    private String itemName;
+    private int itemPrice;
+    private int discountPrice;
+
+    public Order(Long memberId, String itemName, int itemPrice, int discountPrice) {
+        this.memberId = memberId;
+        this.itemName = itemName;
+        this.itemPrice = itemPrice;
+        this.discountPrice = discountPrice;
+    }
+
+    public int calculatePrice() {
+        return itemPrice - discountPrice;
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public int getItemPrice() {
+        return itemPrice;
+    }
+
+    public void setItemPrice(int itemPrice) {
+        this.itemPrice = itemPrice;
+    }
+
+    public int getDiscountPrice() {
+        return discountPrice;
+    }
+
+    public void setDiscountPrice(int discountPrice) {
+        this.discountPrice = discountPrice;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "memberId=" + memberId +
+                ", itemName='" + itemName + '\'' +
+                ", itemPrice=" + itemPrice +
+                ", discountPrice=" + discountPrice +
+                '}';
+    }
+}
+```
+
+우선 필드에 memberId, itemName, itemPrice, discountPrice를 추가한다. 그리고 각 필드에 대해 생성자를 만들고, Getter와 Setter를 불러온다.
+
+계산 로직을 하나 넣을 것이다. 정가(itemPrice)가 10000원이고 할인금액(discountPrice)이 1000원이라면 9000원이 되어야 한다. 최종 계산된 금액인 calculatePrice를 추가하는 것이다.
+
+또, 출력할 때 보기 쉽게 하기 위해 toString을 불러올 것이다. ```cmd + N```을 누르고 'toString'을 누르면 객체를 출력할 때 toString의 결과가 쭉 나온다.
