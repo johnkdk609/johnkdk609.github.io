@@ -599,3 +599,54 @@ public class Order {
 계산 로직을 하나 넣을 것이다. 정가(itemPrice)가 10000원이고 할인금액(discountPrice)이 1000원이라면 9000원이 되어야 한다. 최종 계산된 금액인 calculatePrice를 추가하는 것이다.
 
 또, 출력할 때 보기 쉽게 하기 위해 toString을 불러올 것이다. ```cmd + N```을 누르고 'toString'을 누르면 객체를 출력할 때 toString의 결과가 쭉 나온다.
+
+<br>
+
+이제 주문 서비스의 인터페이스를 만들 것이다. order패키지 안에 OrderService 인터페이스를 생성한다. <b>OrderService인터페이스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.order;
+
+public interface OrderService {
+
+    Order createOrder(Long memberId, String itemName, int itemPrice);
+}
+```
+
+위 코드는 다음과 같은 부분을 표현한 것이다.
+
+<img width="936" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/e0a87839-eb50-441c-9185-707baea62dd8">
+
+주문 서비스의 역할을 보면, 클라이언트는 주문을 생성할 때(createOrder) 회원 id, 상품명, 상품 가격을 파라미터로 넘겨야 한다. 그러면 리턴으로 주문 결과를 반환한다.
+
+<br>
+
+이제 구현을 해야 한다. order패키지 안에 OrderServiceImpl클래스를 생성한다. <b>OrderServiceImpl클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.order;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.discount.FixDiscountPolicy;
+import hello.core.member.Member;
+import hello.core.member.MemberRepository;
+import hello.core.member.MemoryMemberRepository;
+
+public class OrderServiceImpl implements OrderService {
+
+    private final MemberRepository memberRepository = new MemoryMemberRepository();
+    private final DiscountPolicy discountPolicy = new FixDiscountPolicy();
+
+    @Override
+    public Order createOrder(Long memberId, String itemName, int itemPrice) {
+        Member member = memberRepository.findById(memberId);
+        int discountPrice = discountPolicy.discount(member, itemPrice);
+
+        return new Order(memberId, itemName, itemPrice, discountPrice);
+    }
+}
+```
+
+이 OrderService는 두 개가 필요하다. MemberRepository에서 회원을 찾아야 하니 memberRepository를 생성하고, 할인 정책을 찾아야 하니 discountPolicy를 생성한다. 그리고 createOrder에서 memberId로 찾고, discountPolicy에서 할인을 하는데 그냥 일단 member를 넘긴다. 이 설계가 진짜 잘 된 것이다. OrderService 입장에서는 '할인에 대해서 나는 모르겠어. 할인에 대해서는 discountPolicy 네가 알아서 해줘. 나는 몰라. 네가 알아서 하고 결과만 던져줘.' 하고 설계한 것이다. <u>단일 책임 원칙이 잘 지켜진 것이다.</u> 만약 할인에 대한 변경이 필요하면 할인 쪽만 고치면 된다. 주문 쪽까지 고칠 필요는 없다. 만약 단일 책임 원칙이 잘 설계되지 않고 discountPolicy가 없었다면 할인 정책이 변경되었을 때 OrderService를 고쳐야 한다. 
+
+이제 Order을 만들어서 반환해주면 된다. ```new Order(memberId, itemName, itemPrice, discountPrice)```를 리턴하게 한다. 그러면 OrderService의 역할이 끝난다. 이렇게 주문 생성 요청이 오면 회원 정보를 먼저 조회하고, 할인 정책에 회원을 그냥 넘긴다. 물론 등급만 넘겨도 되는데, 일의 확정성과 몇 가지를 고려해서 member을 통으로 넘겼다. 이 부분에 대해서는 내가 고민을 해보면 된다. grade만 넘길지, 아니면 member 자체를 넘길지.. 프로젝트 상황에 따라 다르다. 그 다음에 itemPrice를 넘겼다. 이렇게 최종적으로 할인된 가격을 받고, 최종 생성된 주문을 반환했다. 그래서 MemoryMemberRepository와 FixDiscountPolicy를 구현체로 생성해서 사용하고 있다.
