@@ -650,3 +650,102 @@ public class OrderServiceImpl implements OrderService {
 이 OrderService는 두 개가 필요하다. MemberRepository에서 회원을 찾아야 하니 memberRepository를 생성하고, 할인 정책을 찾아야 하니 discountPolicy를 생성한다. 그리고 createOrder에서 memberId로 찾고, discountPolicy에서 할인을 하는데 그냥 일단 member를 넘긴다. 이 설계가 진짜 잘 된 것이다. OrderService 입장에서는 '할인에 대해서 나는 모르겠어. 할인에 대해서는 discountPolicy 네가 알아서 해줘. 나는 몰라. 네가 알아서 하고 결과만 던져줘.' 하고 설계한 것이다. <u>단일 책임 원칙이 잘 지켜진 것이다.</u> 만약 할인에 대한 변경이 필요하면 할인 쪽만 고치면 된다. 주문 쪽까지 고칠 필요는 없다. 만약 단일 책임 원칙이 잘 설계되지 않고 discountPolicy가 없었다면 할인 정책이 변경되었을 때 OrderService를 고쳐야 한다. 
 
 이제 Order을 만들어서 반환해주면 된다. ```new Order(memberId, itemName, itemPrice, discountPrice)```를 리턴하게 한다. 그러면 OrderService의 역할이 끝난다. 이렇게 주문 생성 요청이 오면 회원 정보를 먼저 조회하고, 할인 정책에 회원을 그냥 넘긴다. 물론 등급만 넘겨도 되는데, 일의 확정성과 몇 가지를 고려해서 member을 통으로 넘겼다. 이 부분에 대해서는 내가 고민을 해보면 된다. grade만 넘길지, 아니면 member 자체를 넘길지.. 프로젝트 상황에 따라 다르다. 그 다음에 itemPrice를 넘겼다. 이렇게 최종적으로 할인된 가격을 받고, 최종 생성된 주문을 반환했다. 그래서 MemoryMemberRepository와 FixDiscountPolicy를 구현체로 생성해서 사용하고 있다.
+
+
+## 8. 주문과 할인 도메인 실행과 테스트
+
+이제 주문과 할인 도메인을 실행하고 테스트 해보겠다.
+
+먼저 메인 메서드를 만든다. hello.core패키지 안에 OrderApp클래스를 생성한다. <b>OrderApp클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core;
+
+import hello.core.member.Grade;
+import hello.core.member.Member;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import hello.core.order.Order;
+import hello.core.order.OrderService;
+import hello.core.order.OrderServiceImpl;
+
+public class OrderApp {
+
+    public static void main(String[] args) {
+        MemberService memberService = new MemberServiceImpl();
+        OrderService orderService = new OrderServiceImpl();
+
+        Long memberId = 1L;
+        Member member = new Member(memberId, "memberA", Grade.VIP);
+        memberService.join(member);
+
+        Order order = orderService.createOrder(memberId, "itemA", 10000);
+
+        System.out.println("order = " + order);
+        System.out.println("order.calculatePrice = " + order.calculatePrice());
+    }
+}
+```
+
+바로 테스트를 만들어도 되지만, 아직 테스트에 익숙하지 않은 경우에 이렇게 할 수도 있다. 
+
+memberService, orderService를 먼저 만든다. 그리고 member를 저장해야 하니, memberId를 1L로 설정하고 member에 넣는다. 그리고 ```orderService.createOrder(memberId, "itemA", 10000);```를 입력하고 이것을 order에 담는다. 그리고 이것을 출력하면 된다. 이것을 출력하면 Order클래스의 toString이 출력된다. 그리고 아래에 ```order.calculatePrice```를 추가한다. 실행하면 다음과 같이 나타난다.
+
+<img width="792" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/b8b0bcf4-b183-4d89-a257-5d31efd6df8c">
+
+의도했던 대로 결과가 콘솔창에 잘 출력된다.
+
+<br>
+
+물론, 이렇게 main메서드로 하는 것은 좋지 않다. 자동화된 테스트를 잘 하는 것이 중요하다.
+
+JUnit에 그대로 옮겨올 것이다. 먼저 test/java/hello.core 안에 order패키지를 만들고, 그 안에 OrderServiceTest클래스를 생성한다. <b>OrderServiceTest클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.order;
+
+import hello.core.member.Grade;
+import hello.core.member.Member;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+public class OrderServiceTest {
+
+    MemberService memberService = new MemberServiceImpl();
+    OrderService orderService = new OrderServiceImpl();
+
+    @Test
+    void createOrder() {
+        Long memberId = 1L;
+        Member member = new Member(memberId, "memberA", Grade.VIP);
+        memberService.join(member);
+
+        Order order = orderService.createOrder(memberId, "itemA", 10000);
+        Assertions.assertThat(order.getDiscountPrice()).isEqualTo(1000);
+    }
+}
+```
+
+똑같이 memberService와 orderService가 필요하다. 그리고 ```@Test``` 어노테이션을 붙이고, createOrder을 생성한다. 그리고 memberId의 경우 primitive type으로 ```long```을 넣을 수 있기는 한데, 그러면 null을 넣을 수 없기 때문에 wrapper 타입인 ```Long```을 선택했다. 그리고 member를 생성하고, memberService에 join 시킨다.
+
+그리고 order를 생성하고, Assertions를 사용해서 검증한다. VIP인 경우에 천원 할인되는 것이 맞는지 보는 것이다. 이제 실행해보면 다음과 같이 나타난다.
+
+<img width="1222" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/ed79187a-5541-4343-98b1-9d57f8701c98">
+
+문제 없이 잘 실행된다. 이제 테스트를 전부 한 번 돌려보겠다. test/java/hello.core에 마우스 우클릭을 하고 'Run 'Test in 'hello.core'''를 클릭한다.
+
+<img width="1685" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/62dbec45-359d-40db-807b-45a07b7d0946">
+
+성공적으로 잘 돌아간다.
+
+<br>
+
+정리를 해보면 이게 핵심이다.
+
+<img width="941" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/499453fa-b81a-4f51-b5cd-d616a96afb42">
+
+클라이언트가 주문 서비스에 주문 생성을 하고, 얘가 회원을 조회하고, 할인 정책을 가져와서 결과물을 클라이언트에 반환하는 것이다.
+
+현재 다형성이 매우 잘 지켜지고 있다. 다음 시간에는 정률 할인 정책으로 깔끔하게 변경할 수 있는지 알아볼 것이다.
