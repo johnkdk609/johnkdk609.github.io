@@ -185,3 +185,148 @@ class RateDiscountPolicyTest {
 ```
 
 간결해지면서 위에 ```import static org.assertj.core.api.Assertions.*;```가 올라간다.
+
+
+## 2. 새로운 할인 정책 적용과 문제점
+
+이제 새로운 할인 정책의 적용과 문제점에 대해 알아보겠다. 무언가 적용하려는데 문제가 생기는 것이다.
+
+할인 정책을 바로 적용하려면 OrderServiceImpl로 들어가야 한다. 적용한 <b>OrderServiceImpl클래스</b> 코드는 다음과 같다.
+
+```java
+package hello.core.order;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.discount.FixDiscountPolicy;
+import hello.core.discount.RateDiscountPolicy;
+import hello.core.member.Member;
+import hello.core.member.MemberRepository;
+import hello.core.member.MemoryMemberRepository;
+
+public class OrderServiceImpl implements OrderService {
+
+    private final MemberRepository memberRepository = new MemoryMemberRepository();
+//    private final DiscountPolicy discountPolicy = new FixDiscountPolicy();
+    private final DiscountPolicy discountPolicy = new RateDiscountPolicy();
+
+    @Override
+    public Order createOrder(Long memberId, String itemName, int itemPrice) {
+        Member member = memberRepository.findById(memberId);
+        int discountPrice = discountPolicy.discount(member, itemPrice);
+
+        return new Order(memberId, itemName, itemPrice, discountPrice);
+    }
+}
+```
+
+여기서 할인 정책(discountPolicy)이 고정 할인 금액(FixDiscountPolicy)로 되어 있었다. 얘를 위와 같이 RateDiscountPolicy로 바꾸면 끝난다.
+
+<br>
+
+할인 정책을 변경하려면 클라이언트인 ```OrderServiceImpl```의 코드를 고쳐야 한다. 원래 FixDiscountPolicy로 되어 있는데 RateDiscountPolicy 객체로 바꾸려면 ```new ~~```를 실제로 고쳐야 한 것이다.
+
+### 문제점 발견
+
+* 우리는 역할과 구현을 충실하게 분리했다. → OK
+* 다형성도 활용하고, 인터페이스와 구현 객체를 분리했다. → OK
+* OCP, DIP 같은 객체지향 설계 원칙을 충실히 준수했다. → 그렇게 보이지만 사실은 아니다.
+* DIP: 주문서비스 클라이언트(OrderServiceImpl)는 DiscountPolicy인터페이스에 의존하면서 DIP를 지킨 것 같은데?
+    * → 클래스 의존관계를 분석해 보자. 추상(인터페이스)뿐만 아니라 <b>'구체(구현) 클래스에도 의존'</b>하고 있다.
+        * 추상(인터페이스) 의존: DiscountPolicy
+        * 구체(구현) 클래스: FixDiscountPolicy, RateDiscountPolicy
+* OCP: 변경하지 않고 확장할 수 있다고 했는데!
+    * → <b>지금 코드는 기능을 확장해서 변경하면, 클라이언트 코드에 영향을 준다. 따라서 OCP를 위반</b>한다.
+
+<br>
+
+왜 클라이언트 코드를 변경해야 했는지, 클래스 다이어그램으로 의존관계를 분석해보자.
+
+기대했던 의존관계는 다음과 같다.
+
+<img width="905" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/091f0fee-2d10-42b2-9956-7f37d8961e09">
+
+OrderServiceImpl은 분명히 DiscountPolicy에 의존하고 있다. 지금까지 단순히 DiscountPolicy인터페이스에 의존한다고 생각했다.
+
+그런데 실제 의존관계는 다음과 같다.
+
+<img width="904" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/83e53ea9-50ef-4df5-84f1-d0a777d67e62">
+
+잘 보면 클라이언트인 OrderServiceImpl이 DiscountPolicy인터페이스뿐만 아니라 FixDiscountPolicy인 구체 클래스도 함께 의존하고 있다. 실제 코드를 보면 의존하고 있는 것이고, 이는 <b>DIP를 위반한 것</b>이다.
+
+위에 OrderServiceImpl 실제 코드를 보면, 다음과 같이 FixDiscountPolicy, RateDiscountPolicy에 실제로 의존하고 있다.
+
+<img width="646" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/6e196a28-2f48-44fa-b4a9-92a4f7af568d">
+
+<br>
+
+DIP를 위반했기 때문에 할인 정책을 FixDiscountPolicy에서 RateDiscountPolicy로 바꾸는 순간 OrderServiceImpl의 소스코드를 함께 변경할 수밖에 없다.
+
+<img width="911" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1b33c2d4-cacc-4642-be1c-3f2155e502d7">
+
+이게 바로 의존성이다. 의존관계가 있으면 어떤 것을 건드는 순간 코드를 바꿔야 한다.
+
+설계가 잘 되어 있어서 변경이 작았기는 하다. 아무튼 FixDiscountPolicy를 RateDiscountPolicy로 변경하는 순간 OrderServiceImpl의 소스코드도 함께 변경해야 한다. 즉, <b>OCP를 위반한 것</b>이다.
+
+<br>
+
+운전을 생각해봤을 때, 역할과 구현을 분리하면 예를 들어 내가 내연기관 차를 타다가 전기차로 바꿔도 운전 면허증이 있으면 그냥 차를 운전할 수 있다. 그런데 지금 이거는 차를 새로 바꿨다고 해서 내가 라이선스를 갱신해야 하는 상황이 된 것이다. 뭔가 안 맞는 것이다.
+
+<br>
+
+### 어떻게 문제를 해결할 수 있을까?
+
+* 클라이언트 코드인 OrderServiceImpl은 DiscountPolicy의 인터페이스 뿐만 아니라 구체 클래스도 함께 의존한다.
+* 그래서 구체 클래스를 변경할 때 클라이언트 코드도 함께 변경해야 하는 문제가 있었다.
+* <u>DIP 위반 → 추상에만 의존하도록 변경(인터페이스에만 의존)</u>
+* DIP를 위반하지 않도록 인터페이스에만 의존하도록 의존관계를 변경하면 된다.
+
+즉, 인터페이스에만 의존하도록 설계를 변경하면 된다.
+
+<img width="906" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/9fd263aa-4bdc-4b8c-bd3c-b8c5224db028">
+
+OrderServiceImpl이 DiscountPolicy에만 의존하도록 변경하면 된다.
+
+<br>
+
+OrderServiceImpl의 코드를 다음과 같이 변경하면 된다.
+
+```java
+package hello.core.order;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.member.Member;
+import hello.core.member.MemberRepository;
+import hello.core.member.MemoryMemberRepository;
+
+public class OrderServiceImpl implements OrderService {
+
+    private final MemberRepository memberRepository = new MemoryMemberRepository();
+    private DiscountPolicy discountPolicy;
+
+    @Override
+    public Order createOrder(Long memberId, String itemName, int itemPrice) {
+        Member member = memberRepository.findById(memberId);
+        int discountPrice = discountPolicy.discount(member, itemPrice);
+
+        return new Order(memberId, itemName, itemPrice, discountPrice);
+    }
+}
+```
+
+final은 무조건 값이 할당되어야 하므로 지운다. 일단은 DiscountPolicy에 한정해서만 보겠다. 이제 인터페이스 즉 추상에만 의존하고 있다.
+
+<br>
+
+그런데 이 코드를 실행하면 다음과 같이 NPE(NullPointerException)가 터진다. 이전에 만들었던 OrderServiceTest를 실행한 결과이다.
+
+<img width="1295" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c119a869-c382-46de-bdd1-0f6604a1d429">
+
+Null에 점 찍으면 NullPointerException이 발생한다.
+
+createOrder를 호출했을 때, discountPolicy가 아무 값도 할당되어 있지 않기 때문에 Null에 점 찍으니 이런 예외가 발생한 것이다.
+
+<br>
+
+구현체가 없는데 어떻게 코드를 실행할 수 있을까?
+
+<b>해결방안</b>: 이 문제를 해결하려면 누군가가 클라이언트인 OrderServiceImpl에 DiscountPolicy의 구현 객체를 대신 생성하고 주입해주어야 한다.
