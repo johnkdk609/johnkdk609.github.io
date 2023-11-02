@@ -330,3 +330,101 @@ createOrder를 호출했을 때, discountPolicy가 아무 값도 할당되어 �
 구현체가 없는데 어떻게 코드를 실행할 수 있을까?
 
 <b>해결방안</b>: 이 문제를 해결하려면 누군가가 클라이언트인 OrderServiceImpl에 DiscountPolicy의 구현 객체를 대신 생성하고 주입해주어야 한다.
+
+
+## 3. 관심사의 분리
+
+애플리케이션을 하나의 공연이라 생각해보자. 각각의 인터페이스를 배역(배우 역할)이라 생각하자. 그런데, 실제 배역에 맞는 배우를 선택하는 것은 누가 하는가?
+
+로미오와 줄리엣 공연을 하면 로미오 역할은 누가 할지, 줄리엣 역할을 누가 할지는 배우들이 정하는 것이 아니다. 이전 코드는 마치 로미오 역할(인터페이스)을 하는 레오나르도 디카프리오(구현체, 배우)가 줄리엣 역할(인터페이스)을 하는 여자 주인공(구현체, 배우)을 직접 초빙하는 것과 같다. 디카프리오는 공연도 해야하고 동시에 여자 주인공도 공연에 직접 초빙해야 하는 <b>다양한 책임</b>을 가지고 있다.
+
+코드를 보면 이해하기 쉽다. 기존의 OrderServiceImpl에서는 다음과 같이 적혀 있었다.
+
+```java
+private DiscountPolicy discountPolicy = new FixDiscountPolicy();
+```
+
+OrderServiceImpl은 OrderService와 관련된 로직만 해야 하는데, 여기서는 '나는 FixDiscountPolicy를 해야 돼'라며 자기가 직접 선택하는 것이다. 굉장히 부차적인 것까지 OrderServiceImpl이 직접 객체를 생성하고 선택해서 할당하는 것이다. 마치 배우가 직접 여자 주인공(ex. 올리비아 핫세)을 초빙하는 것과 마찬가지인 것이다.
+
+### 관심사를 분리해야 한다
+
+배우는 본인의 역할인 배역을 수행하는 것에만 집중해야 한다. 디카프리오는 어떤 여자 주인공이 선택되더라도 똑같이 공연할 수 있어야 한다.
+
+* 공연을 구성하고, 담당 배우를 섭외하고, 역할에 맞는 배우를 지정하는 책임을 담당하는 별도의 <b>공연 기획자</b>가 나올 시점이다.
+
+공연 기획자를 만들고, 배우와 공연 기획자의 책임을 확실히 분리해야 한다. 애플리케이션은 이렇게 개발을 해야 한다.
+
+
+### AppConfig의 등장
+
+애플리케이션의 전체 동작 방식을 구성(config)하기 위해, <u>구현 객체를 생성하고 연결하는 책임을 가지는 별도의 설정 클래스를 만들 것</u>이다.
+
+애플리케이션 전반에 대한 구성을 책임지는 것이라 보면 된다. main/java/hello.core 바로 아래에 AppConfig클래스를 생성한다. <b>AppConfig클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core;
+
+import hello.core.discount.FixDiscountPolicy;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import hello.core.member.MemoryMemberRepository;
+import hello.core.order.OrderService;
+import hello.core.order.OrderServiceImpl;
+
+public class AppConfig {
+
+    public MemberService memberService() {
+        return new MemberServiceImpl(new MemoryMemberRepository());
+    }
+
+    public OrderService orderService() {
+        return new OrderServiceImpl(new MemoryMemberRepository(), new FixDiscountPolicy());
+    }
+}
+```
+
+먼저, memberService와 orderService를 만든다. 이전에는 객체를 생성하고 인터페이스에 어떤 것을 할당할지 MemberService 안에서 직접 했었다.
+
+```java
+package hello.core.member;
+
+public class  MemberServiceImpl implements MemberService {
+
+    private final MemberRepository memberRepository = new MemoryMemberRepository();
+
+    @Override
+    public void join(Member member) {
+        memberRepository.save(member);
+    }
+
+    @Override
+    public Member findMember(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+}
+```
+
+MemberServiceImpl을 보면 MemberService 오른쪽에서 ```new MemoryMemberRepository();```를 하여 MemberServiceImpl이 직접 지정해준 것이다. 이제 이런 것을 AppConfig에서 다 할 것이다. 일단, MemberServiceImpl의 ```new MemoryMemberRepository``` 부분을 지우고, 생성자를 만든다.
+
+```java
+package hello.core.member;
+
+public class  MemberServiceImpl implements MemberService {
+
+    private final MemberRepository memberRepository;
+
+    public MemberServiceImpl(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    @Override
+    public void join(Member member) {
+        memberRepository.save(member);
+    }
+
+    @Override
+    public Member findMember(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+}
+```
