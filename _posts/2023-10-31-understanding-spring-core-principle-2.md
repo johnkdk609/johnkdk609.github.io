@@ -428,3 +428,74 @@ public class  MemberServiceImpl implements MemberService {
     }
 }
 ```
+
+그리고, 이 생성자를 통해서 MemberRepository에 구현체가 무엇이 들어갈지 선택한다. AppConfig클래스에서 ```return new MemberServiceImpl(new MemoryMemberRepository());```를 입력하는 것이다. AppConfig를 통해서 MemberService를 불러다 쓰게 된다. MemberService 구현체인 객체가 생성이 되는데, 그때 이게 중요하다. 생성자에 들어가보기 위해 MemberServiceImpl 부분에 마우스 커서를 두고, Alt 버튼을 누르고 들어가본다.
+
+MemberServiceImpl클래스의 코드를 봤을 때, ```public MemberServiceImpl(MemberRepository memberRepository)```의 memberRepository에 MemoryMemberRepository가 들어와서 ```private final MemberRepository memberRepository;```의 memberRepository에 할당이 된다. 지금 보면, MemberServiceImpl에 MemoryMemberRepository에 대한 코드가 없다. 오로지 MemberRepository라는 인터페이스만 있다. 얘는 이제 추상화에만 의존하는 것이다. DIP를 지키는 것이다. 구체적인 것에 대해서는 전혀 모른다. 이것은 밖에서 생성을 해서 넣어주는 것이다. 이것을 생성자를 통해서 객체가 들어간다고 해서 "생성자 주입"이라고 한다.
+
+다시 AppConfig클래스로 돌아와서, OrderService를 만들 것이다. 이번에도 생성자 주입을 해줄 것이다. OrderServiceImpl에 들어가보면, OrderService는 사용하는 필드가 두 개이다. 기존 <b>OrderServiceImpl클래스</b>의 코드는 다음과 같았다.
+
+```java
+package hello.core.order;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.discount.FixDiscountPolicy;
+import hello.core.member.Member;
+import hello.core.member.MemberRepository;
+import hello.core.member.MemoryMemberRepository;
+
+public class OrderServiceImpl implements OrderService {
+
+    private final MemberRepository memberRepository = new MemoryMemberRepository();
+    private final DiscountPolicy discountPolicy = new FixDiscountPolicy();
+
+    @Override
+    public Order createOrder(Long memberId, String itemName, int itemPrice) {
+        Member member = memberRepository.findById(memberId);
+        int discountPrice = discountPolicy.discount(member, itemPrice);
+
+        return new Order(memberId, itemName, itemPrice, discountPrice);
+    }
+}
+```
+
+MemberRepository도 필요하고 DiscountPolicy도 필요한 상황이다. 그러면, 뒷부분을 과감하게 지우고, 생성자를 추가한다. (final이 있으면 기본으로 할당을 하든 생성자를 통해서 할당이 되어야 한다.)
+
+<b>OrderServiceImpl클래스</b>의 코드를 다음과 같이 수정하는 것이다.
+
+```java
+package hello.core.order;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.member.Member;
+import hello.core.member.MemberRepository;
+
+public class OrderServiceImpl implements OrderService {
+
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;
+
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+    }
+
+    @Override
+    public Order createOrder(Long memberId, String itemName, int itemPrice) {
+        Member member = memberRepository.findById(memberId);
+        int discountPrice = discountPolicy.discount(member, itemPrice);
+
+        return new Order(memberId, itemName, itemPrice, discountPrice);
+    }
+}
+```
+
+두 개를 다 받아야 하므로, AppConfig클래스에서 다음과 같이 두 개의 필드를 넣는 것이다.
+
+```java
+return new OrderServiceImpl(new MemoryMemberRepository(), new FixDiscountPolicy());
+```
+
+이제 AppConfig를 통해서 누군가 orderService를 조회하면 얘는 OrderServiceImpl이 반환되는데, 거기에 MemoryMemberRepository와 FixDiscountPolicy가 들어간다. 그러면 OrderServiceImpl에서 생성자를 통해서 MemoryMemberRepository와 FixDiscountPolicy가 넘어가서 값이 할당된다.
+
+OrderServiceImpl을 보면 DIP를 철저하게 지키고 있다. 인터페이스에만 의존하고 있고, 구체적인 클래스에 대해서 전혀 모르는 것이다. 누군가가 MemoryMemberRepository를 넣어줄지, DbMemberRepository를 넣어줄지, JdbcMemberRepository를 넣어줄지 모르는 것이다. DiscountPolicy가 OrderServiceImpl의 입장에서는 FixDiscountPolicy가 들어올지, RateDiscountPolicy가 들어올지 전혀 모르는 것이다. 얘는 마치 대본 보고 자기 공연하듯이 이 로직만 실행하면 되는 것이다.
