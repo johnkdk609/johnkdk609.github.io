@@ -499,3 +499,64 @@ return new OrderServiceImpl(new MemoryMemberRepository(), new FixDiscountPolicy(
 이제 AppConfig를 통해서 누군가 orderService를 조회하면 얘는 OrderServiceImpl이 반환되는데, 거기에 MemoryMemberRepository와 FixDiscountPolicy가 들어간다. 그러면 OrderServiceImpl에서 생성자를 통해서 MemoryMemberRepository와 FixDiscountPolicy가 넘어가서 값이 할당된다.
 
 OrderServiceImpl을 보면 DIP를 철저하게 지키고 있다. 인터페이스에만 의존하고 있고, 구체적인 클래스에 대해서 전혀 모르는 것이다. 누군가가 MemoryMemberRepository를 넣어줄지, DbMemberRepository를 넣어줄지, JdbcMemberRepository를 넣어줄지 모르는 것이다. DiscountPolicy가 OrderServiceImpl의 입장에서는 FixDiscountPolicy가 들어올지, RateDiscountPolicy가 들어올지 전혀 모르는 것이다. 얘는 마치 대본 보고 자기 공연하듯이 이 로직만 실행하면 되는 것이다.
+
+<br>
+
+AppConfig는 애플리케이션의 실제 동작에 필요한 <b>구현 객체를 생성</b>한다.
+
+* MemberServiceImpl
+* MemoryMemberRepository
+* OrderServiceImpl
+* FixDiscountPolicy
+
+AppConfig는 생성한 객체 인스턴스의 참조(레퍼런스)를 <b>생성자를 통해서 주입(연결)</b>해준다.
+
+* MemberServiceImpl → MemoryMemberRepository
+* OrderServiceImpl → MemoryMemberRepository, FixDiscountPolicy
+
+가령, MemberServiceImpl의 경우, AppConfig에서 다음과 같이 ```new MemoryMemberRepository```를 해서 객체를 생성하고 이것에 대한 참조값을 MemberServiceImpl에 넣어주는 것이다.
+
+<img width="589" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/9bebf0a1-d0d5-42fd-b2f5-079edd0c8218">
+
+그래서 MemberServiceImpl에는 MemoryMemberRepository가 들어가고, OrderServiceImpl에는 MemoryMemberRepository와 FixDiscountPolicy 두 가지가 파라미터로 들어가는데, 이것을 '생성자 주입'이라고 한다.
+
+(참고: 각 클래스에 생성자가 없으면 컴파일 오류가 발생한다.)
+
+<br>
+
+결과적으로, 설계 변경으로 MemberServiceImpl은 MemoryMemberRepository를 의존하지 않는다. DIP를 지키고 있는 것이다. 단지 MemberRepository인터페이스만 의존한다.
+
+MemberServiceImpl 입장에서 생성자를 통해 어떤 구현 객체가 들어올지(주입될지)는 알 수 없다. 다형성에 의해서 무언가 들어오는 것이다.
+
+MemberServiceImpl의 생성자를 통해서 어떤 구현 객체를 주입할지는 오직 외부(AppConfig)에서 결정된다. (예전에는 MemberServiceImpl 안에서 결정되었었다.)
+
+MemberServiceImpl은 이제부터 <b>의존관계에 대한 고민은 외부</b>에 맡기고 <b>실행에만 집중하면 된다.
+
+<br>
+
+이제 클래스 다이어그램을 보겠다.
+
+<img width="905" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/832a1d8c-dd7b-4c9a-b88c-4d5934e0b780">
+
+먼저 MemberService인터페이스를 구현하는 것이 MemberServiceImpl이다. 그리고 이 MemberServiceImpl은 MemberRepository인터페이스를 의존한다. 여기까지는 이전 그림과 똑같다. 그런데 차이가 나는 것이 AppConfig가 등장한다. AppConfig가 MemberServiceImpl이라는 객체를 생성한다. 또, AppConfig가 무엇을 생성하냐면, 원래 MemberServiceImpl이 생성했던 MemoryMemberRepository를 AppConfig가 직접 생성한다. 그렇게 해서 객체의 생성과 연결을 AppConfig가 담당하는 것이다.
+
+* 객체의 생성과 연결은 AppConfig가 담당한다.
+* <b>DIP 완성</b>: MemberServiceImpl은 MemberRepository인 추상에만 의존하면 된다. 이제 구체 클래스를 몰라도 된다.
+* <b>관심사의 분리</b>: 객체를 생성하고 연결하는 역할과 실행하는 역할이 명확히 분리되었다.
+
+<br>
+
+이것을 조금 더 풀어서 설명해보겠다. 다음은 회원 객체 인스턴스 다이어그램이다.
+
+<img width="972" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/ac3123db-7c15-4bbe-a61f-4ab9f2eb5b3e">
+
+appConfig가 memoryMemberRepository객체를 생성했다. 
+
+<img width="614" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/6567eaee-cab0-431a-b9a6-7a4310f480ba">
+
+MemberService 객체를 만들 때 MemoryMemberRepository를 생성하는 것이다.
+
+그 다음에 memberServiceImpl을 생성할 때, memoryMemberRepository의 참조값 ```x001```을 생성자에 같이 넘긴다. 그래서 memberServiceImpl은 생성한 memoryMemberRepository에 대한 값을 주입받게 되는 것이다.
+
+* appConfig객체는 memoryMemberRepository객체를 생성하고 그 참조값을 memberServiceImpl을 생성하면서 생성자로 전달한다.
+* 클라이언트인 memberServiceImpl 입장에서 보면 의존관계를 마치 외부에서 주입해주는 것 같다고 해서 <b>DI(Dependency Injection)</b>, 우리 말로 <b>의존관계 주입 또는 의존성 주입</b>이라고 한다.
