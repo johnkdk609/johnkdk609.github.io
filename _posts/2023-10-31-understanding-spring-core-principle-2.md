@@ -560,3 +560,122 @@ MemberService 객체를 만들 때 MemoryMemberRepository를 생성하는 것이
 
 * appConfig객체는 memoryMemberRepository객체를 생성하고 그 참조값을 memberServiceImpl을 생성하면서 생성자로 전달한다.
 * 클라이언트인 memberServiceImpl 입장에서 보면 의존관계를 마치 외부에서 주입해주는 것 같다고 해서 <b>DI(Dependency Injection)</b>, 우리 말로 <b>의존관계 주입 또는 의존성 주입</b>이라고 한다.
+
+<br>
+
+이제 OrderServiceImpl에 대해 알아보겠다.
+
+설계 변경으로 OrderServiceImpl은 이제 더 이상 FixDiscountPolicy를 의존하지 않는다. 순수한 인터페이스에만 의존하고, <u>DIP를 만족</u>하는 것이다. 단지 DiscountPolicy인터페이스에만 의존한다. 
+
+OrderServiceImpl 입장에서 생성자를 통해 어떤 구현 객체가 들어올지(주입될지)는 알 수 없다. 마치 배우가 상대 배우가 누가 캐스팅될지 알 수 없는 것이다.
+
+OrderServiceImpl의 생성자를 통해서 어떤 구현 객체를 주입할지는 오직 외부(AppConfig)에서 결정한다. OrderServiceImpl은 이제 실행에만 집중하면 된다. 
+
+결과적으로 OrderServiceImpl에는 MemoryMemberRepository, FixDiscountPolicy 객체의 의존관계가 주입된다.
+
+<br>
+
+이제 한 번 실행해보겠다. 이전에 만들었던 MemberApp을 보면 다음과 같이 코드에 빨간줄이 나 있는 것을 볼 수 있다.
+
+<img width="659" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/293cfe84-3ef1-4442-8bc3-bec5bb4f9510">
+
+MemberServiceImpl에 마우스를 갖다대고 ```Alt```를 누르고 들어간 다음, MemberServiceImpl에서 '4 related problems'를 클릭하면 다음과 같이 어떤 문제들이 있는지 콘솔에 나타난다. (IntelliJ의 기능이다.)
+
+<img width="1686" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2a2d7213-801a-4360-9455-22b3c25541fd">
+
+기존에는 MemberApp에서 직접 MemberService 객체도 생성하고 했는데, 이제 그게 아니라 AppConfig를 이용해서 애플리케이션을 개발해볼 것이다.
+
+수정한 MemberApp클래스의 코드는 다음과 같다.
+
+```java
+package hello.core;
+
+import hello.core.member.Grade;
+import hello.core.member.Member;
+import hello.core.member.MemberService;
+
+public class MemberApp {
+
+    public static void main(String[] args) {
+        AppConfig appConfig = new AppConfig();
+        MemberService memberService = appConfig.memberService();
+//        MemberService memberService = new MemberServiceImpl();
+        Member member = new Member(1L, "memberA", Grade.VIP);
+        memberService.join(member);
+
+        Member findMember = memberService.findMember(1L);
+        System.out.println("new member = " + member.getName());
+        System.out.println("find Member = " + findMember.getName());
+    }
+}
+```
+
+AppConfig를 무조건 만들어야 한다. 그리고 ```appConfig.memberService();```가 필요하다. 기존에는 MemberServiceImpl을 직접 메인 메서드에서 생성해줬다. 그러면 MemberServiceImpl에서 또 MemoryMemberRepository를 생성했다. 마치 순차적으로 돌듯이. 그런데 이것은 AppConfig에서 다 결정한다. 이제 AppConfig에서 MemberService 달라고 하면 memberService인터페이스를 주고, 이 memberServiceImpl이 들어가 있는 이 memberService인터페이스를 받는다.
+
+```appConfg.memberService();```에서 memberService 부분을 타고 들어가보면, 다음과 같이 new MemberServiceImpl객체를 생성하면서 '나는 MemberServiceImpl인데 나는 MemoryMemberRepository를 쓸 거야'라는 것을 딱 해서 주입해준다.
+
+<img width="565" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/bfd21486-379f-4f39-be63-bb171f720543">
+
+<br>
+
+이제 MemberApp을 실행해보면, 다음과 같이 에러가 발생한다.
+
+<img width="1432" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f775796c-9d72-418d-9ea8-05d70f05b479">
+
+OrderApp 쪽에서 컴파일 오류가 발생했는데, 이럴 때에는 잠시 null로 설정해두면 된다.
+
+<img width="831" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/658586f1-b109-4a4f-82a7-f3d7e4bc4dc2">
+
+이제 다시 MemberApp을 실행하면 다음과 같이 성공적으로 된다.
+
+<img width="791" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/974ec3e5-e270-4918-92de-0a046fbfb19e">
+
+<br>
+
+이번에는 OrderApp으로 넘어가서, 얘도 AppConfig를 쓰도록 바꾼다. 수정한 <b>OrderApp클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core;
+
+import hello.core.member.Grade;
+import hello.core.member.Member;
+import hello.core.member.MemberService;
+import hello.core.order.Order;
+import hello.core.order.OrderService;
+
+public class OrderApp {
+
+    public static void main(String[] args) {
+
+        AppConfig appConfig = new AppConfig();
+        MemberService memberService = appConfig.memberService();
+        OrderService orderService = appConfig.orderService();
+
+//        MemberService memberService = new MemberServiceImpl();
+//        OrderService orderService = new OrderServiceImpl();
+
+        Long memberId = 1L;
+        Member member = new Member(memberId, "memberA", Grade.VIP);
+        memberService.join(member);
+
+        Order order = orderService.createOrder(memberId, "itemA", 10000);
+
+        System.out.println("order = " + order);
+        System.out.println("order.calculatePrice = " + order.calculatePrice());
+    }
+}
+```
+
+appConfig에서 memberService가 필요하면 꺼내고, appConfig에서 orderService가 필요하면 꺼내는 것이다. 
+
+memberService는 이미 봤으니, orderService를 타고 들어가면 다음과 같다.
+
+<img width="743" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/606084bd-2b54-427d-8967-dd56eb766b3a">
+
+OrderServiceImpl을 반환하는데, 생성자로 MemoryMemberRepository와 FixDiscountPolicy 두 개가 있는 것이다. 그렇게 해서 OrderServiceImpl이 MemoryMemberRepository와 FixDiscountPolicy객체를 참조하도록 그림을 완성시키고, 완성된 OrderServiceImpl객체를 반환하는 것이다.
+
+OrderApp을 실행해보면, 다음과 같이 성공적으로 된다.
+
+<img width="860" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/ca5304eb-8148-4e25-b39b-5173852d79ee">
+
+결과를 보면 똑같다. 이제 OrderApp도 이제 더 이상 구체 클래스에 의존할 필요가 없다. 인터페이스에만 의존하고 있다.
