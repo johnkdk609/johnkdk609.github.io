@@ -679,3 +679,116 @@ OrderApp을 실행해보면, 다음과 같이 성공적으로 된다.
 <img width="860" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/ca5304eb-8148-4e25-b39b-5173852d79ee">
 
 결과를 보면 똑같다. 이제 OrderApp도 이제 더 이상 구체 클래스에 의존할 필요가 없다. 인터페이스에만 의존하고 있다.
+
+<br>
+
+그리고, 테스트코드의 오류도 수정해줘야 한다.
+
+먼저, Member부터 고쳐보겠다. MemberServiceTest클래스에서 생성자를 넣어줘야 한다. 이것도 AppConfig를 사용하도록 바꿔줘야 한다.
+
+다음과 같이 수정한다.
+
+```java
+package hello.core.member;
+
+import hello.core.AppConfig;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class MemberServiceTest {
+
+    MemberService memberService;
+
+    @BeforeEach
+    public void beforeEach() {
+        AppConfig appConfig = new AppConfig();
+        memberService = appConfig.memberService();
+    }
+
+    @Test
+    void join() {
+        // given
+        Member member = new Member(1L, "memberA", Grade.VIP);
+
+        // when
+        memberService.join(member);
+        Member findMember = memberService.findMember(1L);
+
+        // then
+        Assertions.assertThat(member).isEqualTo(findMember);
+
+    }
+}
+```
+
+여기서 ```@BeforeEach```는 테스트를 실행하기 전에 무조건 실행시키는 것이다. 여기서 appConfig를 만들고, ```memberService = appConfig.memberService();```를 통해 memberService를 할당해준다. 테스트가 2개 있으면 두 번 돈다.
+
+<br>
+
+또, OrderServiceTest클래스도 수정해준다.
+
+OrderServiceTest는 다음과 같이 수정한다.
+
+```java
+package hello.core.order;
+
+import hello.core.AppConfig;
+import hello.core.member.Grade;
+import hello.core.member.Member;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class OrderServiceTest {
+
+    MemberService memberService;
+    OrderService orderService;
+
+    @BeforeEach
+    public void beforeEach() {
+        AppConfig appConfig = new AppConfig();
+        memberService = appConfig.memberService();
+        orderService = appConfig.orderService();
+    }
+
+    @Test
+    void createOrder() {
+        Long memberId = 1L;
+        Member member = new Member(memberId, "memberA", Grade.VIP);
+        memberService.join(member);
+
+        Order order = orderService.createOrder(memberId, "itemA", 10000);
+        Assertions.assertThat(order.getDiscountPrice()).isEqualTo(1000);
+    }
+}
+```
+
+(```cmd + E + Enter``` 단축키를 통해 직전에 보던 클래스로 이동할 수 있다.)
+
+마찬가지로 OrderServiceTest에도 ```@BeforeEach```를 추가한다.
+
+<br>
+
+이제 MemberServiceTest에서 테스트를 다 돌려보면, 성공적으로 돌아간다.
+
+<img width="1152" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/78d509eb-5ef0-4466-a242-959ea6e8be12">
+
+<br>
+
+이제 DIP를 지키게 된 것이다. 
+
+### 정리
+
+* AppConfig를 통해서 관심사를 확실하게 분리했다.
+* 배역, 배우를 생각해보자.
+* AppConfig는 공연 기획자다.
+* AppConfig는 구체 클래스를 선택한다. 배역에 맞는 담당 배우를 선택한다. 애플리케이션이 어떻게 동작해야 할지 전체 구성(Configuration)을 책임진다.
+* 이제 각 배우들은 담당 기능을 실행하는 책임만 지면 된다.
+* ```OrderServiceImpl```은 기능을 실행하는 책임만 지면 된다.
+
+OrderServiceImpl의 경우 인터페이스만 보고 개발을 하면 된다. 구체 클래스에 대해 고민할 필요가 전혀 없다. 실행만 책임지면 되는 것이다.
+
+기존에 너무 많은 역할과 책임이 MemberServiceImpl과 OrderServiceImpl에 있었다. 이것들을 역할과 책임을 적절하게 잘 분리했다. (어찌 보면 단일 책임 원칙 SRP를 잘 지킨 것이라 볼 수 있겠다.)
