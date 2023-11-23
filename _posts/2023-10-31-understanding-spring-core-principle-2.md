@@ -792,3 +792,90 @@ public class OrderServiceTest {
 OrderServiceImpl의 경우 인터페이스만 보고 개발을 하면 된다. 구체 클래스에 대해 고민할 필요가 전혀 없다. 실행만 책임지면 되는 것이다.
 
 기존에 너무 많은 역할과 책임이 MemberServiceImpl과 OrderServiceImpl에 있었다. 이것들을 역할과 책임을 적절하게 잘 분리했다. (어찌 보면 단일 책임 원칙 SRP를 잘 지킨 것이라 볼 수 있겠다.)
+
+
+## 4. AppConfig 리팩터링
+
+이번에는 AppConfig를 리팩터링 해볼 것이다.
+
+현재 AppConfig를 보면 중복도 좀 있고, 역할에 따른 구현이 잘 안 보인다.
+
+기대하는 그림은 다음과 같다.
+
+<img width="768" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/abe7c816-6738-49f9-b5ab-1d5baff1e555">
+
+위 그림에서, 클라이언트가 주문할 때 생각해 보면, 주문 서비스 역할이 있었고, 주문 서비스 역할에는 회원 저장소 역할이 있고 할인 정책 역할이 있다. 역할과 구현을 분리해서 한 그림에 보고 싶은데, 구성 정보에는 이게 한 눈에 딱 보여야 한다. 역할이 있고 그 역할에 대한 구현을 어떻게 한다는 것이 한 눈에 보여야 한다.
+
+그런데 지금 AppConfig에는 그런 것이 전혀 보이지 않는다.
+
+이 역할들이 드러나게 하는 것이 굉장히 중요하다.
+
+<br>
+
+현재 AppConfig클래스 코드는 다음과 같다.
+
+```java
+package hello.core;
+
+import hello.core.discount.FixDiscountPolicy;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import hello.core.member.MemoryMemberRepository;
+import hello.core.order.OrderService;
+import hello.core.order.OrderServiceImpl;
+
+public class AppConfig {
+
+    public MemberService memberService() {
+        return new MemberServiceImpl(new MemoryMemberRepository());
+    }
+
+    public OrderService orderService() {
+        return new OrderServiceImpl(new MemoryMemberRepository(), new FixDiscountPolicy());
+    }
+}
+```
+
+여기서, memberService에서 ```new MemoryMemberRepository()```를 음영 설정하고, ```cmd + option + M``` 단축키를 누른 후 Name에 'memberRepository'로 설정한다. 리턴 타입은 구체 클래스(MemoryMemberRepository)를 선택하면 안 되고, 인터페이스(MemberRepository)를 선택한다. 
+
+<img width="789" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/8d679273-6ace-45c2-b67c-5c97215a9826">
+
+그러면 위와 같이 창이 뜬다. Process Duplicates 즉 중복이 있었던 것이다.
+
+지금 memberService가 있고, MemberRepository 인터페이스를 반환해주는 역할, OrderService의 역할까지 드러난다. 그런데 한 가지 빠진 것이 있는데, DiscountPolicy이다. 이것은 리팩터링 안 하고 그냥 입력해본다.
+
+수정된 코드는 다음과 같다.
+
+```java
+package hello.core;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.discount.FixDiscountPolicy;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import hello.core.member.MemoryMemberRepository;
+import hello.core.order.OrderService;
+import hello.core.order.OrderServiceImpl;
+
+public class AppConfig {
+
+    public MemberService memberService() {
+
+        return new MemberServiceImpl(memberRepository());
+    }
+
+    private MemoryMemberRepository memberRepository() {
+        return new MemoryMemberRepository();
+    }
+
+    public OrderService orderService() {
+        return new OrderServiceImpl(memberRepository(), new FixDiscountPolicy());
+    }
+
+    public DiscountPolicy discountPolicy() {
+        return new FixDiscountPolicy();
+    }
+}
+```
+
+위 코드만 봐도, 메서드명을 통해 역할이 잘 드러난다. memberService에 대한 구현을 내 애플리케이션에서는 MemberServiceImpl을 쓸 것이고, memberRepository에 대한 것은 MemoryMemberRepository를 쓸 것이라는 것이 잘 드러난다. 나중에 만약 jdbcMemoryMemberRepository로 바뀐다고 했을 때, 이 코드만 바꾸면 되는 것이다.
