@@ -869,7 +869,7 @@ public class AppConfig {
     }
 
     public OrderService orderService() {
-        return new OrderServiceImpl(memberRepository(), new FixDiscountPolicy());
+        return new OrderServiceImpl(memberRepository(), discountPolicy());
     }
 
     public DiscountPolicy discountPolicy() {
@@ -878,4 +878,12 @@ public class AppConfig {
 }
 ```
 
-위 코드만 봐도, 메서드명을 통해 역할이 잘 드러난다. memberService에 대한 구현을 내 애플리케이션에서는 MemberServiceImpl을 쓸 것이고, memberRepository에 대한 것은 MemoryMemberRepository를 쓸 것이라는 것이 잘 드러난다. 나중에 만약 jdbcMemoryMemberRepository로 바뀐다고 했을 때, 이 코드만 바꾸면 되는 것이다.
+위 코드만 봐도, 메서드명을 통해 역할이 잘 드러난다. memberService에 대한 구현을 내 애플리케이션에서는 MemberServiceImpl을 쓸 것이고, memberRepository에 대한 것은 MemoryMemberRepository를 쓸 것이라는 것이 잘 드러난다. 나중에 만약 jdbcMemoryMemberRepository로 바뀐다고 했을 때, 이 코드만 바꾸면 되는 것이다. 그리고, orderService도 보면 orderService에 대한 구체적인 것은 현재는 memberRepository 쓰는 것 가져오고, 애플리케이션에서 결정한 discountPolicy 쓰는 것 가져올 거야 하면 그 아래에 discountPolicy는 Fix이니 Fix를 사용하는 것이다. memberRepository는 MemoryMemberRepository이니까 MemoryMemberRepository 객체가 들어오는 것이다.
+
+그렇게 해서, 이 설계에 대한 그림이 구성 정보에 그대로 드러난다. 역할들이 나오고, 그 역할들에 대한 구현이 어떻게 되는지가 한 눈에 들어오는 것이다.
+
+정리하자면, ```new MemoryMemberRepository()``` 부분이 중복 제거되었다. 이제 ```MemoryMemberRepository```를 다른 구현체로 변경할 때 한 부분만 변경하면 된다.
+
+또, ```AppConfig```를 보면 역할과 구현 클래스가 한 눈에 들어온다. 메서드명과 리턴 타입을 보면 역할이 무엇인지 보인다. 그리고 이것에 대한 구현 클래스가 보인다. 애플리케이션 전체 구성이 어떻게 되어있는지 빠르게 파악할 수 있다는 장점이 있다.
+
+이렇게 설계하는 것이 좋다. 역할을 세우고, 구현이 그 안에 들어가도록 하는 것이다. 그리고 중복도 제거한 것이다.
