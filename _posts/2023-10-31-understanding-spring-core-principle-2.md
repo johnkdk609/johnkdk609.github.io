@@ -887,3 +887,70 @@ public class AppConfig {
 또, ```AppConfig```를 보면 역할과 구현 클래스가 한 눈에 들어온다. 메서드명과 리턴 타입을 보면 역할이 무엇인지 보인다. 그리고 이것에 대한 구현 클래스가 보인다. 애플리케이션 전체 구성이 어떻게 되어있는지 빠르게 파악할 수 있다는 장점이 있다.
 
 이렇게 설계하는 것이 좋다. 역할을 세우고, 구현이 그 안에 들어가도록 하는 것이다. 그리고 중복도 제거한 것이다.
+
+
+## 5. 새로운 구조와 할인 정책 적용
+
+이제 정액 할인 정책을 정률 할인 정책으로 변경해볼 것이다.
+
+<b>FixDiscountPolicy → RateDiscountPolicy</b>
+
+기존에 이것을 바꿨을 때에는 클라이언트 코드에 영향을 미쳤었다. 하지만, 현재 구조가 AppConfig가 등장했으므로, AppConfig만 변경하면 된다.
+
+<br>
+
+AppConfig의 등장으로 애플리케이션이 크게 <b>사용 영역</b>과 객체를 생성하고 구성(Configuration)하는 <b>구성 영역</b>으로 분리되었다.
+
+<img width="747" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/e8abbe7a-7712-4bfe-b43c-686cb93d0b7e">
+
+완전히 나눠진 것이다. 실제 배우들이 배우의 역할을 하는 영역과, 공연을 기획하고 담당자를 섭외하는 역할이 나눠진 것이다.
+
+만약 할인 정책을 변경하게 되면, 다음과 같이 구성 영역인 AppConfig의 코드만 고치면 된다.
+
+<img width="742" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/76e88ceb-824d-4637-ad04-bc1a71ad9d70">
+
+사용 영역의 코드는 전혀 손댈 필요가 없다.
+
+<br>
+
+AppConfig클래스의 코드를 다음과 같이 수정하면 된다.
+
+<img width="765" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/33ff3326-102f-4576-8fcb-7e0abce6629a">
+
+<br>
+
+이제 테스트를 전부 돌리면, 다음과 같이 잘 돌아간다.
+
+<img width="1143" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/46094606-b2b9-45bb-a648-b98ab18c4aae">
+
+<br>
+
+그리고, OrderApp을 실행시켜보면, 다음과 같이 잘 돌아간다.
+
+<img width="827" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5ffd4f50-c85d-4def-969e-9524215f0896">
+
+여기서 itemPrice를 20000으로 변경하면 다음과 같이 나타난다.
+
+<img width="802" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1d873e1c-5c4c-42fb-944c-1f9afd82e0a3">
+
+RateDiscountPolicy가 적용되었기 때문에, 20000원일 경우 10%인 2000원이 할인되는 것이다. 만약 FixDiscountPolicy가 적용되었을 경우, itemPrice가 20000원이더라도 할인되는 가격은 2000원이 아니라 1000원이다.
+
+<img width="808" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/4602e78e-2c66-4d82-9dbb-d13952b04f71">
+
+<br>
+
+정리해보면, 우선 AppConfig에서 할인 정책 역할을 담당하는 구현을 'FixDiscountPolicy' 객체로 변경했다.
+
+이제 할인 정책을 변경해도 애플리케이션의 구성 역할을 담당하는 AppConfig만 변경하면 된다. 클라이언트 코드인 OrderServiceImpl를 포함해서 <b>'사용 영역'</b>인 어떤 코드도 변경할 필요가 없다.
+
+<b>'구성 영역'</b>은 당연히 변경된다. 구성 역할을 담당하는 AppConfig를 애플리케이션이라는 공연의 기획자로 생각하자. 공연 기획자는 공연 참여자인 구현 객체들을 모두 알아야 한다.
+
+OrderServiceImpl은 아무것도 변경할 필요가 없다는 것이 중요한 부분이다.
+
+<br>
+
+<img width="825" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/26417078-66f6-4411-95de-68d44ef075a2">
+
+OrderServiceImpl을 보면, 우선 추상화에 의존하고 있으니 DIP를 지키고 있다. (구체화는 전혀 모르고 있다.) 그리고 OCP도 지키고 있다. FixDiscountPolicy를 RateDiscountPolicy로 변경해도, 클라이언트 코드는 전혀 손대지 않고 있는 것이다.
+
+이렇게 해서 OCP과 DIP를 다 만족하는 코드를 만든 것이다.
