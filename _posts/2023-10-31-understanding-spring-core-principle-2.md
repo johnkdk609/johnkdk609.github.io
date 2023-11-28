@@ -1044,3 +1044,85 @@ AppConfig가 의존관계를 FixDiscountPolicy에서 RateDiscountPolicy로 변�
 <br>
 
 이렇게 해서 좋은 객체 지향 원칙 5가지에 대해 정리해 보았다.
+
+
+## 8. IoC, DI, 그리고 컨테이너
+
+이번에는 IoC, DI, 그리고 컨테이너라는 용어에 대해 알아볼 것이다. 스프링을 공부하다 보면 '제어의 역전(IoC)'이라는 단어를 듣게 된다. 이것은 스프링에만 국한된 것은 아니다.
+
+### 제어의 역전 IoC(Inversion of Control)
+
+제어의 역전이란, 내가 호출하는 것이 아니라 프레임워크가 코드를 대신 호출해주는 것이다. 말 그대로 제어권이 뒤바뀐다고 해서 '제어의 역전'이라고 한다.
+
+기존 프로그램은 클라이언트 구현 객체가 스스로 필요한 서버 구현 객체를 생성하고, 연결하고, 실행한다. 한마디로 구현 객체가 프로그램의 제어 흐름을 스스로 조종했다. 개발자 입장에서는 자연스러운 흐름이다.
+
+반면에 AppConfig가 등장한 이후에 구현 객체는 자신의 로직을 실행하는 역할만 담당한다. 프로그램의 제어 흐름은 이제 AppConfig가 가져간다. 예를 들어서 OrderServiceImpl은 필요한 인터페이스들을 호출하지만 어떤 구현 객체들이 실행될지 모른다.
+
+<img width="821" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/b0a03156-c1dc-4807-b0ba-bfc83c84e5f6">
+
+가령, 위 코드를 보면 memberRepository에 대해서 흐름 자체가 제어권이 없는 것이다. 어떤 것이 호출될지 OrderServiceImpl 입장에서는 모르는 것이다.
+
+프로그램에 대한 제어 흐름에 대한 권한은 모두 AppConfig가 가지고 있다. 심지어 OrderServiceImpl도 AppConfig가 생성한다. 
+
+<img width="645" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/58421b56-de25-4a1a-8f13-ef4f5cc5301b">
+
+위 그림을 보면 AppConfig가 MemberServiceImpl, OrderServiceImpl을 쓸 것이라고 결정하는 것을 알 수 있다.
+
+그리고 AppConfig는 OrderServiceImpl이 아닌 OrderService 인터페이스의 다른 구현 객체를 생성하고 실행할 수도 있다. 그런 사실도 모른 채 OrderServiceImpl은 묵묵히 자신의 로직을 실행할 뿐이다.
+
+이렇듯 <u>프로그램의 제어 흐름을 직접 제어하는 것이 아니라 외부에서 관리하는 것을 제어의 역전(IoC)이라 한다.</u>
+
+
+### 프레임워크 vs 라이브러리
+
+프레임워크가 내가 작성한 코드를 제어하고, 대신 실행하면 그것은 프레임워크가 맞다. (JUnit)
+
+<img width="624" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/a43b16af-f434-4b0d-8bbc-4d3e1282835e">
+
+가령, 위와 같이 MemberServiceTest를 보면, join메서드를 테스트 했다. 나는 이 로직만 개발한 것이다. 이것을 실행하고, 제어권을 가져가는 것은 JUnit이라는 테스트 프레임워크이다. 그냥 실행하는 것도 아니고 자신만의 라이프 사이클이 있다. ```@BeforeEach```를 먼저 실행하고, 그 다음에 ```@Test```를 실행하는 것의 라이프 사이클 속에서 내 것만 callback 식으로 불러지는 것이다. 이렇게 내가 제어권을 가지고 있는 것이 아니고, 나는 그 프레임워크 안에서 필요한 부분만 개발하면 프레임워크가 알아서 적절한 타이밍에 호출이 되는 것이다. 이렇게 호출하는 제어권을 넘기는 것을 '제어의 역전'이라고 한다.
+
+반면에 내가 작성한 코드가 직접 제어의 흐름을 담당한다면 그것은 프레임워크가 아니라 라이브러리이다.
+
+예를 들어서 자바 객체를 XML로 바꾸거나 JSON으로 바꾸는 것이 있다면, 내가 그 라이브러리를 불러다가 직접 호출한다. 이런 것은 라이브러리로 보는 것이다.
+
+
+### 의존관계 주입 DI(Dependency Injection)
+
+OrderServiceImpl은 DiscountPolicy 인터페이스에 의존한다.
+
+<img width="749" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2d4cf5e9-0455-4b6d-b330-17f13ae5a801">
+
+위의 클래스 다이어그램을 보면, OrderServiceImpl은 DiscountPolicy 인터페이스에 의존하도록 코드를 바꿨다. 예전에는 인터페이스에 의존하는 것뿐만 아니라, FixDiscountPolicy와 같은 구체화에도 의존했다.
+
+그래서 실제 어떤 구현 객체가 사용될지는 이제는 모른다.
+
+위 클래스 다이어그램을 보면, OrderServiceImpl 입장에서는 DiscountPolicy 인터페이스만 알고 있는 것이다. 실제 FixDiscountPolicy가 들어올지, RateDiscountPolicy가 들어올지 전혀 모른다.
+
+의존관계는 <b>정적인 클래스 의존 관계와, 실행 시점에 결정되는 동적인 객체(인스턴스) 의존 관계</b>들을 분리해서 생각해야 한다.
+
+
+### 정적인 클래스 의존관계
+
+클래스가 사용하는 import 코드만 보고 의존관계를 쉽게 판단할 수 있다. 
+
+<img width="809" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/8775c2af-bfe3-4e4a-9308-15c5aaf83d4b">
+
+가령, OrderServiceImpl을 보면 사용하는 것이 MemberRepository, DiscountPolicy, Member 등등을 사용한다. 이것을 정적인 의존관계라고 한다.
+
+<img width="1346" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5bd022c0-8ff8-4789-b303-45d49ccd229b">
+
+정적인 의존관계는 애플리케이션을 실행하지 않아도 분석할 수 있다. 클래스 다이어그램을 보자.
+
+<img width="749" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2d4cf5e9-0455-4b6d-b330-17f13ae5a801">
+
+우리가 OrderServiceImpl라는 코드를 보면, implements 해서 상위 인터페이스에 OrderService가 있음을 알 수 있다. 그리고 OrderServiceImpl은 MemberRepository인터페이스와 DiscountPolicy를 참조하고 있다.
+
+그리고 FixDiscountPolicy는 DiscountPolicy에 의존하고 있다. DiscountPolicy는 아무 곳에도 의존하고 있지 않다. 오직 Member만 사용하고 있다.
+
+<img width="378" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/90c13b78-f437-48e4-aa6b-1d8aa62ae96d">
+
+상속이든, 구현이든 화살표 방향으로만 의존하고 있다는 것이다. FixDiscountPolicy는 DiscountPolicy를 의존하고 있다. 그런데 DiscountPolicy는 아무 것에도 의존하고 있지 않다. (Member 파라미터로 넘겨야 하니깐 Member 정도만 사용하고 있다.)
+
+이렇게 정적인 클래스 의존관계와, 실행 시점에 결정되는 동적인 의존관계를 명확히 구분할 수 있어야 한다.
+
+OrderServiceImpl은 MemberRepository, DiscountPolicy에 의존한다는 것을 알 수 있다. 그런데 이러한 클래스 의존관계만으로는 실제 어떤 객체가 OrderServiceImpl에 주입될지 알 수 없다.
