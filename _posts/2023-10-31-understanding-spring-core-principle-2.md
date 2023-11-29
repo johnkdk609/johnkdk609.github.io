@@ -1126,3 +1126,48 @@ OrderServiceImpl은 DiscountPolicy 인터페이스에 의존한다.
 이렇게 정적인 클래스 의존관계와, 실행 시점에 결정되는 동적인 의존관계를 명확히 구분할 수 있어야 한다.
 
 OrderServiceImpl은 MemberRepository, DiscountPolicy에 의존한다는 것을 알 수 있다. 그런데 이러한 클래스 의존관계만으로는 실제 어떤 객체가 OrderServiceImpl에 주입될지 알 수 없다.
+
+<img width="836" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c57a2eac-c3e5-4f04-bd7d-1fb7e3c609e2">
+
+위의 OrderServiceImpl을 보면, 음영 처리 된 부분의 memberRepository에 메모리가 들어올지, JDBC가 들어올지, discountPolicy에 정액 할인이 들어올지 정률 할인이 올지 이 코드만 보고는 분석이 불가능하다. 실제로 실행을 시켜봐야 아는 것이다.
+
+<br>
+
+이것을 <b>동적인 객체 인스턴스 의존 관계</b>라고 한다.
+
+애플리케이션 실행 시점에 실제 생성된 객체 인스턴스의 참조가 연결된 의존 관계이다.
+
+<br>
+
+객체 다이어그램은 다음과 같다.
+
+<img width="759" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/fc69e692-0962-4a1c-a9f0-03dda0cd9884">
+
+클라이언트는 주문 서비스 구현체를 호출한다. AppConfig에서 orderService를 생성할 때 memberRepository에는 MemoryMemberRepository가 들어가고, discountPolicy에는 RateDiscountPolicy가 들어간다.
+
+<img width="628" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/849f2f30-3aa2-489c-af93-ef9c3668d3b2">
+
+객체 다이어그램은 정적인 것이 아니다. 애플리케이션을 실행할 때마다 동적으로 바뀐다.
+
+애플리케이션 <b>실행 시점(런타임)</b>에 외부에서 실제 구현 객체를 생성하고 클라이언트에 전달해서 서버의 실제 의존관계가 연결되는 것을 <b>의존관계 주입</b>이라 한다.
+
+객체 인스턴스를 생성하고 그 참조값을 전달해서 연결된다.
+
+의존관계 주입을 사용하면 클라이언트 코드를 변경하지 않고, 클라이언트가 호출하는 대상의 타입 인스턴스를 변경할 수 있다. 정액 할인 정책을 정률 할인 정책으로 변경할 수 있다는 것이다.
+
+<u>의존관계 주입을 사용하면 정적인 클래스 의존관계를 변경하지 않고, 동적인 객체 인스턴스 의존관계를 쉽게 변경할 수 있다.</u> 동적인 그림만 바꾼다는 것은, 메모리 회원 저장소를 선택할지 JDBC 저장소를 할지, 정액 할인을 할지 정률 할인을 할지 애플리케이션 코드를 손대지 않고 바꿀 수 있다는 것이다.
+
+이게 의존관계 주입의 장점이다.
+
+
+### IoC 컨테이너, DI 컨테이너
+
+IoC를 해주는 컨테이너, Dependency Injection을 해주는 컨테이너라고 보면 된다.
+
+AppConfig처럼 객체를 생성하고 관리하면서 의존관계를 연결해주는 것을 IoC 컨테이너 또는 <b>DI 컨테이너</b>라고 한다.
+
+AppConfig가 의존관계의 역전을 일으킨다고 해서 IoC 컨테이너(DI 컨테이너)라고 한다. (IoC 컨테이너라는 용어는 너무 범용적이라는 의견에 따라 누군가 'DI 컨테이너'라고 이름을 바꿨다.)
+
+AppConfig는 의존관계 주입을 대신 해준다. orderServiceImpl객체를 생성할 때, 생성자인 memberRepository와 discountPolicy에 집어넣어주는 것은 AppConfig이다.
+
+스프링이 DI 컨테이너 역할을 한다. 하지만 스프링만 DI 컨테이너 역할을 하는 것이 아니다. 여러 오픈소스가 굉장히 많다. 이런 AppConfig에 대한 용어가 굉장히 많다. 조립을 한다고 해서 '어셈블러', 그리고 오브젝트를 만든다고 해서 '오브젝트 팩토리' 등으로 불리기도 한다.
