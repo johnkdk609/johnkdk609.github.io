@@ -1171,3 +1171,108 @@ AppConfig가 의존관계의 역전을 일으킨다고 해서 IoC 컨테이너(D
 AppConfig는 의존관계 주입을 대신 해준다. orderServiceImpl객체를 생성할 때, 생성자인 memberRepository와 discountPolicy에 집어넣어주는 것은 AppConfig이다.
 
 스프링이 DI 컨테이너 역할을 한다. 하지만 스프링만 DI 컨테이너 역할을 하는 것이 아니다. 여러 오픈소스가 굉장히 많다. 이런 AppConfig에 대한 용어가 굉장히 많다. 조립을 한다고 해서 '어셈블러', 그리고 오브젝트를 만든다고 해서 '오브젝트 팩토리' 등으로 불리기도 한다.
+
+
+## 9. 스프링으로 전환하기
+
+드디어 스프링을 써볼 것이다. 지금까지는 프로젝트 세팅할 때 제외하고는 스프링을 사용하지 않았다. 순수한 자바 코드만으로 DI를 적용한 것이다.
+
+이제 스프링을 사용해보겠다.
+
+우선 AppConfig를 스프링 기반으로 바꾼다. 수정된 코드는 다음과 같다.
+
+```java
+package hello.core;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.discount.RateDiscountPolicy;
+import hello.core.member.MemberRepository;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import hello.core.member.MemoryMemberRepository;
+import hello.core.order.OrderService;
+import hello.core.order.OrderServiceImpl;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public MemberService memberService() {
+        return new MemberServiceImpl(memberRepository());
+    }
+
+    @Bean
+    public OrderService orderService() {
+        return new OrderServiceImpl(memberRepository(), discountPolicy());
+    }
+
+    @Bean
+    public MemberRepository memberRepository() {
+        return new MemoryMemberRepository();
+    }
+
+    @Bean
+    public DiscountPolicy discountPolicy() {
+//        return new FixDiscountPolicy();
+        return new RateDiscountPolicy();
+    }
+}
+```
+
+```@Configuration``` 어노테이션을 붙여준다. 그리고 ```import org.springframework.context.annotation.Configuration;```를 위에 붙여준다. 그 다음에 스프링 빈 ```@Bean```을 다 붙여준다.
+
+이전까지는 AppConfig는 애플리케이션의 <b>설정 정보(구성 정보)</b>를 담당하는 것이었다. 스프링에서는 이러한 설정 정보에 이러한 ```@Configuration```을 적어주게 되어 있다. 그리고 각 메서드에 ```@Bean```이라고 적어준다. 이렇게 되면 이 메서드들이 다 스프링 컨테이너에 등록이 된다.
+
+이제 실제 스프링을 써보도록 해보겠다.
+
+<br>
+
+MemberApp을 열어서, AppConfig 버전에서 스프링을 사용하는 버전으로 바꿔보겠다.
+
+수정한 MemberApp의 코드는 다음과 같다.
+
+```java
+package hello.core;
+
+import hello.core.member.Grade;
+import hello.core.member.Member;
+import hello.core.member.MemberService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class MemberApp {
+
+    public static void main(String[] args) {
+//        AppConfig appConfig = new AppConfig();
+//        MemberService memberService = appConfig.memberService();
+
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+        MemberService memberService = applicationContext.getBean("memberService", MemberService.class);
+
+        Member member = new Member(1L, "memberA", Grade.VIP);
+        memberService.join(member);
+
+        Member findMember = memberService.findMember(1L);
+        System.out.println("new member = " + member.getName());
+        System.out.println("find Member = " + findMember.getName());
+    }
+}
+```
+
+우선 AppConfig를 사용하는 버전은 주석 처리를 한다. 스프링은 모든 것이 ApplicationContext라는 것으로 시작한다. 이것이 스프링 컨테이너라고 보면 된다. 이게 모든 객체들(```@Bean``` 붙은 것들)을 관리해주는 것이다. 생성을 할 때에는 ```new AnnotationConfigApplicationContext();```를 사용해야 한다. 그리고 그 안에는 파라미터로 ```AppConfig.class```를 넣어주면 된다. 이렇게 하면 AppConfig에 있는 환경 설정 정보를 가지고 스프링이 모든 객체들(```@Bean``` 붙은 것들)을 스프링 컨테이너에다가 넣어서 관리한다.
+
+기존에는 ```appConfig.memberService();```와 같은 방식으로 직접 찾아왔다. 이제는 스프링 컨테이너를 통해서 찾아와야 한다. ```applicationContext.getBean();```을 입력하고, 그 안에 이름을 적어준다. 이름을 memberService로 하고, MemberSerivce.class를 넣는 것이다. 내가 AppConfig에서 memberService를 꺼낼 생각이다. 그러면 기본적으로 이름이 메서드 이름으로 등록이 된다.
+
+![image](https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/ff5e14fb-020e-437e-96b6-deea05bcf288)
+
+그래서 이 이름인 "memberService"를 입력하고, 두 번째는 타입이다. 반환 타입으로 MemberService.class를 입력해 넣는 것이다.
+
+<br>
+
+이제 실행시켜 보겠다.
+
+<img width="1687" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/21278370-08c1-4454-b0bc-1f9adbf52cf3">
+
+보면, 기존과 조금 다른 것이 있다. 무언가 로그가 나왔다. 'Create shared instance of singleton bean ~~~' 으로 로그가 쭉 나오는데, 이게 스프링 빈에 등록이 되는 것이다. 'appConfig' 위의 다섯 줄은 스프링이 내부적으로 필요로 해서 등록을 하는 스프링 빈이다. appConfig도 등록이 된다. memberService, memberRepository, orderService, discountPolicy는 ```@Bean```을 붙여놨던 것이다. key는 이름(ex. "memberService"), value는 객체 인스턴스(ex. ```new MemberServiceImpl(memberRepository());```)로 해서 스프링 컨테이너에 등록이 된다. 그래서 이제 꺼낼 때에는 스프링 컨테이너에 이름, 타입을 주고 꺼내면 된다. 그러면 그대로 돌아가는 것이다. 이전 코드와 똑같다.
