@@ -1276,3 +1276,77 @@ public class MemberApp {
 <img width="1687" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/21278370-08c1-4454-b0bc-1f9adbf52cf3">
 
 보면, 기존과 조금 다른 것이 있다. 무언가 로그가 나왔다. 'Create shared instance of singleton bean ~~~' 으로 로그가 쭉 나오는데, 이게 스프링 빈에 등록이 되는 것이다. 'appConfig' 위의 다섯 줄은 스프링이 내부적으로 필요로 해서 등록을 하는 스프링 빈이다. appConfig도 등록이 된다. memberService, memberRepository, orderService, discountPolicy는 ```@Bean```을 붙여놨던 것이다. key는 이름(ex. "memberService"), value는 객체 인스턴스(ex. ```new MemberServiceImpl(memberRepository());```)로 해서 스프링 컨테이너에 등록이 된다. 그래서 이제 꺼낼 때에는 스프링 컨테이너에 이름, 타입을 주고 꺼내면 된다. 그러면 그대로 돌아가는 것이다. 이전 코드와 똑같다.
+
+<br>
+
+이번에는 OrderApp에서 해보겠다.
+
+수정된 OrderApp 코드는 다음과 같다.
+
+```java
+package hello.core;
+
+import hello.core.member.Grade;
+import hello.core.member.Member;
+import hello.core.member.MemberService;
+import hello.core.order.Order;
+import hello.core.order.OrderService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class OrderApp {
+
+    public static void main(String[] args) {
+
+//        AppConfig appConfig = new AppConfig();
+//        MemberService memberService = appConfig.memberService();
+//        OrderService orderService = appConfig.orderService();
+
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        MemberService memberService = applicationContext.getBean("memberService", MemberService.class);
+        OrderService orderService = applicationContext.getBean("orderService", OrderService.class);
+
+        Long memberId = 1L;
+        Member member = new Member(memberId, "memberA", Grade.VIP);
+        memberService.join(member);
+
+        Order order = orderService.createOrder(memberId, "itemA", 10000);
+
+        System.out.println("order = " + order);
+        System.out.println("order.calculatePrice = " + order.calculatePrice());
+    }
+}
+```
+
+윗부분들을 주석 처리해주고, ```ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);```를 입력한다. 그 다음에는 getBean을 입력해서 필요한 것이 MemberService이니 위와 같이 입력한다. 또, OrderService도 필요하니 위와 같이 입력한다.
+
+이제 밑에 코드는 똑같다. memberService, orderService 그냥 기존에 했던 것이 나오는 것이다. orderService를 꺼내면 AppConfig에서 생성한 ```new OrderServiceImpl()```이 튀어나온다.
+
+이제 실행해보면 다음과 같다.
+
+<img width="1686" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5c20f3b6-a23d-41d8-adaa-8da448d8df60">
+
+결과가 완전히 동일하다. (다만 로그가 조금 더 늘고 이름이 좀 더 긴 것 같다.)
+
+<br>
+
+정리하자면 다음과 같다.
+
+### 스프링 컨테이너
+
+<b>ApplicationContext를 스프링 컨테이너라고 한다.</b> 기존에는 개발자가 AppConfig를 사용해서 직접 객체를 생성하고 DI를 했지만, 이제부터는 스프링 컨테이너를 사용한다.
+
+스프링 컨테이너는 ```@Configuration```이 붙은 AppConfig를 <b>설정(구성) 정보</b>로 사용한다. 여기서 ```@Bean```이라 적힌 메서드를 모두 호출해서 반환된 객체를 스프링 컨테이너에 등록한다. 이렇게 스프링 컨테이너에 등록된 객체를 스프링 빈이라 한다.
+
+스프링 빈은 ```@Bean```이 붙은 메서드의 명을 스프링 빈의 이름으로 사용한다. (memberService, orderService)
+
+이전에는 개발자가 필요한 객체를 AppConfig를 사용해서 직접 조회했지만, 이제부터는 스프링 컨테이너를 통해서 필요한 스프링 빈(객체)를 찾아야 한다. 스프링 빈은 applicationContext.getBean() 메서드를 사용해서 찾을 수 있다.
+
+기존에는 개발자가 직접 자바 코드로 모든 것을 했다면 이제부터는 스프링 컨테이너에 객체를 스프링 빈으로 등록하고, 스프링 컨테이너에서 스프링 빈을 찾아서 사용하도록 변경되었다. 이제부터는 스프링에게 환경 정보를 던져주고, 찾을 때에는 스프링 컨테이너를 통해서 가져오는 것이다. 그러면 스프링이 환경 정보를 가지고 필요한 것들을 읽어와서 스프링 컨테이너에서 다 관리를 하고, 스프링 컨테이너한테 getBean에서 받아올 수 있다. (```@Autowired```도 이와 관련되어 있다.)
+
+<br>
+
+코드가 약간 더 복잡해진 것 같은데, 스프링 컨테이너를 사용하면 어떤 장점이 있을까?
+
+결론부터 말하자면, 어마어마한 장점이 있다. 스프링 컨테이너가 관리해줌으로써 해줄 수 있는 기능이 어마어마하다. 이것에 대해 차차 알아볼 것이다.
