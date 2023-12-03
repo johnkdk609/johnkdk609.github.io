@@ -78,3 +78,31 @@ ApplicationContext를 스프링 컨테이너라고 한다. ApplicationContext는
 이것을 스프링 빈이라고 한다. 빈 이름은 보통 메서드 이름을 사용한다. 하지만 임의로 부여할 수 있다. ```@Bean(name="memberService2")```의 방식.
 
 <b>주의: 빈 이름은 항상 다른 이름을 부여해야 한다.</b> 같은 이름을 부여하면, 다른 빈이 무시되거나, 기존 빈을 덮어버리거나 설정에 따라 오류가 발생한다. 실무에서는 무조건 단순하고 명확하게 개발해야 한다.
+
+<br>
+
+<b>3. 스프링 빈 의존관계 설정 - 준비</b>
+
+<img width="788" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/afead662-dc45-4337-94b9-5c1432094f70">
+
+그 다음에 스프링이 어떤 단계를 거치냐면, 스프링 빈 의존관계 설정을 준비한다. 위에서 객체를 생성했다. 이번에는 의존관계를 넣어주는 것이다.
+
+<br>
+
+<b>4. 스프링 빈 의존관계 설정 - 완료</b>
+
+<img width="789" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7169073f-6888-4382-af85-584781a67b1d">
+
+위와 같이 memberService의 의존관계로 memberRepository를 넣어준다. 그러면 memoryMemberRepository가 세팅이 된다. orderService는 memberRepository도 의존하고 discountPolicy도 의존한다. 그래서 discountPolicy 스프링 빈, 실제로는 RateDiscountPolicy가 걸린다. 이렇게 해서 동적인 객체 인스턴스 의존관계를 스프링 빈이 연결해주는 것이다. 객체의 참조값들이 다 연결되는 것이다.
+
+스프링 컨테이너는 설정 정보를 참고해서 의존관계를 주입(DI)한다. 설정 정보를 참조한다는 것은, 위 그림에서처럼 "나는 memberRepository 의존할 거야" 와 같은 것들을 보고 의존관계를 주입하는 것이다.
+
+단순히 자바 코드를 호출하는 것 같지만, 차이가 있다. (이 차이는 뒤에서 싱글톤 컨테이너에서 설명될 것이다.)
+
+<br>
+
+참고: 스프링 빈을 생성하고, 의존관계를 주입하는 단계가 나누어져 있다. 그런데 이렇게 자바 코드로 스프링 빈을 등록하면 생성자를 호출하면서 의존관계 주입도 한 번에 처리된다. 왜냐하면 memberService를 생성하면 스프링이 "memberService를 생성해" 하면서 호출한다. ```@Bean```이 memberService에 붙어 있으니, ```new memberServiceImpl(~~)``` 호출하면서 여기서 memberRepository 코드를 호출한다. 그러면 아래에서 MemoryMemberRepository를 호출하는 것이다. 얘를 부르는 순간 의존관계가 다 엮여버리는 것이다. 그런데 사실은 이것뿐만 아니라, 의존관계가 자동으로 연결이 되는 경우도 있다. 그래서 실제 단계는 두 단계로 나뉜다. (자세한 내용은 의존관계 자동 주입에서 다시 알아보겠다.)
+
+### 정리
+
+스프링 컨테이너를 생성하고, 설정(구성) 정보를 참고해서 스프링 빈도 등록하고, 의존관계도 설정했다. 이제 스프링 컨테이너에서 데이터를 조회해보자.
