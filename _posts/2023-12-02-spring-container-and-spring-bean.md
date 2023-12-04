@@ -106,3 +106,123 @@ ApplicationContext를 스프링 컨테이너라고 한다. ApplicationContext는
 ### 정리
 
 스프링 컨테이너를 생성하고, 설정(구성) 정보를 참고해서 스프링 빈도 등록하고, 의존관계도 설정했다. 이제 스프링 컨테이너에서 데이터를 조회해보자.
+
+
+## 2. 컨테이너에 등록된 모든 빈 조회
+
+이번에는 컨테이너에 등록한 빈들이 제대로 등록되었는지 확인해보겠다. 무언가 등록을 한 것 같기는 한데, ```@Bean```을 붙이면 자동으로 등록이 되어 버리니, 진짜 잘 등록되었는지 보고 싶은 것이다.
+
+우선 테스트 코드로 한 번 짜보겠다.
+
+hello.core에 'beanfind'라는 패키지를 만들고, 그 안에 'ApplicationContextInfoTest'라는 클래스를 생성한다.
+
+<b>ApplicationContextInfoTest클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.beanfind;
+
+import hello.core.AppConfig;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class ApplicationContextInfoTest {
+
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+    @Test
+    @DisplayName("모든 빈 출력하기")
+    void findAllBean() {
+        String[] beanDefinitionNames = ac.getBeanDefinitionNames();
+        for (String beanDefinitionName : beanDefinitionNames) {
+            Object bean = ac.getBean(beanDefinitionName);
+            System.out.println("name = " + beanDefinitionName + " object = " + bean);
+        }
+    }
+}
+```
+
+우선 AnnotationConfigApplicationContext ac를 생성한다. 그리고 등록된 모든 스프링 빈을 출력해보겠다. JUnit5부터는 public 설정 안 해도 된다. 그래서 그냥 void로 시작한다.
+
+```ac.getBeanDefinitionNames();```로 스프링 빈의 이름을 꺼내고, beanDefinitionNames 리스트에 담는다. 그리고 ```iter```을 입력하고, 엔터를 누르면 for문이 자동으로 완성된다. 그리고 ```ac.getBean(beanDefinitionName);```를 입력하여 빈을 꺼낸다. 그러면 타입을 모르기 때문에 object가 꺼내진다. (타입을 지정하지 않았기 때문)
+
+그 다음에 ```soutv```를 입력하고 엔터를 누른 다음, name은 beanDefinitionName을, object는 bean을 입력한다.
+
+<br>
+
+이제 실행시키면 다음과 같이 나타난다.
+
+<img width="1685" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/aa6f9a23-56e8-46d5-8e5e-cca13735f086">
+
+위 결과를 보면, 스프링 컨테이너에 있는 모든 빈이 가져와진 것을 볼 수 있다.
+
+<img width="1308" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/273af028-7b20-44e1-b1a2-0acb1e1061bf">
+
+위 그림에서 볼 수 있는 이것들은, 스프링 내부적으로 자체를 확장하기 위해서 쓰는 기반 bean들이다. 참고로 appConfig도 스프링 빈으로 등록된다.
+
+<img width="788" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5b12d1f0-f7b4-4185-b97c-f50e119f9faa">
+
+그리고 이 네 개가 내가 등록한 것들이다.
+
+<br>
+
+그런데 스프링 내부에 있는 것들은 좀 빼고 내가 짠 코드만 보고 싶을 수 있다. 그러면 ApplicationBean이라는 것만 출력해볼 것이다.
+
+<br>
+
+ApplicationContextInfoTest에서 작성한 ```@Test``` 코드를 전체 선택하고, ```cmd + D```를 눌러 그대로 아래에 복사한다.
+
+추가한 코드는 다음과 같다.
+
+```java
+@Test
+@DisplayName("애플리케이션 빈 출력하기")
+void findApplicationBean() {
+    String[] beanDefinitionNames = ac.getBeanDefinitionNames();
+    for (String beanDefinitionName : beanDefinitionNames) {
+        BeanDefinition beanDefinition = ac.getBeanDefinition(beanDefinitionName);
+
+        // Role ROLE_APPLICATION: 직접 등록한 애플리케이션 빈
+        // Role ROLE_INFRASTRUCTURE: 스프링이 내부에서 사용하는 빈
+        if (beanDefinition.getRole() == BeanDefinition.ROLE_APPLICATION) {
+            Object bean = ac.getBean(beanDefinitionName);
+            System.out.println("name = " + beanDefinitionName + " object = " + bean);
+        }
+    }
+}
+```
+
+이번에는 Application Bean을 출력하는 것이니 ```@DisplayName("애플리케이션 빈 출력하기")```로 설정해둔다. 그리고 ```ac.getBeanDefinitionNames();```을 입력해 빈 하나하나의 메타데이터 정보를 꺼낸다.
+
+그리고 조건문으로 ```beanDefinition.getRole() == BeanDefinition.ROLE_APPLICATION```을 넣어 스프링이 내부에서 무언가 하기 위해 등록한 빈들이 아니라, 내가 애플리케이션을 개발하기 위해 등록한 빈들의 경우에만 출력하도록 한다.
+
+이제 실행하면 다음과 같이 나온다.
+
+<img width="1684" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/56a9275e-ac25-4770-b595-62195cd1c91f">
+
+appConfig 포함해서 총 다섯 개가 출력된다. memberService의 경우 MemberServiceImpl, memberRepository는 MemoryMemberRepository, orderService는 OrderServiceImpl, discountPolicy는 RateDiscountPolicy에 대한 클래스 인스턴스들이 생성되었다.
+
+<br>
+
+만약에 위 코드에서 ```BeanDefinition.ROLE_INFRASTRUCTURE```로 수정하고 테스트를 다시 실행하면 다음과 같이 출력된다.
+
+<img width="1681" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/da936b4a-ba2b-4edc-8b51-e26322a6cd98">
+
+ROLE_INFRASTRUCTURE은 스프링 컨테이너 내부에서 사용하는 빈들이다. internal~~라고 써 있는 것을 보면 알 수 있다.
+
+<br>
+
+정리하면 다음과 같다.
+
+<b>모든 빈 출력하기</b>
+
+* 실행하면 스프링에 등록된 모든 빈 정보를 출력할 수 있다.
+* ```ac.getBeanDefinitionNames()```: 스프링에 등록된 모든 빈 이름을 조회한다.
+* ```ac.getBean()```: 빈 이름으로 빈 객체(인스턴스)를 조회한다.
+
+<b>애플리케이션 빈 출력하기</b>
+
+* 스프링이 내부에서 사용하는 빈은 제외하고, 내가 등록한 빈만 출력해볼 수 있다.
+* 스프링이 내부에서 사용하는 빈은 ```getRole()```로 구분할 수 있다.
+    * ```ROLE_APPLICATION```: 일반적으로 사용자가 정의한 빈
+    * ```ROLE_INFRASTRUCTURE```: 스프링이 내부에서 사용하는 빈
