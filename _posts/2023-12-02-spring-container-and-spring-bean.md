@@ -226,3 +226,118 @@ ROLE_INFRASTRUCTURE은 스프링 컨테이너 내부에서 사용하는 빈들�
 * 스프링이 내부에서 사용하는 빈은 ```getRole()```로 구분할 수 있다.
     * ```ROLE_APPLICATION```: 일반적으로 사용자가 정의한 빈
     * ```ROLE_INFRASTRUCTURE```: 스프링이 내부에서 사용하는 빈
+
+
+## 3. 스프링 빈 조회 - 기본
+
+이번에는 스프링 빈을 조회하는 가장 기본적인 방법부터 하나씩 알아볼 것이다.
+
+빈을 조회하는 가장 간단한 방법은 getBean이라는 메서드를 사용하는 것이다.
+
+```ac.getBean(빈이름, 타입)```
+
+그리고, 빈 이름을 생략하고 타입만 주어도 된다.
+
+```ac.getBean(타입)```
+
+만약 조회한 스프링 빈이 없으면 예외가 발생한다.
+
+* ```NoSuchBeanDefinitionException No bean named 'xxxxx' available```
+
+<br>
+
+우선 테스트의 beanfind 패키지에 ApplicationContextBasicFindTest 클래스를 생성한다. <b>ApplicationContextBasicFindTest클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.beanfind;
+
+import hello.core.AppConfig;
+import hello.core.member.MemberService;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+class ApplicationContextBasicFindTest {
+
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+    @Test
+    @DisplayName("빈 이름으로 조회")
+    void findBeanByName() {
+        MemberService memberService = ac.getBean("memberService", MemberService.class);
+        System.out.println("memberService = " + memberService);
+        System.out.println("memberService.getClass() = " + memberService.getClass());
+    }
+}
+```
+
+일단 검증을 위해 위와 같이 했다. 실행을 해보면 다음과 같다.
+
+<img width="1684" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f5840b9b-5394-4c67-a6a1-6e47ea6da83f">
+
+기대했던 대로 잘 나왔다. MemberServiceImpl이 나왔고, getClass 타입도 MemberServiceImpl로 잘 나왔다.
+
+<br>
+
+검증은 Assertions(org.assertj.core.api)로 해야 한다. 수정한 코드는 다음과 같다.
+
+```java
+@Test
+@DisplayName("빈 이름으로 조회")
+void findBeanByName() {
+    MemberService memberService = ac.getBean("memberService", MemberService.class);
+    Assertions.assertThat(memberService).isInstanceOf(MemberServiceImpl.class);
+}
+```
+
+이제 실행해보면 다음과 같이 성공적으로 돌아간다.
+
+<img width="1684" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/d71b781a-60ba-4c3e-b306-c7417a8a9941">
+
+memberService가 MemberServiceImpl의 인스턴스이면 성공한 것이다. 이제 Assertions 부분을 클릭하고 ```opt + Enter```을 누른 다음, 'Add on-demand ~'을 클릭한다.
+
+<img width="780" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/6810a58f-28de-4370-97c7-d2d96ceaeab7">
+
+<br>
+
+두 번째는 이름 없이 타입으로만 조회해볼 것이다. 추가한 코드는 다음과 같다.
+
+```java
+@Test
+@DisplayName("이름 없이 타입으로만 조회")
+void findBeanByType() {
+    MemberService memberService = ac.getBean(MemberService.class);
+    assertThat(memberService).isInstanceOf(MemberServiceImpl.class);
+}
+```
+
+위에서 ```ac.getBean("memberService", MemberService.class);```에서 이름 부분인 "memberService"만 빼면 된다. 그러면 타입으로만 조회하는 것이다. 훨씬 편리하기는 한데, 장단점이 있다. 타입으로만 할 경우 같은 타입들이 여러 개일 경우 곤란해진다.
+
+실행시키면 테스트는 성공한다.
+
+<br>
+
+지금까지는 인터페이스로 조회했다. 이렇게 인터페이스로 조회하면 인터페이스의 구현체가 대상이 된다. 그런데 구체 타입으로 조회할 수도 있다.
+
+추가한 코드는 다음과 같다.
+
+```java
+@Test
+@DisplayName("구체 타입으로 조회")
+void findBeanByName2() {
+    MemberService memberService = ac.getBean("memberService", MemberServiceImpl.class);
+    assertThat(memberService).isInstanceOf(MemberServiceImpl.class);
+}
+```
+
+이번에는 ```ac.getBean("memberService", MemberServiceImpl.class);```을 입력하는 것이다. 이번에는 인터페이스명 MemberService가 아니라 MemberServiceImpl을 입력한 것이다.
+
+실행하면 테스트는 성공한다.
+
+AppConfig클래스를 보면 다음과 같다.
+
+<img width="793" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/27bbf275-6310-4fa5-999a-778d7a96ac0e">
+
+반환 타입을 가령 MemberService로 했는데, 이 타입이어야 할 필요는 없다. 스프링 빈에 등록된 인스턴스 타입을 보고 결정하기 때문에, 꼭 여기에 있는 인터페이스가 아니어도 된다. 실제 구체적인 것으로 적어줘도 된다. 
+
+물론 구체적인 것을 적는 것은 좋지 않다. 항상 역할과 구현을 구분해야 된다. 그리고 역할에 의존해야 한다. 위의 경우 구현에 의존하는 것이므로 그렇게 좋은 코드는 아니다. (살다보면 모든 것이 이상적으로 돌아가지 않을 때가 있다. 그럴 때 이렇게 하면 된다.)
