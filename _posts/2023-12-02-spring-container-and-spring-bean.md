@@ -341,3 +341,72 @@ AppConfig클래스를 보면 다음과 같다.
 반환 타입을 가령 MemberService로 했는데, 이 타입이어야 할 필요는 없다. 스프링 빈에 등록된 인스턴스 타입을 보고 결정하기 때문에, 꼭 여기에 있는 인터페이스가 아니어도 된다. 실제 구체적인 것으로 적어줘도 된다. 
 
 물론 구체적인 것을 적는 것은 좋지 않다. 항상 역할과 구현을 구분해야 된다. 그리고 역할에 의존해야 한다. 위의 경우 구현에 의존하는 것이므로 그렇게 좋은 코드는 아니다. (살다보면 모든 것이 이상적으로 돌아가지 않을 때가 있다. 그럴 때 이렇게 하면 된다.)
+
+<br>
+
+만약 조회가 안 되면, 실패 테스트를 만들면 된다.
+
+추가한 코드를 포함한 ApplicationContextBasicFindTest의 코드는 다음과 같다.
+
+```java
+package hello.core.beanfind;
+
+import hello.core.AppConfig;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class ApplicationContextBasicFindTest {
+
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+    @Test
+    @DisplayName("빈 이름으로 조회")
+    void findBeanByName() {
+        MemberService memberService = ac.getBean("memberService", MemberService.class);
+        assertThat(memberService).isInstanceOf(MemberServiceImpl.class);
+    }
+
+    @Test
+    @DisplayName("이름 없이 타입으로만 조회")
+    void findBeanByType() {
+        MemberService memberService = ac.getBean(MemberService.class);
+        assertThat(memberService).isInstanceOf(MemberServiceImpl.class);
+    }
+
+    @Test
+    @DisplayName("구체 타입으로 조회")
+    void findBeanByName2() {
+        MemberService memberService = ac.getBean("memberService", MemberServiceImpl.class);
+        assertThat(memberService).isInstanceOf(MemberServiceImpl.class);
+    }
+
+    @Test
+    @DisplayName("빈 이름으로 조회")
+    void findBeanByNameX() {
+        // ac.getBean("xxxxx", MemberService.class);
+        assertThrows(NoSuchBeanDefinitionException.class,
+                () -> ac.getBean("xxxxx", MemberService.class));
+    }
+}
+```
+
+테스트는 항상 실패 테스트를 만들어야 한다. findBeanByNameX라는 이름으로 생성한다. 처음에 ```MemberService xxxxx = ac.getBean("xxxxx", MemberService.class);```을 입력한 다음 테스트를 실행하면, 다음과 같이 나온다.
+
+<img width="1684" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/d9121776-4ec7-44c8-8c5e-6e54e0910001">
+
+예외가 발생한다. "NoSuchBeanDefinitionException: No bean named 'xxxxx' available"로 이런 이름의 빈을 등록한 적이 없다는 것이다.
+
+이것을 테스트 코드를 검증해야 하는데, 자바 8의 람다 기능을 쓸 것이다. ```Assertions```의 ```org.junit.jupiter.api``` 것을 사용한다. 그런데 너무 기니까 ```opt + Enter```을 누르고 static import를 한다. 그리고 ```assertThrows(NoSuchBeanDefinitionException.class, () -> ac.getBean("xxxxx", MemberService.class));```을 입력한다. 이 예외가 터질 경우에 성공하는 것이고, 안 터지면 실패이다.
+
+실행시키면 다음과 같이 성공적으로 된다.
+
+<img width="1683" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7b8d27a9-2ea1-4163-9c76-8427e52292cc">
+
+참고로 구체 타입으로 조회하면 유연성이 떨어진다.
