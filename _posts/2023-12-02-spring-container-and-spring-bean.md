@@ -410,3 +410,63 @@ class ApplicationContextBasicFindTest {
 <img width="1683" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7b8d27a9-2ea1-4163-9c76-8427e52292cc">
 
 참고로 구체 타입으로 조회하면 유연성이 떨어진다.
+
+
+## 4. 스프링 빈 조회 - 동일한 타입이 둘 이상
+
+타입으로 조회 시 같은 타입의 스프링 빈이 둘 이상이면 오류가 발생한다. <u>이때는 빈 이름을 지정해야 한다.</u>
+
+```ac.getBeansOfType()```을 사용하면 해당 타입의 모든 빈을 조회할 수 있다.
+
+<br>
+
+테스트 쪽에 beanfind 패키지 안에 ApplicationContextSameBeanFindTest클래스를 생성한다.
+
+<b>ApplicationContextSameBeanFindTest클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.beanfind;
+
+import hello.core.AppConfig;
+import hello.core.discount.DiscountPolicy;
+import hello.core.member.MemberRepository;
+import hello.core.member.MemoryMemberRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+public class ApplicationContextSameBeanFindTest {
+
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(SameBeanConfig.class);
+
+    @Test
+    @DisplayName("타입으로 조회 시 같은 타입이 둘 이상 있으면, 중복 오류가 발생한다.")
+    void findBeanByTypeDuplicate() {
+        MemberRepository bean = ac.getBean(MemberRepository.class);
+    }
+
+    @Configuration
+    static class SameBeanConfig {
+
+        @Bean
+        public MemberRepository memberRepository1() {
+            return new MemoryMemberRepository();
+        }
+
+        @Bean
+        public MemberRepository memberRepository2() {
+            return new MemoryMemberRepository();
+        }
+    }
+}
+```
+
+우선 findBeanByTypeDuplicate를 생성한다. ```ac.getBean(DiscountPolicy.class)```를 입력할 경우, AppConfig를 손을 대야 한다. AppConfig는 손 대기 싫으니까, Config파일을 새로 만들어볼 것이다. 아래에 ```static class SameBeanConfig```를 만든다. static을 쓴 것을 봤을 때, 클래스 안에다가 클래스를 썼다는 것은, 이것은 이 안에서만 쓰겠다는 것이다. 그리고 그 안에 memberRepository1과 memberRepository2를 만든다. 빈의 이름이 다르고, 인스턴스의 타입이 같을 수 있다. 그리고 위에서 ```ac.getBean(MemberRepository.class);```로 수정한 다음, ```cmd + opt + V```를 클릭한다. 그리고 맨 위에 ```new AnnotationConfigApplicationContext(SameBeanConfig.class);```로 수정한다. 이렇게 하면 스프링 컨테이너가 뜰 때, 이 안에 있는 Config 즉, SameBeanConfig만 가지고 실행하는 것이다. 스프링 컨테이너는 이 안에 있는 스프링 빈 두 개만(memberRepository1, memberRepository2) 등록한다. 이렇게 해서 돌려서 memberRepository를 조회하면 두 개가 튀어나온다. 스프링 입장에서는 무엇을 선택해야 할지 예외가 발생하는 것이다.
+
+실행하면 다음과 같다.
+
+<img width="1684" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2c535789-2ea5-4129-af2e-37106ff14e9c">
+
+위 그림을 보면, NoUniqueBeanDefinitionException이 발생했다. 딱 하나만 있어야 하는데 유니크하지 않다는 것이다. 두 개가 찾아졌고, memberRepository1, memberRepository2가 찾아졌다고 나온다.
