@@ -470,3 +470,69 @@ public class ApplicationContextSameBeanFindTest {
 <img width="1684" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2c535789-2ea5-4129-af2e-37106ff14e9c">
 
 위 그림을 보면, NoUniqueBeanDefinitionException이 발생했다. 딱 하나만 있어야 하는데 유니크하지 않다는 것이다. 두 개가 찾아졌고, memberRepository1, memberRepository2가 찾아졌다고 나온다.
+
+<br>
+
+이것을 해결하기 전에, 일단 테스트를 완성시켜보겠다. 수정한 코드는 다음과 같다.
+
+```java
+@Test
+@DisplayName("타입으로 조회 시 같은 타입이 둘 이상 있으면, 중복 오류가 발생한다.")
+void findBeanByTypeDuplicate() {
+    assertThrows(NoUniqueBeanDefinitionException.class,
+            () -> ac.getBean(MemberRepository.class));
+```
+
+돌려보면 테스트는 성공한다.
+
+<img width="1685" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/ffde70b9-b0b2-4a3b-9a61-7af72fb5b30c">
+
+이 경우 예외가 터지는 것이 성공 로직인 것이다.
+
+<br>
+
+얘를 실제로 성공시키려면 코드를 다음과 같이 추가한다.
+
+```java
+@Test
+@DisplayName("타입으로 조회 시 같은 타입이 둘 이상 있으면, 빈 이름을 지정하면 된다.")
+void findBeanByName() {
+    MemberRepository memberRepository = ac.getBean("memberRepository1", MemberRepository.class);
+    assertThat(memberRepository).isInstanceOf(MemberRepository.class);
+}
+```
+
+findBeanByName의 경우, ApplicationContext에서 이전에는 MemberRepository에서 클래스 타입으로 바로 조회했다. 그래서 ```ac.getBean(MemberRepository.class);```를 입력했고 클래스 타입을 바로 조회했다. 그런데 이렇게 하면 예외가 터졌었다. 이를 해결하기 위해 앞에다가 빈 이름을 지정해주는 것이다. "memberRepository1"을 입력한다. 그리고 ```assertThat(memberRepository).isInstanceOf(MemberRepository.class);```을 입력한다. 그냥 MemberRepository의 인스턴스이면 된다. 더 디테일하게 "1번"으로 해도 되지만, 이 정도로 해도 된다.
+
+실행시키면 다음과 같이 성공적으로 수행된다.
+
+<img width="1687" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/ae405b2c-10f9-44eb-ac49-86da2100cf36">
+
+<br>
+
+그 다음에, "나는 둘 다 꺼내고 싶어"라고 할 수도 있다. 이럴 경우에 다음과 같은 코드를 추가한다.
+
+```java
+@Test
+@DisplayName("특정 타입을 모두 조회하기")
+void findAllBeanByType() {
+    Map<String, MemberRepository> beansOfType = ac.getBeansOfType(MemberRepository.class);
+    for (String key : beansOfType.keySet()) {
+        System.out.println("key = " + key + " value = " + beansOfType.get(key));
+    }
+    System.out.println("beansOfType = " + beansOfType);
+    assertThat(beansOfType.size()).isEqualTo(2);
+}
+```
+
+findAllBeanByType를 입력하고, ```ac.getBeansOfType(MemberRepository.class);```를 입력한 다음, ```cmd + opt + V```를 클릭하면 key-value의 Map으로 나온다. 그리고 iter을 돌린다. 이름을 key라고 하고, key를 출력하고 value는 ```beansOfType.get(key)```를 넣는다. 또 beansOfType도 출력해보겠다. 검증의 경우 ```assertThat(beansOfType.size()).isEqualTo(2);```를 입력한다. 해당 타입의 빈이 두 개 등록되어 있으니, 사이즈가 두 개가 나와야 하는 것이다.
+
+실행시키면 다음과 같이 나타난다.
+
+<img width="1686" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/99145e77-3a56-4b66-b61c-60d69a2f17d3">
+
+key, value가 잘 출력된다.
+
+<br>
+
+이렇게 해서, 중복인 경우(같은 타입이 둘 이상 있을 때) 해결하는 방법과 한 번에 조회하는 방법을 알아봤다.
