@@ -536,3 +536,118 @@ key, value가 잘 출력된다.
 <br>
 
 이렇게 해서, 중복인 경우(같은 타입이 둘 이상 있을 때) 해결하는 방법과 한 번에 조회하는 방법을 알아봤다.
+
+
+## 5. 스프링 빈 조회 - 상속관계
+
+스프링 빈을 조회할 때 기본 대원칙은, <b>부모 타입으로 조회하면 자식 타입도 함께 조회하는 것이다.</b> 자식 타입은 다 끌려나온다.
+
+그래서 모든 자바 객체의 최고 부모인 ```Object```타입으로 조회하면, 모든 스프링 빈을 조회한다.
+
+예를 들어, 앞서 생성했던 AnnotationConfigApplicationContext의 경우에도 사실 ```extends Object```를 하고 있는 것이다.
+
+<img width="574" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/91f0ee63-02d9-4a29-bf56-15a4f0138584">
+
+자바는 기본적으로 모든 최상위 부모는 다 Object이다. 눈에 안 보이면 저 코드가 자동으로 들어가는 것으로 생각하면 된다.
+
+<br>
+
+<img width="650" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1a0fd3e8-784b-459c-881b-c719bf8fcf43">
+
+위 그림에서, 1번 타입으로 조회하면 1, 2, 3, 4, 5, 6, 7이 다 나온다. 2번으로 조회하면 2, 4, 5번이 나오고, 3번으로 조회하면 3, 6, 7이 나온다. 4, 5, 6, 7은 마지막 단에 있으니 조회할 때 자기 자신만 조회 된다.
+
+<br>
+
+이제 테스트 코드를 짜보겠다. beanfind 패키지에 ApplicationContextExtendsFindTest를 생성한다. <b>ApplicationContextExtendsFindTest클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.beanfind;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.discount.FixDiscountPolicy;
+import hello.core.discount.RateDiscountPolicy;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+public class ApplicationContextExtendsFindTest {
+
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(TestConfig.class);
+
+    @Test
+    @DisplayName("부모 타입으로 조회 시, 자식이 둘 이상 있으면 중복 오류가 발생한다.")
+    void findBeanByParentTypeDuplicate() {
+        assertThrows(NoUniqueBeanDefinitionException.class,
+                () -> ac.getBean(DiscountPolicy.class));
+    }
+
+    @Test
+    @DisplayName("부모 타입으로 조회 시, 자식이 둘 이상 있으면, 빈 이름을 지정하면 된다.")
+    void findBeanByParentTypeBeanName() {
+        DiscountPolicy rateDiscountPolicy = ac.getBean("rateDiscountPolicy", DiscountPolicy.class);
+        assertThat(rateDiscountPolicy).isInstanceOf(RateDiscountPolicy.class);
+    }
+
+    @Test
+    @DisplayName("특정 하위 타입으로 조회")
+    void findBeanBySubType() {
+        RateDiscountPolicy bean = ac.getBean(RateDiscountPolicy.class);
+        assertThat(bean).isInstanceOf(RateDiscountPolicy.class);
+    }
+
+    @Test
+    @DisplayName("부모 타입으로 모두 조회하기")
+    void findAllBeanByParentType() {
+        Map<String, DiscountPolicy> beansOfType = ac.getBeansOfType(DiscountPolicy.class);
+        assertThat(beansOfType.size()).isEqualTo(2);
+        for (String key : beansOfType.keySet()) {
+            System.out.println("key = " + key + " value = " + beansOfType.get(key));
+        }
+    }
+
+    @Test
+    @DisplayName("부모 타입으로 모두 조회하기 - Object")
+    void findAllBeansByObjectType() {
+        Map<String, Object> beansOfType = ac.getBeansOfType(Object.class);
+        for (String key : beansOfType.keySet()) {
+            System.out.println("key = " + key + " value = " + beansOfType.get(key));
+        }
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public DiscountPolicy rateDiscountPolicy() {
+            return new RateDiscountPolicy();
+        }
+
+        @Bean
+        public DiscountPolicy fixDiscountPolicy() {
+            return new FixDiscountPolicy();
+        }
+    }
+}
+```
+
+우선 ```AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();```를 기입한다. 괄호 안에는 지금 막 생성하는 static class를 넣을 것이다. 맨 아래에 TestConfig를 생성한다. 그리고 Bean을 두 개를 등록할 것인데, rateDiscountPolicy와 fixDiscountPolicy이다. 둘 다 DiscountPolicy타입이므로, 이 타입으로 조회하면 자식 타입인 이 두 개가 조회될 것이다. 그리고 위에 괄호에 ```TestConfig.class```를 넣는다.
+
+이제부터 하나씩 테스트를 만들어볼 것이다. 먼저 "부모 타입으로 조회 시 자식이 둘 이상 있으면 중복 오류가 발생"하는 테스트를 생성해보겠다. 만약 ```DiscountPolicy bean = ac.getBean(DiscountPolicy.class);```만 입력하고 테스트를 실행하면, NoUniqueBeanDefinitionException 오류가 발생한다. 그래서 ```assertThrows(NoUniqueBeanDefinitionException.class, () -> ac.getBean(DiscountPolicy.class))```로 수정하면 실행했을 때 성공적으로 돌아간다.
+
+<img width="1686" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/e482a569-befa-4b1b-869c-1c376559905d">
+
+<br>
+
+다음으로, "부모 타입으로 조회 시 자식이 둘 이상 있으면 빈 이름을 지정하면 된다"를 테스트해볼 것이다. ```ac.getBean("rateDiscountPolicy", DiscountPolicy.class);```를 입력하고 ```cmd + opt + V```를 클릭한다. 타입은 DiscountPolicy이지만 실제 구현 객체는 rateDiscountPolicy가 나올 것이다. 그리고 ```assertThat(rateDiscountPolicy).isInstanceOf(RateDiscountPolicy.class);```를 입력해 확인한다. 실행하면 성공적으로 실행된다.
+
+<img width="1689" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2f635402-e3b5-4183-a142-8d945bcb49e6">
+
+<br>
+
