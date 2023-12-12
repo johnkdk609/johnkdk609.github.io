@@ -651,3 +651,30 @@ public class ApplicationContextExtendsFindTest {
 
 <br>
 
+이번에는 "특정 하위 타입으로 조회"하는 테스트를 만들 것이다. (물론 안 좋은 방법이다.) ```ac.getBean(RateDiscountPolicy.class);```를 입력하고 ```cmd + opt + V```를 클릭한다. 하나밖에 없으니 타입을 바로 지정하는 것이다. 그리고 ```assertThat(bean).isInstanceOf(RateDiscountPolicy.class);```를 입력한다. 구체적인 타입으로 지정하면, rateDiscountPolicy는 아래 TestConfig에 하나밖에 없으니 딱 나오는 것이다. 실행하면 다음과 같다.
+
+<img width="1686" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/58b3f99b-6073-4b0e-bcad-9522e681f7bb">
+
+<br>
+
+그러면 이제 이 질문이 있을 수 있다. 아래에 TestConfig에서 ```public DiscountPolicy fixDiscountPolicy() {```에서 DiscountPolicy를 RateDiscountPolicy로 지정해도 똑같다. 그런데 DiscountPolicy로 해두는 이유는, 개발하거나 설계할 때 역할과 구현을 쪼개기 위함이다. DiscountPolicy를 보고 역할을 파악하고, rateDiscountPolicy로 구체적인 것을 보는 것이다. 이렇게 해야 의존관계 주입(DI)할 때에도 DiscountPolicy를 보고 용이하게 할 수 있는 것이다.
+
+<br>
+
+이번에는 "부모 타입으로 모두 조회"하는 테스트를 생성해보겠다. ```ac.getBeansOfType(DiscountPolicy.class);```를 입력하고 ```cmd + opt + V```를 클릭한다. 그리고 ```assertThat(beansOfType.size()).isEqualTo(2);```를 입력해서 타입의 사이즈가 2개면 성공하게 한다. 그리고 ```iter```을 입력하여 key와 value를 출력하게 한다. 참고로 출력하는 것은 공부하는 용도로 입력하는 것이지, 실제 테스트 케이스를 짤 때에 이런 출력물을 만들면 안 된다. 왜냐하면 자동 통과, 실패 여부를 시스템이 결정하게 해야 하기 때문이다. 테스트가 통과한다, 안 한다로만 하면 되고, 이런 ```println``` 같은 것은 다 빼는 것이 좋다. (물론, 테스트 자체도 디버깅 해보고 싶을 수 있으니 그때에는 남겨도 괜찮다.)
+
+실행하면 다음과 같이 key와 value가 잘 나온다.
+
+<img width="1683" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3e92b72a-4b96-43b6-a55c-9c64617162f2">
+
+<br>
+
+이제 마지막으로 Object타입으로 모두 조회하는 것을 만들어보겠다. ```ac.getBeansOfType(Ojbect.class);```를 입력하고 ```cmd + opt + V```를 클릭한다. 그리고 iter을 입력하여 key와 value를 출력하게 한다. 실행하면 다음과 같다.
+
+<img width="1683" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3ebaa241-588c-48cb-a958-dbf6bee91958">
+
+보면 스프링에 있는 것들까지 다 튀어나온다. 스프링 안에는 여러 가지 빈들이 등록돼 있는데, 그것들까지 다 딸려서 나오는 것이다. 왜냐하면 자바 객체는 모든 것이 Object타입이기 때문이다. 내가 등록했던 두 가지도 나온다.
+
+<br>
+
+이렇게 해서 조회하는 기본적인 방법들을 거의 다 알아봤다. 사실 내가 ApplicationContext에서 getBean을 직접 할 일이 별로 없다. 그게 아니라 뒤에 가면 스프링 컨테이너에서 자동적으로 의존관계를 주입하는 것을 쓰는 방식으로 주로 한다. 하지만 이것이 기본 기능이기도 하고, 가끔 순수한 자바 애플리케이션에서 스프링 컨테이너를 생성해서 써야 할 경우가 있다. 그럴 때 이런 것을 쓰는 것이다.
