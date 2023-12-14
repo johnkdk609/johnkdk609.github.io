@@ -678,3 +678,70 @@ public class ApplicationContextExtendsFindTest {
 <br>
 
 이렇게 해서 조회하는 기본적인 방법들을 거의 다 알아봤다. 사실 내가 ApplicationContext에서 getBean을 직접 할 일이 별로 없다. 그게 아니라 뒤에 가면 스프링 컨테이너에서 자동적으로 의존관계를 주입하는 것을 쓰는 방식으로 주로 한다. 하지만 이것이 기본 기능이기도 하고, 가끔 순수한 자바 애플리케이션에서 스프링 컨테이너를 생성해서 써야 할 경우가 있다. 그럴 때 이런 것을 쓰는 것이다.
+
+
+## 6. BeanFactory와 ApplicationContext
+
+이번에는 beanFactory와 ApplicationContext에 대해서 알아보겠다.
+
+<img width="754" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/de853588-b936-483d-b4cc-20e7552e81a8">
+
+위 그림을 보면, 최상위에 beanFactory인터페이스가 있고, beanFactory를 상속받은 ApplicationContext인터페이스가 있다. 이 ApplicationContext라는 것은 beanFactory에 부가 기능을 더한 것이라고 이해할 수 있다.
+
+그리고 ApplicationContext 밑에 우리가 사용했던 AnnotationConfigApplicationContext와 같은 구현 클래스가 있다.
+
+<br>
+
+### BeanFactory
+
+* 스프링 컨테이너의 최상위 인터페이스이다.
+* 스프링 빈을 관리하고 조회하는 역할을 담당한다.
+* ```getBean()```과 같은 기능을 제공한다.
+* 지금까지 우리가 사용했던 대부분의 기능은 BeanFactory가 제공하는 기능이다.
+
+### ApplicationContext
+
+* BeanFactory 기능을 모두 상속받아서 제공한다.
+
+```cmd + O```를 누르고 'All places'로 설정한 다음 'ApplicationContext'를 검색하면 다음과 같이 나타난다.
+
+<img width="926" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f3c7c51d-f085-466c-a93b-ad16b6673fe3">
+
+여기서, ApplicationContext인터페이스를 클릭하고 들어가보면 다음과 같이 나온다.
+
+<img width="927" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/03177319-0573-48d7-87ef-8b6014feaf4a">
+
+ApplicationContext가 ListableBeanFactory, HierarchicalBeanFactory를 상속 받고 있다. 여기서 가령 ListableBeanFactory를 자세히 보면, 다음과 같이 BeanFactory를 상속 받고 있다.
+
+<img width="535" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c01f3487-c58a-410a-9501-6c5b4527a344">
+
+* 그러면, 빈을 관리하고 검색하는 기능을 BeanFactory가 제공해주는데, 둘의 차이는 뭘까?
+* 애플리케이션을 개발할 때는 빈을 관리하고 조회하는 기능은 물론이고, 수많은 부가기능이 필요하다.
+
+### ApplicationContext가 제공하는 부가기능
+
+<img width="986" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f9bd784b-48c9-4960-9603-5ac6bce29921">
+
+인터페이스가 굉장히 많이 분리되어 있다. ApplicationContext인터페이스가 BeanFactory도 받고 있는데, 더해서 MessageSource, EnvironmentCapable, ApplicationEventPublisher, ResourceLoader 등의 여러 가지 인터페이스들도 받고 있다.
+
+<img width="951" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/b0f1d175-d840-4e38-83e8-c55f946387f6">
+
+BeanFactory와 관련된 것뿐만 아니라, 환경설정과 관련된 EnvironmentCapable 등을 가지고 있는 것이다. 하나씩 설명하면 다음과 같다.
+
+<br>
+
+* <b>메세지 소스를 활용한 국제화 기능</b>
+    * 예를 들어서 한국에서 들어오면 한국어로, 영어권에서 들어오면 영어로 출력하는 웹사이트.
+* <b>환경변수</b>
+    * 로컬, 개발, 운영 등을 구분해서 처리. (실제로 개발할 때에는 크게 세 가지 환경이 있다. 내 PC인 로컬, 테스트 서버에 띄워두고 테스트할 수 있는 개발 환경, 그리고 실제 프로덕션에 나가는 운영 환경. 한 가지가 더 있다면 스테이지 환경이 있기는 하다.)
+* <b>애플리케이션 이벤트</b>
+    * 이벤트를 발행하고 구독하는 모델을 편리하게 지원
+* <b>편리한 리소스 조회</b>
+    * 파일, 클래스패스, 외부 등에서 리소스를 편리하게 조회
+
+### 정리
+
+* ApplicationContext는 BeanFactory의 기능을 상속받는다.
+* ApplicationContext는 빈 관리기능 + 편리한 부가 기능을 제공한다.
+* BeanFactory를 직접 사용할 일은 거의 없다. 부가기능이 포함된 ApplicationContext를 사용한다.
+* BeanFactory나 ApplicationContext를 스프링 컨테이너라 한다. (그리고 우리는 ApplicationContext만 쓴다고 생각하면 된다.)
