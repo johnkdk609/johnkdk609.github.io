@@ -745,3 +745,108 @@ BeanFactory와 관련된 것뿐만 아니라, 환경설정과 관련된 Environm
 * ApplicationContext는 빈 관리기능 + 편리한 부가 기능을 제공한다.
 * BeanFactory를 직접 사용할 일은 거의 없다. 부가기능이 포함된 ApplicationContext를 사용한다.
 * BeanFactory나 ApplicationContext를 스프링 컨테이너라 한다. (그리고 우리는 ApplicationContext만 쓴다고 생각하면 된다.)
+
+
+## 7. 다양한 설정 형식 지원 - 자바 코드, XML
+
+지금까지 자바 코드로 설정하는 것을 알아봤는데, 이번에는 XML로 설정하는 것을 잠깐 알아보겠다.
+
+스프링은 다양한 설정 형식을 지원한다. (자바 코드, XML 등) 스프링 컨테이너는 다양한 형식의 설정 정보를 받아들일 수 있게 유연하게 설계되어 있다. 자바 코드, XML, Groovy 등등... 심지어 임의의 무언가를 만들 수도 있다.
+
+<img width="986" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/d0110722-7c38-43e2-bbcb-2bd227223bde">
+
+위 그림을 보면, 제일 위에 BeanFactory인터페이스가 있고, 그 밑에 ApplicationContext가 있다. 이 ApplicationContext를 구현한 것 중에 하나가 이전에 사용했던 AnnotationConfigApplicationContext이다. 그리고 또, ApplicationContext를 구현한 것 중에 GenericXmlApplicationContext라는 것이 있다. 이것은 자바 코드가 아니라, XML이라는 문서를 설정 정보로 사용하는 것이다. 그리고 임의로 구현해서 만들 수도 있다.
+
+주로 많이 사용하는 것은 자바 코드 기반의 AnnotationConfig이다. 과거에는 XML을 많이 사용했었다. (그래서 XML이 어떻게 돌아가는지 알고 있는 것이 좋다.)
+
+<br>
+
+### 어노테이션 기반 자바 코드 설정 사용
+
+지금까지 했던 것이다. ```new AnnotationConfigApplicationContext(AppConfig.class)```를 만들면서 설정 정보를 넣어줬다. ```AnnocationConfigApplicationContext```클래스를 사용하면서 자바 코드로 된 설정 정보를 넘기면 된다.
+
+### XML 설정 사용
+
+최근에는 스프링 부트를 많이 사용하면서 XML 기반의 설정은 잘 사용하지 않는다. 하지만 아직 많은 레거시 프로젝트들이 XML로 되어 있고, 또 XML을 사용하면 컴파일 없이 빈 설정 정보를 변경할 수 있는 장점도 있으므로 한 번쯤 배워두는 것도 괜찮다.
+
+```GenericXmlApplicationContext```를 사용하면서 XML 설정 파일을 넘기면 된다.
+
+<br>
+
+먼저 테스트를 만들어 보겠다. test쪽에서 xml 패키지를 만들고, 그 안에 XmlAppContext클래스를 생성한다. <b>XmlAppContext클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.xml;
+
+import hello.core.member.MemberService;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+
+import static org.assertj.core.api.Assertions.*;
+
+public class XmlAppContext {
+
+    @Test
+    void xmlAppContext() {
+        ApplicationContext ac = new GenericXmlApplicationContext("appConfig.xml");
+        MemberService memberService = ac.getBean("memberService", MemberService.class);
+        assertThat(memberService).isInstanceOf(MemberService.class);
+    }
+}
+```
+
+GenericXmlApplicationContext를 생성하고 여기에다가 "appConfig.xml"을 넘길 것이다. 그리고 ac에서 빈을 조회할 것이다. 그리고 ```assertThat(memberService).isInstanceOf(MemberService.class);```를 기입한다. Assertions는 static import 한다.
+
+이 테스트는 현재 실행되지 않는다. ```appConfig.xml```이 아직 생성되지 않았기 때문이다.
+
+<br>
+
+이제 appConfig.xml을 만들어보겠다. 테스트이기 때문에 테스트에 넣어도 되지만, 이번에는 테스트가 아닌 곳에 만들 것이다. XML은 자바 코드가 아니므로 resources 안에 생성하면 된다. resources 안에 appConfig.xml 파일을 생성한다.
+
+<b>appConfig.xml</b>의 코드는 다음과 같다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="memberService" class="hello.core.member.MemberServiceImpl" >
+        <constructor-arg name="memberRepository" ref="memberRepository" />
+    </bean>
+
+    <bean id="memberRepository" class="hello.core.member.MemoryMemberRepository" />
+
+    <bean id="orderService" class="hello.core.order.OrderServiceImpl" >
+        <constructor-arg name="memberRepository" ref="memberRepository" />
+        <constructor-arg name="discountPolicy" ref="discountPolicy" />
+    </bean>
+
+    <bean id="discountPolicy" class="hello.core.discount.RateDiscountPolicy" />
+</beans>
+```
+
+우선 id는 "memberService"로, 클래스는 패키지명까지 다 적어서 MemberServiceImpl을 적는다. 그리고 생성자를 넘겨줘야 하기 때문에, constructor-arg로 해서 name은 "memberRepository", 레퍼런스는 ref로 "memberRepository"로 넘긴다. 그런데 지금 memberRepository가 없다. 그래서 memberRepository빈을 등록한다. 아래에 bean을 id는 "memberRepository", 클래스는 MemoryMemberRepository로 해서 넘긴다. 이렇게 하면 memberRepository와 관련된 것이 완성된다.
+
+이전에 만들었던 AppConfig.java를 보면, 빈으로 등록하고 memberService, memberRepository 등록하는 것과 완전히 똑같다.
+
+<img width="556" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5bbcfb99-fa0b-4114-b3fb-6a098108ea52">
+
+위 XML에서 아래의 "memberRepository"가 위의 ref로 해서 생성자에 넘어간다. 실제 구현 객체는 MemoryMemberRepository이다.
+
+할인 정책의 경우 id는 "discountPolicy", 클래스는 패키지명까지 다 해서 RateDiscountPolicy를 사용할 것이다. 그리고 위에다가 bean으로 "orderService"를 만들고 클래스는 패키지명까지 다 해서 OrderServiceImpl을 적는다. 그리고 contructor-arg로 해서 name은 "memberRepository"를 넣고, ref는 "memberRepository"로 넣는다. 또 constructor-arg로 name은 "discountPolicy", ref는 "discountPolicy"를 입력한다.
+
+이렇게 해서 세팅이 다 끝났다. 형식이 XML 문서일 뿐, AppConfig.java와 완전히 똑같다.
+
+이제 테스트를 실행하면, resourceLocations에 있는 "appConfig.xml"을 읽는다.
+
+<img width="1684" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/9228459a-4f5d-463d-9cf4-357fa7e2f53d">
+
+성공적으로 수행된다. 로그를 보면 'memberService', 'memberRepository', 'orderService', 'discountPolicy'가 singleton bean으로 등록되었다고 나온다.
+
+<br>
+
+GenericXmlApplicationContext를 만들고, 설정 정보가 클래스 파일에서 XML로 바뀐 것밖에 없다. 나머지 코드는 전부 똑같다. ApplicationContext를 그대로 쓰는 것이다.
+
+XML 기반의 appConfig.xml 스프링 설정 정보와 코드로 된 AppConfig.java 설정 정보를 비교해보면 거의 비슷하다는 것을 알 수 있다. XML 기반으로 설정하는 것은 최근에 잘 사용하지 않으므로 이 정도로 마무리하고, 필요하면 스프링 공식 문서를 확인하면 되겠다.
