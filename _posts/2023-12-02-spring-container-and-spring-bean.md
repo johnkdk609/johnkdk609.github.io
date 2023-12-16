@@ -850,3 +850,100 @@ GenericXmlApplicationContext를 생성하고 여기에다가 "appConfig.xml"을 
 GenericXmlApplicationContext를 만들고, 설정 정보가 클래스 파일에서 XML로 바뀐 것밖에 없다. 나머지 코드는 전부 똑같다. ApplicationContext를 그대로 쓰는 것이다.
 
 XML 기반의 appConfig.xml 스프링 설정 정보와 코드로 된 AppConfig.java 설정 정보를 비교해보면 거의 비슷하다는 것을 알 수 있다. XML 기반으로 설정하는 것은 최근에 잘 사용하지 않으므로 이 정도로 마무리하고, 필요하면 스프링 공식 문서를 확인하면 되겠다.
+
+
+## 8. 스프링 빈 설정 메타 정보 - BeanDefinition
+
+이번에는 스프링 빈의 설정 메타 정보인 BeanDefinition에 대해서 알아보겠다.
+
+스프링은 어떻게 이런 다양한 설정 형식을 지원하는 것일까? 그 중심에는 ```BeanDefinition```이라는 추상화가 있다. 쉽게 이야기해서 <b>역할과 구현을 개념적으로 나눈 것</b>이다.
+
+* XML을 읽어서 BeanDefinition을 만들면 된다.
+* 자바 코드를 읽어서 BeanDefinition을 만들면 된다.
+* 스프링 컨테이너는 자바 코드인지, XML인지 몰라도 된다. 오직 BeanDefinition만 알면 된다. 이것을 기반으로 Bean을 생성하고 다 하는 것이다.
+
+<br>
+
+BeanDefinition을 빈 설정 메타정보라 한다.
+
+* ```@Bean``` 혹은 XML에서 ```<bean>```을 하면 빈 하나당 각각 하나씩 메타 정보가 생성된다.
+
+스프링 컨테이너는 이 메타정보를 기반으로 스프링 빈을 생성한다.
+
+<img width="986" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f2300943-6388-44c7-8603-4fe085de2e98">
+
+위 그림을 보면, 스프링 컨테이너가 BeanDefinition 정보를 가지고 동작한다고 보면 된다. 스프링 컨테이너 자체는 BeanDefinition에만 의존한다. 이것이 클래스로 설정된 정보인지, XML로 설정된 정보인지, 아니면 임의로 된 것인지 상관을 안 하는 것이다. 설계 자체를 추상화에만 의존하도록 한 것이다. BeanDefinition 자체가 인터페이스이다.
+
+<img width="724" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/532d1c25-4fc3-4d2f-95cf-9f59fdc83c64">
+
+<br>
+
+코드 레벨로 조금 더 깊이 있게 들어가보자.
+
+<img width="989" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/44982d3a-ae6f-4c47-ac2b-bc70e3986fec">
+
+ApplicationContext를 구현한 AnnotationConfigApplicationContext가 있다. 이것은 들어가면 ```AnnotatedBeanDefinitionReader``` 이란 것이 있다.
+
+<img width="1024" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/faef90d6-db34-4a69-9246-087ad16883ab">
+
+이것이 ApplicationContext의 설정 정보인 AppConfig.class를 읽어서 BeanDefinition을 만들어낸다.
+
+정리하면 다음과 같다.
+
+* AnnotationConfigApplicationContext는 AnnotatedBeanDefinitionReader를 사용해서 AppConfig.class를 읽고 BeanDefinition을 생성한다.
+* GenericXmlApplicationContext는 XmlBeanDefinitionReader를 사용해서 appConfig.xml 설정 정보를 읽고 BeanDefinition을 생성한다.
+* 새로운 형식의 설정 정보가 추가되면, XxxBeanDefinitionReader를 만들어서 BeanDefinition을 생성하면 된다.
+
+
+### BeanDefinition 살펴보기
+
+<b>BeanDefinition 정보</b>
+
+* BeanClassName: 생성할 빈의 클래스명(자바 설정처럼 팩토리 역할의 빈을 사용하면 없음)
+* factoryBeanName: 팩토리 역할의 빈을 사용할 경우 이름. 예&#41; appConfig
+* factoryMethodName: 빈을 생성할 팩토리 메서드 지정. 예&#41; memberService
+* Scope: 싱글톤(기본값)
+* lazyInit: 스프링 컨테이너를 생성할 때 빈을 생성하는 것이 아니라, 실제 빈을 사용할 때까지 최대한 생성을 지연처리 하는지 여부
+* InitMethodName: 빈을 생성하고, 의존관계를 적용한 뒤에 호출되는 초기화 메서드 명
+* DestroyMethodName: 빈의 생명주기가 끝나서 제거하기 직전에 호출되는 메서드 명
+* Constructor arguments, Properties: 의존관계 주입에서 사용한다. (자바 설정처럼 팩토리 역할의 빈을 사용하면 없음)
+
+<br>
+
+BeanDefinitionTest를 생성해보겠다. 테스트 쪽에 beandefinition패키지를 생성하고, 그 안에 BeanDefinitionTest클래스를 생성한다. 코드는 다음과 같다.
+
+```java
+package hello.core.beandefinition;
+
+import hello.core.AppConfig;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class BeanDefinitionTest {
+
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+    @Test
+    @DisplayName("빈 설정 메타정보 확인")
+    void findApplicationBean() {
+        String[] beanDefinitionNames = ac.getBeanDefinitionNames();
+        for (String beanDefinitionName : beanDefinitionNames) {
+            BeanDefinition beanDefinition = ac.getBeanDefinition(beanDefinitionName);
+
+            if (beanDefinition.getRole() == BeanDefinition.ROLE_APPLICATION) {
+                System.out.println("beanDefinitionName = " + beanDefinitionName + " beanDefinition = " + beanDefinition);
+            }
+        }
+    }
+}
+```
+
+우선 ```AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);```를 입력하여 ac를 생성하고, AppConfig.class를 설정 정보로 넣는다. 그리고 beanDefinition을 확인하기 위해 findApplicationBean을 만든다. 먼저 ```ac.getBeanDefinitionNames()```로 ac에서 beanDefinition의 이름들을 꺼낸다. 그리고 iter을 돌리면서 ac에서 definition 정보를 얻을 수 있다. 그 다음에 조건문을 넣어서, Role이 Application Role인 것만 출력하도록 한다. (안 그러면 너무 많이 출력되기 때문) beanDefinitionName과 beanDefinition 자체를 출력한다.
+
+이제 실행하면 다음과 같다.
+
+<img width="1685" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/6eba0aad-d843-4c7c-90a6-4b39698c90bc">
+
+보면 먼저 memberService의 경우, scope는 할당이 안 되어 있으므로 싱글톤이라는 것으로 되는 것이다. lazy는 보통 스프링 빈들이 스프링 컨테이너가 뜰 때 등록이 되는데, 그게 아니라 나중에 실제 사용하는 시점에 스프링 빈을 초기화 하라는 정보이다. 그리고 autowireMode를 쓰는지 안 쓰는지 체크하는 것이 있다. 그리고 ```factoryBeanName=appConfig; factoryMethodName=memberService;```라는 것은 appConfig에 있는 memberService를 호출해서 실제 빈을 생성할 수 있구나라고 생각하면 된다. 그리고 ```defined in hello.core.AppConfig```로 되어 있다는 등의 정보들이 있다. 이것을 XML로 바꾸면 다르게 나올 것이다.
