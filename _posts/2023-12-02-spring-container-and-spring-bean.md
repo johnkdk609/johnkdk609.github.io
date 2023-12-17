@@ -946,4 +946,66 @@ public class BeanDefinitionTest {
 
 <img width="1685" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/6eba0aad-d843-4c7c-90a6-4b39698c90bc">
 
-보면 먼저 memberService의 경우, scope는 할당이 안 되어 있으므로 싱글톤이라는 것으로 되는 것이다. lazy는 보통 스프링 빈들이 스프링 컨테이너가 뜰 때 등록이 되는데, 그게 아니라 나중에 실제 사용하는 시점에 스프링 빈을 초기화 하라는 정보이다. 그리고 autowireMode를 쓰는지 안 쓰는지 체크하는 것이 있다. 그리고 ```factoryBeanName=appConfig; factoryMethodName=memberService;```라는 것은 appConfig에 있는 memberService를 호출해서 실제 빈을 생성할 수 있구나라고 생각하면 된다. 그리고 ```defined in hello.core.AppConfig```로 되어 있다는 등의 정보들이 있다. 이것을 XML로 바꾸면 다르게 나올 것이다.
+보면 먼저 memberService의 경우, scope는 할당이 안 되어 있으므로 싱글톤이라는 것으로 되는 것이다. lazy는 보통 스프링 빈들이 스프링 컨테이너가 뜰 때 등록이 되는데, 그게 아니라 나중에 실제 사용하는 시점에 스프링 빈을 초기화 하라는 정보이다. 그리고 autowireMode를 쓰는지 안 쓰는지 체크하는 것이 있다. 그리고 ```factoryBeanName=appConfig; factoryMethodName=memberService;```라는 것은 appConfig에 있는 memberService를 호출해서 실제 빈을 생성할 수 있구나라고 생각하면 된다. 그리고 ```defined in hello.core.AppConfig```로 되어 있다는 등의 정보들이 있다. (이것을 XML로 바꾸면 다르게 나올 것이다.)
+
+<br>
+
+이런 메타정보가 있고, 이 메타정보를 기반으로 실제 인스턴스를 생성할 수 있다.
+
+정리하면 다음과 같다.
+
+* BeanDefinition을 직접 생성해서 스프링 컨테이너에 등록할 수 있다. 하지만 실무에서 BeanDefinition을 직접 정의하거나 사용할 일은 거의 없다. → 어려우면 그냥 넘어가도 된다.
+* BeanDefinition에 대해서는 너무 깊이있게 이해하기 보다는, 스프링이 다양한 형태의 설정 정보를 BeanDefinition으로 추상화해서 사용하는 것 정도만 이해하면 된다.
+* 가끔 스프링 코드나 스프링 관련 오픈 소스의 코드를 볼 때, BeanDefinition이라는 것이 보일 때가 있다. 이때 이러한 메커니즘을 떠올리면 된다.
+
+<br>
+
+이번에는 BeanDefinitionTest의 코드에서 Xml을 사용해보겠다. 수정한 코드는 다음과 같다.
+
+```java
+package hello.core.beandefinition;
+
+import hello.core.AppConfig;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+
+public class BeanDefinitionTest {
+
+//    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+    GenericXmlApplicationContext ac = new GenericXmlApplicationContext("appConfig.xml");
+
+    @Test
+    @DisplayName("빈 설정 메타정보 확인")
+    void findApplicationBean() {
+        String[] beanDefinitionNames = ac.getBeanDefinitionNames();
+        for (String beanDefinitionName : beanDefinitionNames) {
+            BeanDefinition beanDefinition = ac.getBeanDefinition(beanDefinitionName);
+
+            if (beanDefinition.getRole() == BeanDefinition.ROLE_APPLICATION) {
+                System.out.println("beanDefinitionName = " + beanDefinitionName + " beanDefinition = " + beanDefinition);
+            }
+        }
+    }
+}
+```
+
+참고로 이전에 ```ApplicationContext ac = new ~~```로 ApplicationContext를 사용하지 못한 이유는, 뒤에 ```ac.getBeanDefinition(beanDefinitionName)```에서 getBeanDefinition을 못 하기 때문이다.
+
+이번에는 ```GenericXmlApplicationContext ac = new GenericXmlApplicationContext("appConfig.xml");```를 입력해 XML을 사용한다. 실행하면 다음과 같이 나타난다.
+
+<img width="1682" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/522221ca-bea9-490c-af4d-738463af3b82">
+
+방금 했던 것과 좀 다르다. XML로 했을 경우, Generic bean이라고 해서 빈에 대한 정보가 명확하게 등록되어 있다. 그리고 ```defined in class path resource [appConfig.xml]```이라고 나와있다. 그리고 factoryBeanName, factoryMethodName 같은 것들이 다 빠져 있다. 이게 무슨 차이가 있냐면, 예전에는 다 XML로 설정하면서 이렇게 빈에 대한 클래스가 다 밖에 드러났다. 스프링이 빈을 등록하는 것이 두 가지이다. 첫 번째는 직접 스프링 빈을 스프링 컨테이너에 등록하는 방법이고, 두 번째는 우회해서 하는 것이다. 이 우회해서 하는 것이 factoryMethod라는 것을 쓰는 것이다. 그런데 이 자바 코드를 가지고 쓰는 방법은 factoryMethod를 통해서 등록하는 방법이다. 내가 생성했던 AppConfig라는 팩토리 메서드를 통해서, AppConfig가 제공하는 memberService라는 메서드를 통해서 제공하는 방식이다. AnnotationConfig로 오면서 외부에서 메서드를 호출해서 생성하는 팩토리 메서드 방식을 사용하게 된 것이다.
+
+반대로 위 코드에서 ```AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);```를 선택해서 테스트를 돌려보면 다음과 같다.
+
+<img width="1686" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7102b358-42c4-4537-b380-af4220fd9344">
+
+factoryBeanName은 appConfig이고, factoryMethodName은 memberRepository 이렇게 나타난다. appConfig라는 팩토리 빈에서 이 팩토리 메서드를 통해서 생성이 된다고 보면 되는 것이다. AnnotationConfig를 사용하면 팩토리 빈을 통해서 등록되는 방식으로 스프링에 제공되는 것이다.
+
+<br>
+
+정리하면, <b>스프링은 BeanDefinition이라는 것으로 스프링의 메타 정보를 추상화한다</b>는 것만 기억하면 된다. 그리고 <b>스프링 빈을 만들 때에는 두 가지 방법이 있는데, 하나는 직접 스프링 빈을 등록하는 방법과, 두 번째는 팩토리 빈을 통해서 등록하는 방법</b>이다. 우리가 일반적으로 쓰는 것은 팩토리 빈을 통해서 등록하는 방식이라고 이해하면 된다.
