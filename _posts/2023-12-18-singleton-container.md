@@ -103,3 +103,65 @@ Assertions.assertThat(memberService1).isNotSameAs(memberService2);
 * 우리가 만들었던 스프링 없는 순수한 DI 컨테이너인 AppConfig는 요청을 할 때마다 객체를 새로 생성한다.
 * 고객 트래픽이 초당 100이 나오면 초당 100개 객체가 생성되고 소멸된다! → 메모리 낭비가 심하다.
 * 해결방안은 해당 객체가 딱 1개만 생성되고, 공유하도록 설계하면 된다. → <b>싱글톤 패턴</b>
+
+
+## 2. 싱글톤 패턴
+
+이번에는 싱글톤 패턴에 대해 알아볼 것이다.
+
+<b>싱글톤 패턴이란 클래스의 인스턴스가 딱 1개만 생성되는 것을 보장하는 디자인 패턴</b>이다. 한 JVM(자바 서버) 안에서 객체 인스턴스가 하나만 생성되는 것으로, 절대 두 개가 생성되지 않도록 만드는 디자인 패턴이다.
+
+결론은 똑같은 객체 타입의 인스턴스를 2개 이상 생성하지 못하도록 막으면 된다. (private 생성자를 사용해서 외부에서 임의로 new 키워드를 사용하지 못하도록 막아야 한다.)
+
+<br>
+
+코드로 만들어 보겠다. test 밑에 singleton 패키지에 SingletonService클래스를 생성한다. <b>SingletonService클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.singleton;
+
+public class SingletonService {
+
+    private static final SingletonService instance = new SingletonService();
+
+    public static SingletonService getInstance() {
+        return instance;
+    }
+
+    private SingletonService() {
+    }
+
+    public void logic() {
+        System.out.println("싱글톤 객체 로직 호출");
+    }
+    
+}
+```
+
+먼저 ```private static final SingletonService instance = new SingletonService();```를 입력해 자기자신을 선언한다. 관례상 instance를 많이 사용한다. 자기 자신을 내부에 private으로 하나 가지고 있는데, static으로 가지고 있다. 이렇게 하면 클래스 레벨에 올라가기 때문에 딱 하나만 올라가게 된다. 이제 얘를 조회해야 한다. ```public static SingletonService getInstance()```를 기입하고, instance를 리턴하게 한다. 
+
+JVM이 뜰 때 SingletonService의 static 영역에 ```new SingletonService();```라고 되어 있으니 내부적으로 실행해서 객체를 생성한 다음 ```instance```에 참조를 넣어 놓는다. 그러면 객체 인스턴스를 딱 하나 생성해서 이 안에 들어가 있는 것이다.
+
+그리고 private 생성자를 사용한다. private은 자기 자신을 호출할 수 있다. 가령 다른 클래스인 SingletonTest에서 다음과 같이 SingletonService을 만들려 하면 다음과 같이 안 된다.
+
+<img width="1085" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f4b45f1b-369b-4324-9f09-844e3ef33dc3">
+
+위와 같이 'private access' 여서 안 된다고 나온다. 컴파일 오류가 나는 것이다.
+
+그리고 로직이 하나 있어야 하니, 위와 같이 ```public void logic()```을 기입한다. 
+
+이렇게 하면 완벽한 싱글톤이 된다. 자바가 뜨면서 static 영역에 있는 SingletonService를 초기화하면서 new를 한 번 생성해서 가지고 있다. 이 instance에 참조를 꺼낼 수 있는 방법은 getInstance밖에 없다. 그리고 SingletonService를 생성할 수 있는 곳은 아무 곳도 없다.
+
+<br>
+
+정리하자면 이러하다.
+
+1. static영역에 객체 instance를 미리 하나 생성해서 올려둔다.
+2. 이 객체 인스턴스가 필요하면 오직 ```getInstance()```메서드를 통해서만 조회할 수 있다. 이 메서드를 호출하면 항상 같은 인스턴스를 반환한다.
+3. 딱 1개의 객체 인스턴스만 존재해야 하므로, 생성자를 private으로 막아서 혹시라도 외부에서 new 키워드로 객체 인스턴스가 생성되는 것을 막는다.
+
+제일 좋은 오류는 Compile Error이다. 진짜 잘 설계한 객체는 컴파일 오류만으로 웬만한 오류가 다 잡히도록 설계하는 것이다. 이렇게 private으로 막아버리는 것이다. 누군가가 이것을 보고 '왜 private이지?' 하고 한 번 생각하다가, 싱글톤이라는 것을 생각하게 될 것이다. 만약 public으로 돼 있으면 '생성해서 쓰는 것인가보다' 하고 생성해서 2~3개가 되어버릴 수 있는 것이다.
+
+<br>
+
+이제 테스트를 하나 만들어볼 것이다.
