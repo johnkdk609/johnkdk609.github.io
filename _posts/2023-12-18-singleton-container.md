@@ -164,4 +164,78 @@ JVM이 뜰 때 SingletonService의 static 영역에 ```new SingletonService();``
 
 <br>
 
-이제 테스트를 하나 만들어볼 것이다.
+이제 테스트를 하나 만들어볼 것이다. 그냥 이전에 만들었던 SingletonTest클래스에 만들 것이다.
+
+테스트 코드는 다음과 같다.
+
+```java
+@Test
+@DisplayName("싱글톤 패턴을 적용한 객체 사용")
+void singletonServiceTest() {
+    SingletonService singletonService1 = SingletonService.getInstance();
+    SingletonService singletonService2 = SingletonService.getInstance();
+
+    System.out.println("singletonService1 = " + singletonService1);
+    System.out.println("singletonService2 = " + singletonService2);
+
+    assertThat(singletonService1).isSameAs(singletonService2);
+}
+```
+
+먼저 new 해서 싱글톤 서비스를 생성하려고 하면 안 된다. private access 때문이다. 그래서 조회하기 위해서는 ```SingletonService.getInstance()```의 방법을 사용해야 한다. singletonService1과 singletonService2를 만든다. 호출할 때마다 객체를 생성하는지 안 하는지 보기 위해서 참조값을 확인해볼 것이다. 위와 같이 입력하고 출력해보면 다음과 같이 같은 객체 인스턴스가 반환된 것을 확인할 수 있다.
+
+<img width="1178" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1db6853a-e1f3-40c1-a84c-7286692bb4b5">
+
+이미 자바가 뜰 때 생성해놓은 것을 가져다 쓰는 것이다. 객체 인스턴스를 생성하는 데 드는 비용이 1,000 정도라면, 이미 생성한 것을 가져오는 비용은 1 정도라고 생각하면 된다. 그리고 검증을 하기 위해 Assertions를 static import를 해주고, ```assertThat(singletonService1).isSameAs(singletonService2);```를 입력한다. ```isSameAs```와 ```isEqualTo```가 있는데, Same은 참조를 비교하기 위해 ```==```를 하는 것이고, Equals는 자바의 ```equal```이다. 여기서는 진짜 인스턴스가 같은지 비교하는 것이기 때문에 ```isSameAs```를 사용하면 된다.
+
+<br>
+
+이렇게 해서 싱글톤 패턴을 구현하는 것을 알아봤다. 이제 기존에 만들어둔 AppConfig.java를 다 싱글톤 패턴을 넣어 바꾼 다음, ```getInstance```해서 반환하도록 하면 된다. 그러면 싱글톤이 다 적용된다.
+
+그런데 그렇게 할 필요가 없다. 왜냐하면 스프링 컨테이너를 쓰면, 스프링 컨테이너가 기본적으로 객체를 다 싱글톤으로 만들어서 관리해주기 때문이다. 이 싱글톤 패턴이 적용되면, 고객의 요청이 초당 100개가 와서 초당 100개 요청을 처리해야 해도, 객체를 하나도 안 만든다. 있는 객체를 그대로 재활용하는 것이다. 성능이 상당히 좋아질 것이다.
+
+<br>
+
+정리하면 다음과 같다.
+
+* private으로 new 키워드를 막아놨다.
+* 호출할 때마다 같은 객체 인스턴스를 반환하는 것을 확인할 수 있다.
+
+(참고: 싱글톤 패턴을 구현하는 방법은 여러가지가 있다. 여기서는 객체를 미리 생성해두는 가장 단순하고 안전한 방법을 선택했다.)
+
+싱글톤 패턴을 적용하면 고객의 요청이 올 때마다 객체를 생성하는 것이 아니라, 이미 만들어진 객체를 공유해서 효율적으로 사용할 수 있다. 하지만 싱글톤 패턴은 다음과 같은 수많은 문제점들을 가지고 있다.
+
+<br>
+
+<b>싱글톤 패턴 문제점</b>
+
+* 싱글톤 패턴을 구현하는 코드 자체가 많이 들어간다.
+
+이전에 만들었던 SingletonService클래스 코드를 생각하면 된다.
+
+<img width="691" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/849afb41-0e91-4da1-ae20-edad89ec53e2">
+
+위와 같은 코드를 넣어야 하고, 이것이 상당히 큰 단점이라고 할 수 있다.
+
+* 의존관계상 클라이언트가 구체 클래스에 의존한다. → DIP를 위반한다.
+
+위의 그림을 봤을 때, getInstance() 한 것을 불러와야 하는 문제가 있다. 예를 들어서 AppConfig에서 이것을 할려 그러면, ```memberServiceImpl.getInstance()```의 방식으로 꺼내야 한다. 다른 애들도 클라이언트가 ```구체클래스.getInstance()```의 방식으로 꺼내게 된다. 그러니까 구체 클래스에 의존하게 되고 DIP를 위반하는 것이다.
+
+* 클라이언트가 구체 클래스에 의존해서 OCP 원칙을 위반할 가능성이 높다.
+* 테스트하기 어렵다.
+
+싱글톤은 내가 딱 지정해서 가져온다. 인스턴스를 미리 받아놔서 설정이 끝난 것이다. 유연성이 떨어진다.
+
+* 내부 속성을 변경하거나 초기화하기 어렵다.
+* private 생성자로 자식 클래스를 만들기 어렵다.
+* 결론적으로 유연성이 떨어진다.
+
+Dependency Injection과 같은 것을 적용하기 어렵다. 왜냐하면 ```구체클래스.getInstance()```와 같은 것을 해줘야 하기 때문이다.
+
+* 안티패턴으로 불리기도 한다.
+
+<br>
+
+물론 장점도 있다. share을 할 수 있고, 확실하게 객체 하나가 있다는 것이 보장된다. 하지만 위와 같은 수많은 단점들이 있기도 하다.
+
+그런데 스프링 프레임워크는 싱글톤이 가진 단점은 다 제거하면서 객체를 싱글톤으로 관리해준다.
