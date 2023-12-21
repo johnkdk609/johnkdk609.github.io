@@ -239,3 +239,67 @@ Dependency Injection과 같은 것을 적용하기 어렵다. 왜냐하면 ```�
 물론 장점도 있다. share을 할 수 있고, 확실하게 객체 하나가 있다는 것이 보장된다. 하지만 위와 같은 수많은 단점들이 있기도 하다.
 
 그런데 스프링 프레임워크는 싱글톤이 가진 단점은 다 제거하면서 객체를 싱글톤으로 관리해준다.
+
+
+## 3. 싱글톤 컨테이너
+
+이제 싱글톤 컨테이너에 대해 알아보겠다.
+
+스프링 컨테이너는 싱글톤 패턴의 문제점을 해결하면서, 객체 인스턴스를 싱글톤(1개만 생성)으로 관리한다. 지금까지 우리가 학습한 스프링 빈이 바로 싱글톤으로 관리되는 빈이다.
+
+### 싱글톤 컨테이너
+
+* 스프링 컨테이너는 싱글톤 패턴을 적용하지 않아도, 객체 인스턴스를 싱글톤으로 관리한다.
+    * 이전에 설명한 컨테이너 생성 과정을 자세히 보자. 컨테이너는 객체를 하나만 생성해서 관리한다.
+
+<img width="990" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f094c174-04ff-49e1-a65f-65eafe4dfb33">
+
+이전에 했던 스프링 빈 등록에 대한 그림이다. ```@Bean```이 붙어있는 것들을 다 호출해서 빈 객체를 미리 등록해서 관리해준다. 객체 인스턴스를 미리 생성해서 관리해주는 것이다. 그러면 조회하면 관리되는 오른쪽의 객체들을 조회해준다. 두 번 조회하면 이미 관리되던 것과 똑같은 것을 조회해주는 것이다.
+
+* 스프링 컨테이너는 싱글톤 컨테이너 역할을 한다. 이렇게 싱글톤 객체를 생성하고 관리하는 기능을 싱글톤 레지스트리라 한다.
+* 스프링 컨테이너의 이런 기능 덕분에 싱글톤 패턴의 모든 단점을 해결하면서 객체를 싱글톤으로 유지할 수 있다.
+    * 싱글톤 패턴을 위한 지저분한 코드가 들어가지 않아도 된다.
+    * DIP, OCP, 테스트, private 생성자로부터 자유롭게 싱글톤을 사용할 수 있다. → 유연성을 늘릴 수 있는 것이다.
+
+<br>
+
+그러면 테스트를 해보겠다. 기존에 사용하던 SingletonTest클래스에 그대로 코드를 추가하겠다. 테스트 코드는 다음과 같다.
+
+```java
+@Test
+@DisplayName("스프링 컨테이너와 싱글톤")
+void springContainer() {
+//        AppConfig appConfig = new AppConfig();
+    AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+    MemberService memberService1 = ac.getBean("memberService", MemberService.class);
+    MemberService memberService2 = ac.getBean("memberService", MemberService.class);
+
+    // 참조값이 다른 것을 확인
+    System.out.println("memberService1 = " + memberService1);
+    System.out.println("memberService2 = " + memberService2);
+
+    // memberService1 ≠ memberService
+    assertThat(memberService1).isSameAs(memberService2);
+}
+```
+
+이전에 pureContainer의 테스트 코드를 복사 붙이기 하고, 이번에는 ```new AnnotationConfigApplicationContext(AppConfig.class);```를 입력해 ac를 생성한다. 그리고 ```ac.getBean("memberService", MemberService.class);```를 두 번씩 해서 두 번 조회한다. 그리고 아래에서 ```assertThat(memberService1).isSameAs(memberService2);```로 ```isSameAs```를 사용한다. 이제 실행하면 다음과 같이 성공적으로 수행된다.
+
+<img width="1684" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c60efd9d-62c4-44e0-a13b-3ed24f9733f5">
+
+보면 조회할 때마다 스프링이 처음에 컨테이너에 등록한 빈을 계속 반환해주는 것이다. 싱글톤이 맞다.
+
+MemberServiceImpl클래스 코드에 들어가 보면, 싱글톤 패턴과 관련한 코드가 하나도 없다.
+
+<img width="793" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/6dd090ea-79a2-4a31-88c7-1190c98ff98d">
+
+어차피 스프링을 쓰면 스프링 컨테이너를 통해서 사용하기 때문에, 직접 new로 생성하거나 하지는 않는다. 스프링 컨테이너에서 꺼내서 사용해야 된다는 내부 규약을 가지고 개발하면 되는 것이다.
+
+그리고 스프링 컨테이너가 엮이면 이미 주입하고 하는 것은 다 같은 싱글톤이기 때문에 그런 걱정은 없다.
+
+<br>
+
+그래서 싱글톤 컨테이너를 적용하면 다음과 같이 된다.
+
+<img width="991" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1ed34b17-63a2-457d-a711-6aae004dda89">
