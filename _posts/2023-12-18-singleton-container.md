@@ -303,3 +303,54 @@ MemberServiceImpl클래스 코드에 들어가 보면, 싱글톤 패턴과 관�
 그래서 싱글톤 컨테이너를 적용하면 다음과 같이 된다.
 
 <img width="991" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1ed34b17-63a2-457d-a711-6aae004dda89">
+
+고객인 클라이언트 A, B, C가 요청할 때마다 동일한 memberService를 반환해준다. 스프링 컨테이너 덕분에 고객의 요청이 올 때마다 객체를 생성하는 것이 아니라, 이미 만들어진 객체를 공유해서 효율적으로 재사용할 수 있는 것이다.
+
+(참고: 스프링의 기본 빈 등록 방식은 싱글톤이지만, 싱글톤 방식만 지원하는 것은 아니다. 요청할 때마다 새로운 객체를 생성해서 반환하는 기능도 제공한다. 자세한 내용은 뒤에 빈 스코프에서 알아볼 것이다.)
+
+
+## 4. 싱글톤 방식의 주의점
+
+이번에는 싱글톤 방식의 주의점에 대해 알아볼 것이다.
+
+싱글톤 패턴이든, 스프링 같은 싱글톤 컨테이너를 사용하든, 객체 인스턴스를 하나만 생성해서 공유하는 싱글톤 방식은 여러 클라이언트가 하나의 같은 객체 인스턴스를 공유하기 때문에 싱글톤 객체는 상태를 유지(stateful)하게 설계하면 안 된다.
+
+<b>무상태(stateless)로 설계해야</b> 한다!
+    * 특정 클라이언트에 의존적인 필드가 있으면 안 된다.
+    * <b>특정 클라이언트가 값을 변경할 수 있는 필드가 있으면 안 된다.</b>
+    * 가급적 읽기만 가능해야 한다.
+    * 필드 대신에 자바에서 공유되지 않는, 지역변수, 파라미터, ThreadLocal 등을 사용해야 한다.
+
+스프링 빈의 필드에 공유 값을 설정하면 정말 큰 장애가 발생할 수 있다.
+
+<br>
+
+상태를 유지할 경우 발생하는 문제점 예시를 알아보겠다. 테스트 쪽의 singleton패키지에 StatefulService클래스를 생성한다. <b>StatefulService클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.singleton;
+
+public class StatefulService {
+
+    private int price;  // 상태를 유지하는 필드
+
+    public void order(String name, int price) {
+        System.out.println("name = " + name + " price = " + price);
+        this.price = price; // 여기가 문제!
+    }
+
+    public int getPrice() {
+        return price;
+    }
+}
+```
+
+어떤 서비스가 있는데, 이름이 StatefulService인 것이다. 가격이란 필드를 가지고 있다. 그리고 여기에는 order하는 로직이 있다. 주문할 때 가격을 저장하게 하는 것인데, ```this.price = price;```를 추가한다. 이 부분이 문제가 된다. 클라이언트 의도는 주문을 해서 값을 여기에 저장해두고, 뒤에 ```public int getPrice()```로 꺼내고 싶었던 것이다.
+
+<br>
+
+이제 테스트 코드를 봐야 한다. 테스트 만들 때, StatefulService를 클릭해두고, ```cmd + shift + T```를 클릭하면 다음과 같이 'Create Test for StatefulService'가 뜬다.
+
+<img width="750" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/9d3af253-a3da-4e27-b15d-585096a8a840">
+
+이것을 클릭하고, OK를 누른다. 그러면 편리하게 만들어진다.
