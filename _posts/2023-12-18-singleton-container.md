@@ -354,3 +354,35 @@ public class StatefulService {
 <img width="750" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/9d3af253-a3da-4e27-b15d-585096a8a840">
 
 이것을 클릭하고, OK를 누른다. 그러면 편리하게 만들어진다.
+
+<br>
+
+이제 만들어진 <b>StatefulServiceTest클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.singleton;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class StatefulServiceTest {
+
+    @Test
+    void statefulServiceSingleton() {
+        AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(TestConfig.class);
+        StatefulService statefulService1 = ac.getBean(StatefulService.class);
+        StatefulService statefulService2 = ac.getBean(StatefulService.class);
+    }
+
+    static class TestConfig {
+
+        @Bean
+        public StatefulService statefulService() {
+            return new StatefulService();
+        }
+    }
+}
+```
