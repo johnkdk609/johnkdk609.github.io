@@ -366,8 +366,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class StatefulServiceTest {
 
     @Test
@@ -375,6 +373,15 @@ class StatefulServiceTest {
         AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(TestConfig.class);
         StatefulService statefulService1 = ac.getBean(StatefulService.class);
         StatefulService statefulService2 = ac.getBean(StatefulService.class);
+
+        // ThreadA: A사용자 10000원 주문
+        statefulService1.order("userA", 10000);
+        // ThreadB: B사용자 20000원 주문
+        statefulService2.order("userB", 20000);
+
+        // ThreadA: 사용자A 주문 금액 조회
+        int price = statefulService1.getPrice();
+        System.out.println("price = " + price);
     }
 
     static class TestConfig {
@@ -386,3 +393,11 @@ class StatefulServiceTest {
     }
 }
 ```
+
+statefulServiceSingleton이라는 테스트를 생성한다. 그리고 이 StatefulServiceTest 전용으로 config를 하나 만들어주기 위해 아래에 TestConfig를 생성한다. 그리고 ```new AnnotationConfigApplicationContext(TestConfig.class);```를 입력하고 ```cmd + opt + V```를 클릭해 ac를 생성한다. 그리고 이 ac에서 빈을 조회하는 것을 두 개 만든다. 그리고 ```statefulService1.order("userA", 10000);```를 먼저 입력한 다음, 다음 줄에 ```statefulService1.order("userB", 20000);```를 입력한다. A 사용자가 10000원을 주문하고, 그 이후에 B 사용자가 20000원을 주문한 것이다. 이제 여기서 사용자 A가 주문 금액을 조회한다.
+
+사용자 A는 10000원을 주기로 했다. 그러고 나서 사용자가 자기가 주문한 금액을 ```getPrice```로 꺼내고 싶은 것이다. 그런데 그 사이에 사용자 B가 끼어든 것이다. 즉, A가 주문하고 금액을 조회하는 사이에 B가 끼어들어서 20000원으로 주문을 한 것이다. 
+
+그러고 나서 사용자 A가 주문 금액을 조회하면 얼마가 나올까? 테스트를 돌려보면 다음과 같이 나온다.
+
+<img width="1687" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/77bc4c5f-28a3-4867-9d5b-3dcc32961a2e">
