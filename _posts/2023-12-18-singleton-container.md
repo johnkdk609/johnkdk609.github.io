@@ -366,6 +366,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class StatefulServiceTest {
 
     @Test
@@ -382,6 +384,8 @@ class StatefulServiceTest {
         // ThreadA: 사용자A 주문 금액 조회
         int price = statefulService1.getPrice();
         System.out.println("price = " + price);
+
+        assertThat(statefulService1.getPrice()).isEqualTo(20000);
     }
 
     static class TestConfig {
@@ -401,3 +405,50 @@ statefulServiceSingleton이라는 테스트를 생성한다. 그리고 이 State
 그러고 나서 사용자 A가 주문 금액을 조회하면 얼마가 나올까? 테스트를 돌려보면 다음과 같이 나온다.
 
 <img width="1687" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/77bc4c5f-28a3-4867-9d5b-3dcc32961a2e">
+
+20000원이 나온다. 우리가 기대한 것은 10000원이 나오는 것이었다. 왜냐하면 사용자 A가 조회한 것이기 때문이다. (statefulService1을 사용한 것이다.) 그런데도 10000원이 아니라 20000원이 나왔다. 왜냐하면 중간에 사용자 B가 이것을 바꿔버렸기 때문이다.
+
+statefulService1이든 statefulService2이든, 상관없다. 인스턴스는 같은 것을 사용한다.
+
+그리고 검증을 위해 아래에 ```assertThat(statefulService1.getPrice()).isEqualTo(20000);```을 입력한다. 이제 실행하면 테스트는 성공한다. 서비스 측면에서는 완전히 망한 것이다. 왜냐하면 사용자 A는 10000원을 주문 넣었는데, 주문서를 확인해보니 주문 결과 화면에 20000원으로 보이는 것이다. 난리 난다. 이렇게 보이는 것만 바뀌면 그나마 다행이지만, 만약 A가 10000원을 주문 넣었는데 중간에 B가 끼어들어서 20000원 주문을 넣었고, 실제 카드에 긁힌 금액이 A 사용자가 10000원이 아니라 20000원이면 매우 심각한 상황이다. 그러면 이 서비스는 이제 망하는 것이고, 몇 백억 물어주고 접어야 하는 것이다.
+
+<br>
+
+다시 위 StatefulServiceTest 코드를 보자. ```statefulService1.order("userA", 10000);```를 해서 사용자 A는 10000원을 주문한다. 그러면 다음과 같이 StatefulService 클래스의 ```this.price```의 price에 10000원이 들어가서 ```private int price```의 price에 10000원이 할당된다.
+
+<img width="629" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/47635aad-856d-438b-8a41-3aa0fb1d1b88">
+
+그런데 사용자 B가 또 들어와서 ```statefulService2.order("userB", 20000);```를 통해 20000원을 넣으면, 다시 StatefulService 클래스의 ```private int price```의 price가 20000원으로 세팅된다. 원래 10000원으로 되어 있던 것이 20000원으로 바꿔치기 된 것이다. statefulService1과 statefulService2가 똑같은 것이기 때문이다.
+
+그래서 사용자 A가 주문서 넣고 주문 결과 화면 확인했는데 ```getPrice```로 꺼내니 20000원을 꺼내게 된 것이다.
+
+<br>
+
+정리하면 다음과 같다.
+
+* 최대한 단순히 설명하기 위해, 실제 쓰레드는 사용하지 않았다.
+* ThreadA가 사용자 A의 코드를 호출하고 ThreadB가 사용자 B 코드를 호출한다 가정하자.
+* StatefulService의 price 필드는 공유되는 필드인데, 특정 클라이언트가 값을 변경한다.
+* 사용자 A의 주문금액은 10000원이 되어야 하는데, 20000원이라는 결과가 나왔다.
+* 실무에서 이런 경우를 종종 보는데, 이로 인해 정말 해결하기 어려운 큰 문제들이 터진다. (몇 년에 한 번씩 꼭 만난다고 한다.)
+* 진짜 공유 필드는 조심해야 한다! 스프링 빈은 항상 무상태(stateless)로 설계해야 한다.
+
+<br>
+
+StatefulService클래스의 코드를 다음과 같이 수정한다.
+
+<img width="585" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/4a81fb6b-358d-4a35-813a-f7f3944b2481">
+
+그리고 StatefulServiceTest클래스의 코드를 다음과 같이 수정한다.
+
+<img width="921" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/338184ae-84a6-4f5a-901f-2a7f907d6b84">
+
+이제 테스트를 돌려보면 다음과 같이 나온다.
+
+<img width="1684" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f167fedd-6f83-4904-ab7d-572189e31be7">
+
+사용자 A의 금액이 10000원으로 정상적으로 나온다. 지역변수로 공유되는 것이 아니기 때문이다. 이런 식으로 문제를 해결해야 한다.
+
+<br>
+
+실무에서는 매우 복잡한 상황에서 문제가 터지기 때문에 원인을 찾기 어렵다.
