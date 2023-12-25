@@ -452,3 +452,210 @@ StatefulService클래스의 코드를 다음과 같이 수정한다.
 <br>
 
 실무에서는 매우 복잡한 상황에서 문제가 터지기 때문에 원인을 찾기 어렵다.
+
+
+## 5. @Configuration과 싱글톤
+
+이번에는 ```@Configuration```의 비밀에 대해 파헤쳐 보겠다. ```@Configuration```은 사실 싱글톤을 위해 존재하는 것이다.
+
+기존의 AppConfig클래스의 코드를 보면 다음과 같다.
+
+```java
+package hello.core;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.discount.RateDiscountPolicy;
+import hello.core.member.MemberRepository;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import hello.core.member.MemoryMemberRepository;
+import hello.core.order.OrderService;
+import hello.core.order.OrderServiceImpl;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AppConfig {
+
+    // @Bean memberService → new MemoryMemberRepository()
+    // @Bean orderService → new MemoryMemberRepository()
+
+    @Bean
+    public MemberService memberService() {
+
+        return new MemberServiceImpl(memberRepository());
+    }
+
+    @Bean
+    public OrderService orderService() {
+
+        return new OrderServiceImpl(memberRepository(), discountPolicy());
+    }
+
+    @Bean
+    public MemberRepository memberRepository() {
+
+        return new MemoryMemberRepository();
+    }
+
+    @Bean
+    public DiscountPolicy discountPolicy() {
+//        return new FixDiscountPolicy();
+        return new RateDiscountPolicy();
+    }
+}
+```
+
+위 코드에서 이상한 것이 하나 있다. 만약 스프링 빈이 memberService를 생성하고 호출할 때, new MemberServiceImpl을 호출하면서 memberRepository를 호출한다. 자바 코드이니 이 메서드가 호출될 것이다. 그러면 ```new MemoryMemberRepository```가 생성된다.
+
+```@Bean```이 되어 있는데, memberService()를 하면 memberRepository()를 호출하면서 결과적으로 ```new MemoryMemberRepository()```를 한 번 호출해주는 것이다.
+
+그 다음에 orderService 메서드를 호출할 때, ```new OrderServiceImpl```을 생성하는 것은 당연하고, memberRepository() 메서드를 또 호출한다. 그러면 이게 들어가서 바로 위에 ```new MemoryMemberRepository()```가 호출되는 것이다.
+
+지금 설명한 것들만 두 번 호출되었다. 그러면 싱글톤이 깨지는 것이 아닐까 하는 의문이 들게 된다.
+
+<br>
+
+위에서 한 것을 정리하자면 다음과 같다.
+
+* memberService 빈을 만드는 코드를 보면 ```memberRepository()```를 호출한다.
+    * 이 메서드를 호출하면 ```new MemoryMemberRepository()```를 호출한다.
+* orderService 빈을 만드는 코드도 동일하게 ```memberRepository()```를 호출한다.
+    * 이 메서드를 호출하면 ```new MemoryMemberRepository()```를 호출한다.
+
+결과적으로 각각 다른 2개의 ```MemoryMemberRepository```가 생성되면서 싱글톤이 깨지는 것처럼 보인다. 스프링 컨테이너는 이 문제를 어떻게 해결할까?
+
+<br>
+
+개발을 하다가 이렇게 고민이 되면, 테스트 코드를 돌려보면 된다.
+
+테스트 하는 것은 간단하다. MemberServiceImpl에 있는 MemberRepository의 값을 확인해보면 된다. (OrderServiceImpl 또한 마찬가지)
+
+<b>MemberServiceImpl클래스</b>에 다음과 같이 코드를 추가한다.
+
+```java
+package hello.core.member;
+
+public class  MemberServiceImpl implements MemberService {
+
+    private final MemberRepository memberRepository;
+
+    public MemberServiceImpl(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    @Override
+    public void join(Member member) {
+        memberRepository.save(member);
+    }
+
+    @Override
+    public Member findMember(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+
+    // 테스트 용도
+    public MemberRepository getMemberRepository() {
+        return memberRepository;
+    }
+}
+```
+
+그리고 <b>OrderServiceImpl클래스</b>에도 다음과 같이 코드를 추가한다.
+
+```java
+package hello.core.order;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.member.Member;
+import hello.core.member.MemberRepository;
+
+public class OrderServiceImpl implements OrderService {
+
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;
+
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+    }
+
+    @Override
+    public Order createOrder(Long memberId, String itemName, int itemPrice) {
+        Member member = memberRepository.findById(memberId);
+        int discountPrice = discountPolicy.discount(member, itemPrice);
+
+        return new Order(memberId, itemName, itemPrice, discountPrice);
+    }
+
+    // 테스트 용도
+    public MemberRepository getMemberRepository() {
+        return memberRepository;
+    }
+}
+```
+
+<br>
+
+이제 테스트를 만들어 보겠다. singleton패키지 안에 ConfigurationSingletonTest클래스를 생성한다.
+
+<b>ConfigurationSingletonTest클래스</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.singleton;
+
+import hello.core.AppConfig;
+import hello.core.member.MemberRepository;
+import hello.core.member.MemberServiceImpl;
+import hello.core.order.OrderServiceImpl;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import static org.assertj.core.api.Assertions.*;
+
+public class ConfigurationSingletonTest {
+
+    @Test
+    void configurationTest() {
+        AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        MemberServiceImpl memberService = ac.getBean("memberService", MemberServiceImpl.class);
+        OrderServiceImpl orderService = ac.getBean("orderService", OrderServiceImpl.class);
+        MemberRepository memberRepository = ac.getBean("memberRepository", MemberRepository.class);
+
+        MemberRepository memberRepository1 = memberService.getMemberRepository();
+        MemberRepository memberRepository2 = orderService.getMemberRepository();
+
+        System.out.println("memberService → memberRepository = " + memberRepository1);
+        System.out.println("orderService → memberRepository = " + memberRepository2);
+        System.out.println("memberRepository = " + memberRepository);
+
+        assertThat(memberService.getMemberRepository()).isSameAs(memberRepository);
+        assertThat(orderService.getMemberRepository()).isSameAs(memberRepository);
+    }
+}
+```
+
+ac를 만들고, AppConfig.class를 사용한다. 이제 꺼내보겠다. getBean 해서 "memberService"를 꺼내고, MemberServiceImpl로 보낸다. 그리고 "orderService"를 하고 OrderServiceImpl로 꺼낸다. Impl로 꺼내야 이전에 테스트 용도로 만든 ```getMemberRepository()```를 사용할 수 있기 때문이다. (원래는 이렇게 구체 타입으로 꺼내는 것이 좋지 않다.)
+
+그리고 memberService에서 getMemberRepository로 꺼내 memberRepository1, orderService에서 getMemberRepository로 꺼내 memberRepository2를 생성한다.
+
+이제 출력을 해보겠다. 1번은 "memberService → memberRepository"로 조회하는 것이고, 2번은 "orderService → memberRepository"로 조회하는 것이다. 같은 것인지 다른 것인지 보는 것이다. 검증을 하기 전에 한 가지 더 보겠다. 진짜 memberRepository까지 조회해보는 것이다. ```ac.getBean("memberRepository", MemberRepository.class);```를 통해 한다.
+
+이제 출력하면 다음과 같다.
+
+<img width="1681" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/85713aa3-addb-4e98-b6c7-138062e28fe5">
+
+세 개의 스프링 빈이 다 똑같다.
+
+<br>
+
+분명히 스프링 빈이 memberService()를 호출하면, memberRepository()가 호출된다. 그러면 ```new MemoryMemberRepository()```로 호출한다. new가 두 번 호출되는 것이다. orderService()를 호출하면, OrderServiceImpl 안에 있는 memberRepository()가 호출된다. 그러면 또 ```new MemoryMemberRepository()```가 호출된다. 3번의 new가 호출되는 것이 맞다. 그런데 실행 결과를 보면 같은 인스턴스가 조회된다.
+
+<br>
+
+정리하자면 다음과 같다.
+
+* 확인해보면 memberRepository 인스턴스는 모두 같은 인스턴스가 공유되어 사용된다.
+* AppConfig의 자바 코드를 보면 분명히 각각 2번 ```new MemoryMemberRepository``` 호출해서 다른 인스턴스가 생성되어야 하는데? (위의 경우 세 번)
+* 어떻게 된 일일까? 혹시 두 번 호출이 안 되는 것일까?
