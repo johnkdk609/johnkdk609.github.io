@@ -658,4 +658,83 @@ ac를 만들고, AppConfig.class를 사용한다. 이제 꺼내보겠다. getBea
 
 * 확인해보면 memberRepository 인스턴스는 모두 같은 인스턴스가 공유되어 사용된다.
 * AppConfig의 자바 코드를 보면 분명히 각각 2번 ```new MemoryMemberRepository``` 호출해서 다른 인스턴스가 생성되어야 하는데? (위의 경우 세 번)
-* 어떻게 된 일일까? 혹시 두 번 호출이 안 되는 것일까?
+* 어떻게 된 일일까? 혹시 두 번 호출이 안 되는 것일까? 실험을 통해 확인해보자.
+
+<br>
+
+AppConfig에서 그냥 출력을 해보겠다. AppConfig클래스에 다음과 같이 로그를 출력하는 문구들을 추가한다.
+
+```java
+package hello.core;
+
+import hello.core.discount.DiscountPolicy;
+import hello.core.discount.RateDiscountPolicy;
+import hello.core.member.MemberRepository;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
+import hello.core.member.MemoryMemberRepository;
+import hello.core.order.OrderService;
+import hello.core.order.OrderServiceImpl;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public MemberService memberService() {
+        System.out.println("call AppConfig.memberService");
+        return new MemberServiceImpl(memberRepository());
+    }
+
+    @Bean
+    public OrderService orderService() {
+        System.out.println("call AppConfig.orderService");
+        return new OrderServiceImpl(memberRepository(), discountPolicy());
+    }
+
+    @Bean
+    public MemberRepository memberRepository() {
+        System.out.println("call AppConfig.memberRepository");
+        return new MemoryMemberRepository();
+    }
+
+    @Bean
+    public DiscountPolicy discountPolicy() {
+//        return new FixDiscountPolicy();
+        return new RateDiscountPolicy();
+    }
+}
+```
+
+결과가 어떻게 출력될까? 먼저 memberService()의 "call AppConfig.memberService"이 출력된다. ```@Bean```이 되어 있는 memberService가 컨테이너에 들어간다. 그러면 AppConfig.memberService를 호출한다. 그 다음에 ```new MemberServiceImpl()``` 하면서 memberRepository()를 호출한다. memberRepository()가 호출되면 "call AppConfig.memberRepository"가 출력된다. 그 다음 orderService의 경우 "call AppConfig.orderService"가 출력되고, 그 다음에 얘가 memberRepository()를 호출하니까 메서드 안에서 memberRepository()가 호출된다. 그러면 "call AppConfig.memberRepository"가 또 출력된다.
+
+출력되는 것의 순서는 다음과 같다. (약간 차이가 있을 수는 있다.)
+
+```java
+// call AppConfig.memberService
+// call AppConfig.memberRepository
+// call AppConfig.memberRepository
+// call AppConfig.orderService
+// call AppConfig.memberRepository
+```
+
+최종적으로, 순서는 좀 다를 수 있지만 memberRepository 메서드가 3번 호출되어야 한다.
+
+<br>
+
+이를 테스트 해보기 위해, ConfigurationSingletonTest클래스의 <b>configurationTest()</b>를 실행시켜보겠다. 실행 결과는 다음과 같다.
+
+<img width="1685" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/de0883b2-9b6d-486d-adfb-5396304a5aa6">
+
+call이 총 3개 있다. 우리의 의도와 완전히 다르게 다음과 같이 세 번 호출되었다.
+
+```java
+// call AppConfig.memberService
+// call AppConfig.memberRepository
+// call AppConfig.orderService
+```
+
+"call AppConfig.memberRepository"가 세 번 호출되어야 되는데, 메서드에서 한 번만 호출된 것이다.
+
+이것을 통해 스프링이 어떠한 방법을 써서라도 싱글톤을 보장해준다는 것을 알 수 있다.
