@@ -738,3 +738,79 @@ call이 총 3개 있다. 우리의 의도와 완전히 다르게 다음과 같�
 "call AppConfig.memberRepository"가 세 번 호출되어야 되는데, 메서드에서 한 번만 호출된 것이다.
 
 이것을 통해 스프링이 어떠한 방법을 써서라도 싱글톤을 보장해준다는 것을 알 수 있다.
+
+
+## 6. @Configuration과 바이트코드 조작의 마법
+
+이제 드디어 ```@Configuration```과 바이트코드 조작의 마법에 대해 알아보겠다.
+
+싱글톤 컨테이너는 싱글톤 레지스트리다. 따라서 스프링 빈이 싱글톤이 되도록 보장해주어야 한다. 그런데 스프링이 자바 코드까지 어떻게 하기는 어렵다. 위의 로그를 붙인 AppConfig 자바 코드를 보면 분명 3번 호출되어야 하는 것이 맞다.
+
+그래서 <b>스프링은 클래스의 바이트코드를 조작하는 라이브러리를 사용한다.</b>
+
+모든 비밀은 ```@Configuration```을 적용한 ```AppConfig```에 있다.
+
+<br>
+
+ConfigurationSingletonTest클래스에 테스트를 하나 추가해보겠다. 추가한 테스트 코드는 다음과 같다.
+
+```java
+@Test
+void configurationDeep() {
+    ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+    AppConfig bean = ac.getBean(AppConfig.class);
+
+    System.out.println("bean = " + bean.getClass());
+}
+```
+
+위 테스트를 실행했을 때 다음과 같은 로그가 출력된다.
+
+<img width="725" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/67daadd4-d44a-4c02-9f13-a7185d9a5eec">
+
+"bean = class hello.core.AppConfig"까지는 맞는데, 그 뒤에 이상한 것이 붙었다. "$$EnhancerBySpringCGLIB$$3013409a"라는 것이 붙어있는 것이다.
+
+<br>
+
+우선, 순수한 클래스라면 다음과 같이 출력되어야 한다.
+
+```
+class hello.core.AppConfig
+```
+
+그런데 예상과는 다르게 클래스 명에 xxxCGLIB가 붙으면서 상당히 복잡해진 것을 볼 수 있다. 이것은 <b>내가 만든 클래스가 아니라 스프링이 CGLIB라는 바이트코드 조작 라이브러리를 사용해서 AppConfig 클래스를 상속받은 임의의 다른 클래스를 만들고, 그 다른 클래스를 스프링 빈으로 등록한 것이다.</b>
+
+그림을 보면 다음과 같다.
+
+<img width="987" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/77dea56e-5b95-4076-98fe-26b99c2f4452">
+
+AppConfig가 있는데, 이 CGLIB라는 바이트코드 조작 라이브러리를 가지고 상속받아서 다른 클래스를 만드는 것이다. 그리고 스프링이 내 것인 AppConfig 클래스 말고, AppConfig@CGLIB라는 조작한 클래스를 스프링 빈으로 등록하는 것이다. 그래서 스프링 컨테이너에 분명히 이름은 AppConfig인데, 인스턴스 객체가 AppConfig@CGLIB~~~인 것이 들어가 있는 것이다. 그래서 실제로 내가 등록한 것은 사라지고, appConfig란 이름으로 다른 것이 등록되어 있는 것이다.
+
+내가 만든 객체가 아닌 바로 이 임의의 다른 클래스가 싱글톤이 되도록 보장해준다. 아마도 다음과 같이 바이트 코드를 조작해서 작성되어 있을 것이다. (실제로는 CGLIB의 내부 기술을 사용하는데 매우 복잡하다.)
+
+```java
+@Bean
+public MemberRepository memberRepository() {
+
+    if (memoryMemberRepository가 이미 스프링 컨테이너에 등록되어 있으면?) {
+        return 스프링 컨테이너에서 찾아서 반환;
+    } else {    // 스프링 컨테이너에 없으면
+        기존 로직을 호출해서 MemoryMemberRepository를 생성하고 스프링 컨테이너에 등록
+        return 반환
+    }
+}
+```
+
+```@Bean```이 붙은 메서드마다 이미 스프링 빈이 존재하면 존재하는 빈을 반환하고, 스프링 빈이 없으면 생성해서 스프링 빈으로 등록하고 반환하는 코드가 동적으로 만들어진다.
+
+덕분에 싱글톤이 보장되는 것이다.
+
+이렇게 했기 때문에 출력 결과가 세 번 출력되는 것이 아니라 딱 한 번 나온 것이다.
+
+(참고: AppConfig@CGLIB는 AppConfig의 자식 타입이므로, AppConfig타입으로 조회할 수 있었던 것이다. 부모 타입으로 조회하면 자식 타입은 다 끌려나온다.)
+
+<br>
+
+대략 보면, 이미 스프링 컨테이너에 등록돼 있으면 등록된 것을 뽑아주고, 아니면 내가 만든 로직을 호출해서 뽑아주는 것이라 이해하면 된다.
+
+이러한 메커니즘은 추후에 AOP에서도 사용된다.
