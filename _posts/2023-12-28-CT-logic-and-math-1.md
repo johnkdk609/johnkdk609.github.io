@@ -92,11 +92,11 @@ exclusive or 예시 - "복권에 당첨되면 자동차 혹은 천만원을 줍�
     <tr>
         <th>p q</th>
         <th>p ∧ (q → p)</th>
-    </th>
+    </tr>
     <tr>
         <td>T T<br>T F<br>F T<br>F F</td>
         <td>F<br>T<br>F<br>F</td>
-    </th>
+    </tr>
 </table>
 
 2. (p ∧ ~q) → r
