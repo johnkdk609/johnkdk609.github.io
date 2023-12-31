@@ -420,3 +420,534 @@ print(list(filter(lambda x: x % 2, range(10))))
 파이썬에서 '참'은 1이고 '거짓'은 0이다. 위의 filter 함수를 실행시키면, 0을 2로 나눈 나머지는 0이니까 람다 함수의 결과값은 0이고, 0은 '거짓'이니까 버려진다.
 
 1을 2로 나눈 나머지는 1이니까 람다 함수의 결과값은 1이고, 1은 '참'이니까 통과한다. 이런 식으로 수행하면서 홀수만 돌려주게 되는 것이다.
+
+### 자료형 - 숫자
+
+```type()``` 함수를 사용하면 자료형을 쉽게 확인할 수 있다.
+
+```python
+print(type(6))  # 정수
+
+# <type 'int'>
+```
+
+```python
+print(type('A'))    # 문자열
+
+# <type 'str'>
+```
+
+파이썬에서 숫자를 나타내는 자료형으로 정수(```int```), 부동소수점수(```float```), 복소수(```complex```)가 있다.
+
+정수의 경우, 너무 길어서 읽기 힘들면 밑줄을 넣어도 된다.
+
+```python
+100_000_000     # 세 자리마다
+1_0000_0000     # 네 자리마다
+```
+
+복소수(```complex```)의 경우 생소하다. 제곱하면 -1이 되는 수 i를 '허수(imaginary number)'라고 한다.
+
+```i² = -1```
+
+파이썬에서는 허수 i를 ```j```로 나타낸다.
+
+```python
+print((1j) ** 2)
+
+# (-1+0j)
+```
+
+```python
+print((1 + 1j) ** 10)
+
+# 32j
+```
+
+### 자료형 - 시퀀스
+
+문자열(str), 리스트(list), 튜플(tuple), 사용자 정의 클래스가 시퀀스에 속한다.
+
+```python
+print(type("Love your Enemies, for they tell you your Faults."))
+
+# <class 'str'>
+```
+
+```python
+print(type(['love', 'enemy', 'fault']))
+
+# <class 'list'>
+```
+
+```python
+print(type(('love', 'enemy', 'fault')))
+
+# <class 'tuple'>
+```
+
+for 문에서 사용할 수 있는 것들이 바로 시퀀스이다. 문자열은 시퀀스에 속한다. 여러 개의 문자를 한 줄로 세워뒀기 때문이다.
+
+### 자료형 - 매핑
+
+딕셔너리(dict)는 키(key)와 값(value)의 짝으로 이뤄진다. 이런 것을 매핑이라고 한다.
+
+```python
+print(type({'one': 1, 'two':2, 'three':3}))
+
+# <class 'dict'>
+```
+
+### 자료형 - 불
+
+참, 거짓을 표현하는 불(bool)도 있다.
+
+```python
+print(type(False))
+
+# <class 'bool'>
+```
+
+```python
+print(type(3 >= 1))
+
+# <class 'bool'>
+```
+
+```python
+print(type(True == 'True'))
+
+# <class 'bool'>
+```
+
+### 자료형 - 세트
+
+집합을 표현하는 세트(set)도 있다.
+
+```python
+fruits = {'apple', 'banana', 'orange'}
+```
+
+세트는 원소의 순서가 유지되지 않고 중복 원소를 갖지 않는 '집합'으로서의 특징이 있으며, 집합 연산을 사용할 수 있다.
+
+### 문자열의 글자 바꾸기 - 불가능
+
+```python
+x = 'banana'
+``` 
+
+'banana'를 'nanana'로 바꿀 수 있을까?
+
+```python
+x[0] = 'n'
+```
+
+위와 같이 하면 안 된다. 아래처럼 TypeError 오류가 발생한다.
+
+```
+Traceback (most recent call last):
+  File "/Users/kdk/Documents/dev_study/coding_test_python/practice.py", line 3, in <module>
+    x[0] = 'n'
+    ~^^^
+TypeError: 'str' object does not support item assignment
+```
+
+이렇듯, 문자열에 들어있는 글자는 바꿀 수 없다.
+
+아래처럼 할 수는 있겠다.
+
+```python
+x = 'n' + x[1:]
+print(x)
+
+# 'nanana'
+```
+
+이것은 문자열 x의 'b'를 'n'으로 바꾼 것이 아니라, 'n'과 'anana'를 합친 새로운 문자열 'nanana'에 x라는 이름을 붙인 것이다.
+
+### 문자열 - find()
+
+문자열에 어떤 글자가 몇 번째 자리에 있는지 알고 싶을 때는 ```find()```를 사용하면 된다.
+
+```python
+s = "hello Python!"
+print(s.find('P'))
+
+# 6
+```
+
+'P'가 6번 인덱스에 있다는 것을 알았으니, 다음과 같이 슬라이싱해서 다른 변수로 저장할 수도 있다.
+
+```python
+h = s[0:6]
+print(h)
+
+# 'hello '
+```
+
+위의 h 변수의 끝에는 공백이 포함되는데, 다음과 같이 슬라이싱을 하거나 ```rstrip()```으로 제거할 수 있다.
+
+```python
+print(h.rstrip())
+
+# 'hello'
+```
+
+또는 다음과 같이 주어진 문자열을 분할한 리스트를 생성하는 split()을 이용해 첫 번째 단어를 알아내는 방법도 있다.
+
+```python
+print(s.split())
+
+# ['hello', 'Python!']
+
+print(s.split()[0])
+
+# 'hello'
+```
+
+### 리스트 - insert, del, pop
+
+리스트에서 원소를 삽입하려면 insert, 삭제하려면 del 또는 pop을 사용하면 된다.
+
+```python
+prime = [3, 7, 11]
+
+prime.append(5)
+# [3, 7, 11, 5]
+
+prime.sort()
+# [3, 5, 7, 11]
+
+prime.insert(0, 2)
+# [2, 3, 5, 7, 11]
+
+del prime[4]
+# [2, 3, 5, 7]
+
+a = prime.pop()     # 삭제한 원소를 a 변수로 받음
+print(prime)
+# [2, 3, 5]
+print(a)
+# 7
+
+prime[0] = 1    # 리스트의 원소에 새로운 값 지정
+print(prime)
+[1, 3, 5]
+```
+
+원소를 삭제할 때 pop()을 사용할 수 있다. pop()은 리스트에서 삭제한 원소를 반환(return)하므로 변수로 받아서 나중에 사용할 수도 있다.
+
+### 슬라이싱 - replace()
+
+replace() 메서드를 써서 특정 단어를 다른 단어로 바꿀 수도 있다.
+
+```python
+h = 'Hello world!'
+
+h.replace('world', 'Python')
+print(h)
+
+# 'Hello Python!'
+```
+
+### bin() 함수
+
+파이썬의 bin() 함수를 이용하면 이진수를 쉽게 구할 수 있다.
+
+```python
+print(bin(13))
+
+# '0b1101'
+```
+
+```0b```는 뒤의 숫자가 이진수임을 나타낸다.
+
+### 튜플(tuple)
+
+다음 코드를 보자.
+
+```python
+c = 10
+d = 20
+c, d = d, c
+print(c, d)
+
+# 20 10
+```
+
+위 코드 세 번째 줄에서 등호 왼쪽은 c, d라는 변수가 담긴 튜플이고, 오른쪽은 d, c의 값이 담긴 튜플이다. 그래서 d는 c로 들어가고, c의 값은 d로 들어간다. 이런 일들이 차례차례 일어나는 것이 아니고, 동시에 처리된다.
+
+함수에서 튜플이 요긴하게 쓰이기도 한다. 아래 함수는 인자(매개변수)를 주는 대로 받아먹는 함수이다.
+
+```python
+def magu_print(x, y, *rest):
+    print(x, y, rest)
+
+magu_print(1, 2, 3, 5, 6, 7, 9, 10)
+
+# 1 2 (3, 5, 6, 7, 9, 10)
+```
+
+위 함수는 인자를 두 개 이상만 주면 나머지는 알아서 다 처리한다. 함수를 정의할 때 인자에 별표를 붙여두면 그 이후에 들어오는 것은 모두 튜플에 집어넣는 것이다. 위에서는 (3, 5, 6, 7, 9, 10)가 하나의 튜플로 묶였다.
+
+이제 튜플의 문법을 보겠다.
+
+```python
+t = ('a', 'b', 'c')
+```
+
+튜플을 만들 때는 위와 같이 괄호를 써도 되고 안 써도 된다. 다만, 원소가 없는 튜플을 만들 때는 괄호를 꼭 써야 한다.
+
+```python
+empty = ()
+```
+
+원소를 하나만 가진 튜플을 만들 땐 원소 뒤에 콤마(,)를 꼭 찍어야 한다.
+
+```python
+one = 5,
+print(one)
+
+# (5,)
+```
+
+그리고 튜플은 리스트와 달리 원소값을 직접 바꿀 수 없기 때문에, 문자열에서 했던 것처럼 오려붙이는 방법을 써야 한다.
+
+```python
+p = (1, 2, 3)
+q = p[:1] + (5,) + p[2:]
+print(q)
+
+# (1, 5, 3)
+
+r = p[:1], 5, p[2:]
+print(r)
+
+# ((1,), 5, (3,))
+```
+
+튜플을 리스트로, 리스트를 튜플로 쉽게 바꿀 수도 있다.
+
+```python
+p = (1, 2, 3)
+q = list(p)
+print(q)
+
+# [1, 2, 3]
+
+r = tuple(q)
+print(r)
+
+# (1, 2, 3)
+```
+
+### 딕셔너리(dict)
+
+딕셔너리 자료형은 키(key)와 값(value)의 쌍으로 이루어진다.
+
+딕셔너리 자료형은 아래와 같이 사용할 수 있다.
+
+```python
+dic = {}    # dic이라는 이름으로 비어있는 딕셔너리 생성
+
+dic['dictionary'] = '1. A reference book containing an ...'
+dic['python'] = 'Any of various nonvenomous snake of the ...'
+
+print(dic['dictionary'])
+
+# '1. A reference book containing an ...'
+```
+
+또, 딕셔너리 자료형은 해싱(hashing) 기법을 이용하기 때문에 자료가 순서대로 저장되지 않는다.
+
+해싱 기법은 자료를 아주 빨리 찾을 수 있는 방법이다.
+
+딕셔너리 자료형에서 원소를 삭제할 때는 다음과 같이 하면 된다.
+
+```python
+smalldic = {'dictionary': 'reference', 'python': 'snake'}
+
+del smalldic['dictionary']
+
+print(smalldic)
+
+# {'python': 'snake'}
+```
+
+이번에는 family라는 딕셔너리를 만들어 보겠다.
+
+```python
+family = {'mom': 'Kim', 'dad': 'Choi', 'baby': 'Choi'}
+```
+
+여기서 family의 키들을 얻으려면 딕셔너리 이름 뒤에 ```.keys()```를 쓰면 된다.
+
+```python
+print(family.keys())
+
+# dict_keys(['mom', 'dad', 'baby'])
+```
+
+family의 값들을 얻으려면 딕셔너리 이름 뒤에 ```.values()```를 쓰면 된다.
+
+```python
+print(family.values())
+
+# dict_values(['Kim', 'Choi', 'Choi'])
+```
+
+family의 원소(키/값 쌍)들을 얻으려면 이름 뒤에 ```.items()```를 쓰면 된다.
+
+```python
+print(family.items())
+
+# dict_items([('mom', 'Kim'), ('dad', 'Choi'), ('baby', 'Choi')])
+```
+
+딕셔너리에 어떤 키가 있는지 없는지는 in을 써서 알아볼 수 있다. 있으면 True, 없으면 False라고 답해 준다.
+
+```python
+print('dad' in family)
+
+# True
+
+print('sister' in family)
+
+# False
+```
+
+### ord()와 chr()
+
+ord() 함수는 문자에 해당하는 코드값을 알려준다.
+
+```python
+ord('A')
+# 65
+
+ord('Z')
+# 90
+
+ord('a')
+# 97
+
+ord('z')
+# 122
+
+ord('0')
+# 48
+
+ord('9')
+# 57
+```
+
+역으로, chr() 함수에 코드값을 입력으로 넣으면 그에 해당하는 문자를 얻는다.
+
+```python
+chr(65)
+# 'A'
+```
+
+한글에 대해서도 두 함수를 사용할 수 있다.
+
+```python
+ord('가')
+# 44032
+
+chr(55197)
+# 힝
+```
+
+### split()과 splitlines()
+
+split() 은 공백을 기준으로 문자열을 분리한 것들을 리스트에 넣어 반환한다.
+
+```python
+print('hello world'.split())
+
+# ['hello', 'world']
+```
+
+여러 행으로 이뤄진 문자열을 분리하려면 ```\n```을 구분자로 지정한다.
+
+```python
+love = '''L is for the way you look at me
+... O is for the only one I see
+... V is very, very extraordinary
+... E is even more than anyone that you adore can'''
+
+print(love.split('\n'))
+
+# ['L is for the way you look at me', 'O is for the only one I see', 'V is very, very extraordinary', 'E is even more than anyone that you adore can']
+```
+
+위와 같이 줄바꿈을 기준으로 문자열을 분할할 때는 ```splitlines()```를 써도 된다.
+
+### 세트(set)
+
+세트(set)는 '집합'을 표현하는 것이다.
+
+다음과 같이 fruits 세트가 있다.
+
+```python
+fruits = {'apple', 'banana', 'orange'}
+```
+
+여기서, 망고를 추가하려면 ```add()```를 하면 된다.
+
+```python
+fruits.add('mango')
+print(fruits)
+
+# {'orange', 'apple', 'mango', 'banana'}
+```
+
+이번에는 회사 이름을 나타내는 집합을 만들어보겠다.
+
+```python
+companies = set()
+companies.add('apple')
+companies.add('microsoft')
+companies.add('google')
+```
+
+세트를 이용해 다음과 같이 집합 연산을 사용할 수 있다.
+
+```python
+print(fruits & companies)   # 교집합
+# {'apple'}
+
+print(fruits | companies)   # 합집합
+# {'apple', 'mango', 'microsoft', 'orange', 'google', 'banana'}
+```
+
+아래와 같이 여러 세트를 리스트에 담은 뒤 set의 메서드를 쓸 수도 있다.
+
+```python
+list_of_sets = [fruits, companies]
+print(set.intersection(*list_of_sets))   # 교집합
+# {'apple'}
+
+print(set.union(*list_of_sets))  # 합집합
+# {'google', 'apple', 'banana', 'mango', 'microsoft', 'orange'}
+```
+
+apple은 fruits에도 속하고 companies에도 속하는데, 위 합집합의 결과에 한 번만 나오는 것을 볼 수 있다. 이와 같이 세트는 중복 원소를 갖지 않는다. 또, 원소의 순서가 유지되지 않는 특징도 있다.
+
+```python
+alphabet = list('google')
+print(alphabet)
+# ['g', 'o', 'o', 'g', 'l', 'e']
+
+print(set(alphabet))
+# {'e', 'o', 'g', 'l'}
+```
+
+또, 집합끼리 뺄셈도 할 수 있다.
+
+```python
+S1 = {1, 2, 3, 4, 5, 6, 7}
+S2 = {3, 6, 9}
+print(S1 - S2)
+
+# {1, 2, 4, 5, 7}
+```
