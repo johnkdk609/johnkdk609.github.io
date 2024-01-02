@@ -951,3 +951,243 @@ print(S1 - S2)
 
 # {1, 2, 4, 5, 7}
 ```
+
+### 모듈 - math, calendar, tkinter
+
+수학적인 계산이 필요하다면 math라는 모듈을 불러와서 사용하면 된다.
+
+```python
+import math
+
+print(math.sqrt(2))     # 2의 제곱근
+# 1.4142135623730951
+
+print(math.pi)  # math 모듈의 변수 pi(원주율)의 값은?
+# 3.1415926535897931
+
+print(math.hypot(3, 4))     # 피타고라스 정리 a² + b² = c²
+# 5.0
+```
+
+달력도 불러올 수 있다.
+
+```python
+import calendar
+calendar.prmonth(2024, 1)
+
+#     January 2024
+# Mo Tu We Th Fr Sa Su
+#  1  2  3  4  5  6  7
+#  8  9 10 11 12 13 14
+# 15 16 17 18 19 20 21
+# 22 23 24 25 26 27 28
+# 29 30 31
+```
+
+tkinter(티 케이 인터) 모듈을 활용해 창을 띄울 수도 있다.
+
+```python
+import tkinter as tk
+
+s = "Life is short\nUse Python"
+
+root = tk.Tk()
+t = tk.Text(root, height=2, width=13)
+t.insert(tk.END, s)
+t.pack()
+tk.mainloop()
+```
+
+어떤 모듈에 무엇이 있는지 살펴보려면, ```dir(모듈명)```을 입력하면 된다.
+
+또, 어떤 모듈에 대한 설명을 보고 싶으면 ```help(모듈명)```을 입력하고 실행하면 된다.
+
+### 모듈 - sys, os, re, webbrowser
+
+sys 모듈은 파이썬 인터프리터를 제어할 수 있는 방법을 제공한다.
+
+파이썬 인터프리터를 띄우면 우리의 명령을 기다린다는 뜻으로 ```>>>```를 표시하고 있다. (프롬프트)
+
+sys 모듈을 사용하면 이 프롬프트를 바꿀 수 있다.
+
+```python
+>>> import sys
+>>> sys.ps1                                  # 현재의 프롬프트는?
+'>>> '
+>>> sys.ps1 = '^^; '                         # 요걸로 바꿔!
+^^; print('hello')
+hello
+^^; 5 * 3
+15
+^^;
+```
+
+인터프리터를 끝내려면 다음과 같이 하면 된다.
+
+```python
+^^; sys.exit()
+```
+
+os 모듈은 운영체제(OS)를 제어할 수 있다.
+
+```python
+import os
+
+print(os.getcwd())  # 현재 경로 알아내기. current working directory
+
+# /Users/kdk/Documents/dev_study/coding_test_python
+
+print(os.listdir())     # 어떤 파일들이 있는지 알아보기
+```
+
+re 모듈의 경우 정규 표현식(regular expression)을 이용해 문자열을 다룰 수 있다. 마침표(.)는 문자 아무거나 한 개를 뜻하고, 별표(*)는 0개 이상의 문자를 뜻한다.
+
+webbrowser 모듈의 경우 다음과 같이 사용할 수 있다.
+
+```python
+import webbrowser
+
+url = 'http://www.python.org/'
+webbrowser.open(url)
+```
+
+실행시키면 파이썬 페이지가 열린다.
+
+### 랜덤(random) 모듈
+
+파이썬으로 난수를 만들려면 다음과 같이 하면 된다.
+
+```python
+import random
+
+print(random.random())
+
+# 0.12094978595791062
+```
+
+random 모듈의 random() 함수를 호출했더니 복잡한 숫자를 돌려주었다. random() 함수는 0 이상 1 미만의 숫자 중에서 아무 숫자나 하나 뽑아서 돌려주는 일을 한다.
+
+주사위처럼 1에서 6까지의 정수 중 하나를 무작위로 얻으려면 randrange() 라는 함수를 사용하면 된다.
+
+```python
+import random
+
+print(random.randrange(1, 7))
+
+# 4
+```
+
+"1 이상 7 미만의 난수"라고 생각하면 이해가 쉽다.
+
+shuffle() 이라는 함수도 있다. 시퀀스를 뒤죽박죽으로 섞어놓는 함수이다.
+
+```python
+import random
+
+abc = ['a', 'b', 'c', 'd', 'e']
+random.shuffle(abc)
+print(abc)
+# ['c', 'd', 'a', 'b', 'e']
+```
+
+아무 원소나 하나 뽑아주는 choice() 함수도 있다.
+
+```python
+import python
+
+abc = ['a', 'b', 'c', 'd', 'e']
+print(random.choice(abc))
+# 'd'
+
+menu = '쫄면', '육개장', '비빔밥'
+print(random.choice(menu))
+# '쫄면'
+```
+
+참과 거짓 중에 하나를 뽑고 싶다면 다음과 같이 하면 된다.
+
+```python
+print(random.choice([True, False]))
+# True
+```
+
+### string 모듈
+
+```python
+import string
+
+print(string.ascii_uppercase)   # 대문자 A~Z
+# 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+print(string.ascii_lowercase)   # 소문자 a~z
+# 'abcdefghijklmnopqrstuvwxyz'
+
+print(string.ascii_letters)     # 소문자와 대문자 모두 갖고 있음
+# 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+print(string.digits)    # 숫자
+# '0123456789'
+```
+
+### 객체지향 - 클래스와 인스턴스
+
+파이썬은 꼭 객체지향적으로 작성하지 않아도 된다. 하지만 객체지향에 대해 이해하고 나면 파이썬으로 윈도우 프로그래밍을 하거나, 복잡한 프로그램을 작성하는 데 많은 도움이 된다.
+
+클래스가 '부류'라면, 인스턴스는 '실체'이다. 실제 세계에 존재하는 실체(instance)를 객체(object)라고 하고, 객체들의 공통점을 간추려서 개념적으로 나타낸 것이 클래스(class)인 것이다.
+
+'사과'가 클래스라면, '내가 어제 먹은 그 사과'는 인스턴스이다. '좋은 집'이 클래스라면, '우리 집'은 인스턴스이다.
+
+파이썬으로 부류와 실체를 표현해 보겠다.
+
+```python
+class Singer:               # 가수 정의
+    def sing(self):         # 노래하기 메서드
+        return "Lalala~"
+
+taeji = Singer()            # 태지 생성
+print(taeji.sing())         # 태지씨 노래 한 곡 부탁해요~
+# 'Lalala~'
+
+ricky = Singer()
+print(ricky.sing())
+# 'Lalala~'
+```
+
+### 객체지향 - self
+
+self라는 것은 바로 그 클래스의 객체를 가리킨다. jane과 mary가 똑같은 attack 메서드를 가지기 때문에 서로 구별하기 위해 사용한 것이다. 한마디로, 메서드를 정의할 때는 항상 self라는 인자를 써준다고 생각하면 된다. self를 어떻게 사용하는지 좀 더 살펴보기 위해 Amazon 클래스에 메서드를 추가해보겠다.
+
+```python
+class Amazon:
+    strength = 20
+    dexterity = 25
+    vitality = 20
+    energy = 15
+
+    def attack(self):
+        return "Jab!!!"
+
+    def exercise(self):     # 추가한 메서드
+        self.strength += 2
+        self.dexterity += 3
+        self.vitality += 1
+
+jane = Amazon()
+mary = Amazon()
+eve = Amazon()
+
+print(jane.strength)
+# 20
+print(jane.attack())
+# 'Jab!!!'
+print(mary.strength)
+# 20
+print(mary.attack())
+# 'Jab!!!'
+
+eve.exercise()      # eve를 훈련시킨다.
+print(eve.strength)
+# 22
+```
+
+eve를 exercise 시키고 나니 힘(strength)이 세진 것을 볼 수 있다.
