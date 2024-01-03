@@ -814,3 +814,63 @@ public MemberRepository memberRepository() {
 대략 보면, 이미 스프링 컨테이너에 등록돼 있으면 등록된 것을 뽑아주고, 아니면 내가 만든 로직을 호출해서 뽑아주는 것이라 이해하면 된다.
 
 이러한 메커니즘은 추후에 AOP에서도 사용된다.
+
+<br>
+
+그러면 ```@Configuration```을 적용하지 않고, ```@Bean```만 적용하면 어떨까? 안 붙여도 된다. 안 붙여도 스프링 컨테이너에 다 스프링 빈으로 등록된다.
+
+<img width="698" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/4be29293-dfc3-4210-b21c-50c16b6958fa">
+
+대신에, 문제가 있다.
+
+```@Configuration```을 붙이면, 바이트코드를 조작하는 CGLIB 기술을 사용해서 싱글톤을 보장하지만, 만약 ```@Bean```만 적용하면 어떻게 될까?
+
+위 그림과 같이 ```@Configuration```은 주석처리 해두고, configurationDeep() 테스트를 실행해보겠다. 실행 결과는 다음과 같다.
+
+<img width="1685" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/14b19c6d-1175-43f5-ae3d-0ca0ac0624b5">
+
+먼저, 맨 아래에 ```bean = class hello.core.AppConfig```를 보면 순수한 AppConfig가 그대로 노출된다. CGLIB 기술을 안 쓴다. (빼버렸으니) configurationDeep() 테스트에서 ```AnnotationConfigApplicationContext(AppConfig.class);```에서 넘긴 AppConfig.class는 스프링 빈으로 등록된다.
+
+그리고 ```@Bean```이 붙어있는 아래 네 개가 스프링 빈으로 등록된다. 그런데, 출력된 것을 보면 memberRepository가 세 번 호출이 되었다. <b>싱글톤이 깨진 것이다.</b> 이렇게 되면 순수한 자바 코드가 도는 것이다.
+
+스프링이 'memberService() 가져와' 하면 MemoryMemberRepository 생성하면서 memberRepository()를 그대로 호출한다. 그리고 이것을 진짜 new로 만들고, 주입시킨다.
+
+그리고 memberRepository()의 경우, ```new MemoryMemberRepository()```는 스프링 컨테이너에 등록되겠다. 
+
+orderService()에서 orderService 등록할 때, ```new OrderServiceImpl(memberRepository(), ~~)```에서 memberRepository() 호출하는데 그때 또 new로 생성해서 new로 생성된 애가 OrderServieImpl(~)에 들어간다.
+
+<br>
+
+이 출력 결과를 통해서 MemberRepository가 총 3번 호출된 것을 알 수 있다. 1번은 ```@Bean```에 의해 스프링 컨테이너에 등록하기 위해서이고, 나머지 2번은 각각 ```memberRepository()``` 메서드를 호출하면서 발생한 코드이다.
+
+### 인스턴스가 같은지 테스트 결과
+
+이제 인스턴스가 같은지 테스트를 돌려볼 것이다. 이전에 생성한 configurationTest()를 돌리겠다.
+
+<img width="900" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1927c7a5-3bc2-470c-9fe7-6de5c52dc172">
+
+실행 결과는 다음과 같다.
+
+<img width="1685" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2fe8ca60-0f0a-4f5c-a447-62b8036096c9">
+
+주소를 잘 보면, memberService가 참조하는 memberRepository는 @676cf48, orderService가 참조하는 memberRepository는 @5a1de7fb, 실제 스프링 컨테이너에 등록된 memberRepository는 @335b5620로, 서로 완전 다르다.
+
+<br>
+
+그리고 문제가 한 개 더 있다. MemberServiceImpl에 주입된 MemberRepository는 스프링 빈이 아니다. 그냥 내가 직접 ```new MemoryMemberRepository();``` 넣은 것과 똑같다. 스프링 컨테이너가 관리하지 않는 것인 것이다.
+
+orderService에 있는 것도 마찬가지이다. 왜냐하면 기존에는 CGLIB을 통해서 스프링 컨테이너에 있는 것을 찾아서 반환했다. 그래서 싱글톤도 보장되고 스프링 컨테이너에 등록된 것도 보장이 됐던 것이다.
+
+그런데 지금처럼 AppConfig 해서 생으로 자바 코드 호출해버리면, memberService()의 ```return new MemberServiceImpl(memberRepository());```에서, memberRepository()가 치환이 된다. ```return new MemberServiceImpl(new MemoryMemberRepository());```로 되는 것이다. 이것은 스프링 컨테이너가 관리하는 스프링 빈이 아니다. 그냥 내가 직접 ```new``` 해준 것과 똑같다. 그래서 이것은 스프링 컨테이너에서 관리도 안 된다.
+
+IDE에서 경고를 준다. 'Method annotated with @Bean is called directly. Use dependency injection instead.'라고 뜨는 것이다.
+
+```@Configuration``` 주석 처리된 것을 해제하면 다시 정상 작동한다.
+
+<br>
+
+정리하자면 다음과 같다.
+
+* ```@Bean```만 사용해도 스프링 빈으로 등록되지만, 싱글톤은 보장하지 않는다.
+    * ```memberRepository()```처럼 의존관계 주입이 필요해서 메서드를 직접 호출할 때 싱글톤을 보장하지 않는다.
+* 크게 고민할 것이 없다. 스프링 설정 정보는 항상 ```@Configuration```을 사용하자.
