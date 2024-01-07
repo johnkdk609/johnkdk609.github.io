@@ -109,3 +109,100 @@ AppConfig는 자동으로 등록되면 안 된다. 지금 수동으로 등록하
 
 * 이전에 AppConfig에서는 ```@Bean```으로 직접 설정 정보를 작성했고, 의존관계도 직접 명시했다. 이제는 이런 설정 정보 자체가 없기 때문에, 의존관계 주입이 이 클래스 안에서 해결해야 한다.
 * ```@Autowired```는 의존관계를 자동으로 주입해준다. (자세한 룰은 조금 뒤에 나온다.)
+
+<br>
+
+한 개 더 남았다. OrderServiceImpl에도 마찬가지로 위에 ```@Component```를 붙인다. 그러면 컴포넌트 스캔의 대상이 되면서 스프링 빈으로 등록된다. 그리고 생성자 위에 ```@Autowired```를 입력한다. 그러면 스프링이 얘를 생성할 때 자동으로 ApplicationContext에서 MemberRepository도 주입하고, DiscountPolicy도 주입해준다.
+
+<img width="837" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c1680048-16dc-4577-96ea-5b585334aa70">
+
+```@Autowired```를 사용하면 생성자에서 여러 의존관계도 한 번에 주입받을 수 있다.
+
+<br>
+
+이제 테스트 코드를 한 번 짜보겠다. test 쪽에 패키지를 scan이라고 해서 하나 생성한다. 그리고 그 안에 AutoAppConfigTest클래스를 생성한다. AutoAppConfigTest클래스의 코드는 다음과 같다.
+
+```java
+package hello.core.scan;
+
+import hello.core.AutoAppConfig;
+import hello.core.member.MemberService;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import static org.assertj.core.api.Assertions.*;
+
+public class AutoAppConfigTest {
+
+    @Test
+    void basicScan() {
+        AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AutoAppConfig.class);
+
+        MemberService memberService = ac.getBean(MemberService.class);
+        assertThat(memberService).isInstanceOf(MemberService.class);
+    }
+}
+```
+
+basicScan이라는 이름으로 만든다. 그리고 AnnotationConfigApplicationContext를 생성해주는데, AutoAppConfig.class를 입력한다. 여기서 ```Alt```를 누른 채 AutoAppConfig를 클릭하면 안에 아무것도 없다. 그냥 ```@ComponentScan``` 어노테이션만 있고, ```exclude```하는 조건만 써 있다.
+
+이렇게 해놓고 조회하면 된다. ```ac.getBean(MemberService.class)```로 MemberService를 조회해본다. 그 다음에 Assertions를 한다. memberService는 MemberService.class의 instanceOf인지 입력하는 것이다.
+
+이제 실행하면 다음과 같다.
+
+<img width="1684" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/07d5f1e6-5551-47f0-869c-c9331850a92e">
+
+AnnotationConfigApplicationContext를 사용하는 것은 기존과 똑같다. 그런데 설정 정보로 ```AutoAppConfig``` 클래스를 넘겨줬다. 실행해보면 기존과 같이 잘 동작하는 것을 확인할 수 있다.
+
+로그를 잘 보면 컴포넌트 스캔이 잘 동작하는 것을 확인할 수 있다.
+
+위 실행 결과를 보면, ClassPathBeanDefinitionScanner이라는 것들이 뜨면서 ```Identified candidate component class:``` 라면서 뭔가 component class의 후보로 식별했다는 것이 뜬다.
+
+그리고 밑에 로그를 보면 ```Creating shared instance of singleton bean```이라면서 이것들이 싱글톤 빈으로 생성됐다고 나온다. 그리고 로그에 Autowired에 대한 정보도 나온다. ```Autowiring by type from bean name 'memberServiceImpl' via constructor to bean named 'memoryMemberRepository'``` 즉, 생성자를 통해서 이것들을 주입했다는 정보가 나오는 것이다.
+
+<br>
+
+컴포넌트 스캔과 자동 의존관계 주입이 어떻게 동작하는지 그림으로 알아보자.
+
+### 1. @ComponentScan
+
+<img width="983" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/cd012dca-5c0c-42f0-93f1-2662490d23f5">
+
+* ```@ComponentScan```은 ```@Component```가 붙은 모든 클래스를 스프링 빈으로 등록한다.
+* 이때 스프링 빈의 기본 이름은 클래스명을 사용하되 맨 앞글자만 소문자를 사용한다.
+    * <b>빈 이름 기본 전략:</b> MemberServiceImpl 클래스 → memberServiceImpl
+    * <b>빈 이름 직접 지정:</b> 만약 스프링 빈의 이름을 직접 지정하고 싶으면 ```@Component("memberService2")``` 의 방식으로 이름을 부여하면 된다.
+
+예를 들어서 MemberServiceImpl클래스에서 ```@Component("memberService2")```라고 수정해두고 AutoAppConfig클래스의 basicScan() 테스트를 실행시키면 다음과 같이 결과가 나온다.
+
+<img width="1685" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5516a416-4fcb-4712-8d1b-cf14434d1ad3">
+
+```Creating shared instance of singleton bean 'memberService2'```라고 나오는 것이다. 이런 식으로 해줄 수도 있다.
+
+웬만하면 default를 쓰면 된다. 특별한 경우에만 이름을 부여하면 된다.
+
+### 2. @Autowired 의존관계 자동 주입
+
+<img width="982" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/4b4ab43b-76cf-447e-a088-48eb3f4f4524">
+
+위 그림을 보면, MemberServiceImpl의 생성자에 ```@Autowired```를 입력했다.
+
+* 생성자에 ```@Autowired```를 지정하면, 스프링 컨테이너가 컨테이너에 있는 memberRepository를 뒤진다. 자동으로 해당 스프링 빈을 찾아서 주입한다.
+* 이때 기본 조회 전략은 타입이 같은 빈을 찾아서 주입한다.
+    * ```getBean(MemberRepository.class)```와 동일하다고 이해하면 된다.
+
+좀 더 자세한 내용에 대해서는 뒤에서 설명할 것이다.
+
+<img width="984" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1d8cd629-7fce-4c33-80a8-aa99280890b7">
+
+그리고 위 그림처럼 OrderServiceImpl을 보면, ```@Autowired``` 해서 MemberRepository도 필요하고 DiscountPolicy도 필요하다. 타입으로 다 찾아서 다 주입해눈다.
+
+생성자에 파라미터가 많아도 다 찾아서 자동으로 주입하는 것이다.
+
+<br>
+
+정리하면 다음과 같다.
+
+AutoAppConfig를 보면, ```@ComponentScan```가 있을 경우 자동으로 클래스 패스를 다 뒤져서 안에 있는 것들을 스프링 빈에 등록해준다. 그런데 그냥 등록하는 것은 아니고 ```@Component```가 붙은 애들을 다 뒤져서 스프링 컨테이너에 자동으로 등록해주는 것이다.
+
+그런데 스프링 컨테이너에 자동으로 등록하다 보니, 의존관계를 주입할 수 있는 방법이 없다. 이전에 수동으로 설정할 때에는 'MemberServiceImpl은 ~~를 의존관계로 주입해' 같은 방식으로 직접 설정 정보에 다 적어줬었다. 그런데 설정 정보 자체를 안 쓰기 때문에 의존관계 자동 주입(```@Autowired```)을 사용해서 주입을 한다. 그러면 얘는 타입인 MemberRepository을 찾아서 등록해준다.
