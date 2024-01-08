@@ -206,3 +206,59 @@ AnnotationConfigApplicationContext를 사용하는 것은 기존과 똑같다. �
 AutoAppConfig를 보면, ```@ComponentScan```가 있을 경우 자동으로 클래스 패스를 다 뒤져서 안에 있는 것들을 스프링 빈에 등록해준다. 그런데 그냥 등록하는 것은 아니고 ```@Component```가 붙은 애들을 다 뒤져서 스프링 컨테이너에 자동으로 등록해주는 것이다.
 
 그런데 스프링 컨테이너에 자동으로 등록하다 보니, 의존관계를 주입할 수 있는 방법이 없다. 이전에 수동으로 설정할 때에는 'MemberServiceImpl은 ~~를 의존관계로 주입해' 같은 방식으로 직접 설정 정보에 다 적어줬었다. 그런데 설정 정보 자체를 안 쓰기 때문에 의존관계 자동 주입(```@Autowired```)을 사용해서 주입을 한다. 그러면 얘는 타입인 MemberRepository을 찾아서 등록해준다.
+
+## 2. 탐색 위치와 기본 스캔 대상
+
+이번에는 컴포넌트 스캔의 탐색 위치와 기본 스캔 대상에 대해 알아보겠다.
+
+먼저, 탐색할 패키지의 시작 위치를 지정할 수 있다. ```@ComponentScan```을 적을 때, ```basePackages```를 적을 수 있는 것이다.
+
+```java
+package hello.core;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
+
+@Configuration
+@ComponentScan(
+        basePackages = "hello.core.member",
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Configuration.class)
+)
+public class AutoAppConfig {
+
+}
+```
+
+이 경우 ```basePackages = "hello.core.member"```라는 코드를 추가했다. 이것은 member패키지부터 하위 패키지를 찾아가는 것이다.
+
+<img width="268" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c9a9cc1e-545f-43be-93b0-85eea5a18ad3">
+
+이렇게 해버리면 member만 컴포넌트 스캔의 대상이 된다. 기존에 돌렸던 AutoAppConfigTest의 basicScan()을 돌려보면 다음과 같이 실행결과가 나온다.
+
+<img width="1683" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/b1362486-413d-4796-a4e6-28fe9564b1b0">
+
+보면 memberServiceImpl과 memoryMemberRepository 딱 두 개만 등록이 됐다. 나머지는 (discountPolicy, order 등에 대한 것) 아예 등록이 안 됐다.
+
+즉, 어디서부터 찾을지 지정해주는 것이다. 시작 위치를 지정하는 것이다.
+
+이게 없으면 모든 자바 코드를 다 뒤져야 한다. 엄청 오래 걸리는 것이다. (라이브러리들까지 다 뒤지면 엄청난 시간이 걸릴 것이다.) 여러 라이브러리가 섞여있을 때, 컴포넌트 스캔을 안 하고 싶을 때도 있을 수 있다. 이럴 때에 유연하게 쓸 수 있는 것이다.
+
+정리하자면 다음과 같다.
+
+* ```basePackages```: 탐색할 패키지의 시작 위치를 지정한다. 이 패키지를 포함해서 하위 패키지를 모두 탐색한다.
+    * ```basePackages = {"hello.core", "hello.service"}``` 이렇게 여러 시작 위치를 지정할 수도 있다.
+* ```basePackageClasses```: 지정한 클래스의 패키지를 탐색 위치로 지정한다.
+* 만약 지정하지 않으면, ```@ComponentScan```이 붙은 설정 정보 클래스의 패키지가 시작 위치가 된다.
+
+### 권장하는 방법
+
+김영한 선생님이 즐겨 사용하시는 방법은 패키지 위치를 지정하지 않고, 설정 정보 클래스의 위치를 프로젝트 최상단에 두는 것이다. 최근 스프링 부트도 이 방법을 기본으로 제공한다.
+
+예를 들어서 프로젝트가 다음과 같이 구조가 되어 있다고 하자.
+
+* ```com.hello```
+* ```com.hello.service```
+* ```com.hello.repository```
+
+그러면 나의 프로젝트의 최상단은 ```com.hello```이다. (프로젝트 시작 루트) 여기에 AppConfig 같은 메인 설정 정보를 두는 것이다. 
