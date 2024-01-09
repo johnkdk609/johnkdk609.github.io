@@ -261,4 +261,26 @@ public class AutoAppConfig {
 * ```com.hello.service```
 * ```com.hello.repository```
 
-그러면 나의 프로젝트의 최상단은 ```com.hello```이다. (프로젝트 시작 루트) 여기에 AppConfig 같은 메인 설정 정보를 두는 것이다. 
+그러면 나의 프로젝트의 최상단은 ```com.hello```이다. (프로젝트 시작 루트) 여기에 AppConfig 같은 메인 설정 정보를 두는 것이다. (지금의 경우 AutoAppConfig 이다.) 그리고 거기에 ```@ComponentScan``` 어노테이션을 붙이고, ```basePackages``` 지정은 생략한다.
+
+그러면 위 세 개를 다 뒤진다. 내 프로젝트와 관련된 것은 자동으로 다 뒤지는 것이다.
+
+이렇게 하면 ```com.hello```를 포함한 하위는 모두 자동으로 컴포넌트 스캔의 대상이 된다. 그리고 프로젝트 메인 설정 정보는 프로젝트를 대표하는 정보이기 때문에 프로젝트 시작 루트 위치에 두는 것이 좋다고 생각한다.
+
+참고로 스프링 부트를 사용하면 스프링 부트의 대표 시작 정보인 ```@SpringBootApplication```를 이 프로젝트 시작 루트 위치에 두는 것이 관례이다. (그리고 이 설정 안에 바로 ```@ComponentScan```이 들어있다!)
+
+<br>
+
+처음에 프로젝트를 자동으로 만들면 main 메서드가 있는 CoreApplication이 자동으로 만들어진다. 스프링 부트를 돌리는 클래스이다.
+
+<img width="520" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/41478059-1a9d-43c4-8080-79267da0f138">
+
+여기서 ```@SpringBootApplication```을 ```Alt```를 누른 채 클릭하고 들어가면 다음과 같다.
+
+<img width="901" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f23d94c0-6121-4b39-a863-196aa9b12523">
+
+```@ComponentScan```이 걸려있는 것이다.
+
+즉, 스프링 부트를 쓰면 내 프로젝트인 ```hello.core```에서부터 컴포넌트 스캔을 하겠다는 것이다. 그래서 스프링 부트를 쓰면 ```@ComponentScan```에 의해서 자동으로 다 스프링 빈이 등록되고 하는 것이다. 그래서 스프링 부트를 쓰면 사실 ```@ComponentScan``` 자체를 쓸 일이 없다. (부트에서 이미 다 해주니까)
+
+그래서 관례를 따라서, 프로젝트 루트에 컴포넌트 스캔을 지정하고 불필요한 몇 가지는 ```exclude``` 해서 쓰는 것을 권장한다.
