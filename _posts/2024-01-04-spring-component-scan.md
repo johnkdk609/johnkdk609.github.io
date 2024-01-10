@@ -284,3 +284,41 @@ public class AutoAppConfig {
 즉, 스프링 부트를 쓰면 내 프로젝트인 ```hello.core```에서부터 컴포넌트 스캔을 하겠다는 것이다. 그래서 스프링 부트를 쓰면 ```@ComponentScan```에 의해서 자동으로 다 스프링 빈이 등록되고 하는 것이다. 그래서 스프링 부트를 쓰면 사실 ```@ComponentScan``` 자체를 쓸 일이 없다. (부트에서 이미 다 해주니까)
 
 그래서 관례를 따라서, 프로젝트 루트에 컴포넌트 스캔을 지정하고 불필요한 몇 가지는 ```exclude``` 해서 쓰는 것을 권장한다.
+
+<br>
+
+### 컴포넌트 스캔 기본 대상
+
+컴포넌트 스캔은 ```@Component``` 뿐만 아니라 다음과 같은 내용도 추가로 컴포넌트 스캔 대상에 포함한다.
+
+* ```@Component```: 컴포넌트 스캔에서 사용
+* ```@Controller```: 스프링 MVC 컨트롤러에서 사용
+* ```@Service```: 스프링 비즈니스 로직에서 사용
+* ```@Repository```: 스프링 데이터 접근 계층에서 사용 (JPA, JDBC 등)
+* ```@Configuration```: 스프링 설정 정보에서 사용
+
+그런데 이것들을 붙여놓으면 자동으로 컴포넌트 스캔의 대상이 된다. 
+
+가령 ```@Service```를 보기 위해 인텔리제이에서 <kbd>Cmd + O</kbd>를 클릭하고, '@Service'를 입력한 다음 클릭해 들어가면, 다음과 같이 볼 수 있다.
+
+<img width="759" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/82a9e996-7cad-4439-a99b-0b83082e0cc8">
+
+보면 위에 ```package org.springframework.stereotype;```라고 되어 있다. 아래에 ```@interface```라고 되어 있으면 바로 뒤의 ```Service```가 어노테이션이다. 보면 ```@Component```가 붙어있다. ```@Repository```도 마찬가지이다.
+
+해당 클래스의 소스 코드를 보면 ```@Component```를 포함하고 있는 것을 알 수 있다.
+
+```java
+@Component
+public @interface Controller {
+}
+
+@Component
+public @interface Service {
+}
+
+@Component
+public @interface Configuration {
+}
+```
+
+(참고: 사실 어노테이션에는 상속관계라는 것이 없다. 그래서 이렇게 어노테이션이 특정 어노테이션을 들고 있는 것을 인식할 수 있는 것은 자바 언어가 지원하는 기능은 아니고, 스프링이 지원하는 기능이다.)
