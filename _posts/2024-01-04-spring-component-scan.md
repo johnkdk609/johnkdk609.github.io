@@ -322,3 +322,41 @@ public @interface Configuration {
 ```
 
 (참고: 사실 어노테이션에는 상속관계라는 것이 없다. 그래서 이렇게 어노테이션이 특정 어노테이션을 들고 있는 것을 인식할 수 있는 것은 자바 언어가 지원하는 기능은 아니고, 스프링이 지원하는 기능이다.)
+
+<br>
+
+컴포넌스 스캔의 용도뿐만 아니라 다음 어노테이션이 있으면 스프링은 부가 기능을 수행한다.
+
+* ```@Controller```: 스프링 MVC 컨트롤러로 인식
+* ```@Repository```: 스프링 데이터 접근 계층으로 인식하고, 데이터 계층의 예외를 스프링 예외로 변환해준다.
+* ```@Configuration```: 앞서 보았듯이 스프링 설정 정보로 인식하고, 스프링 빈이 싱글톤을 유지하도록 추가 처리를 한다.
+* ```@Service```: 사실 ```@Service```는 특별한 처리를 하지 않는다. 대신 개발자들이 핵심 비즈니스 로직이 여기에 있겠구나 라고 비즈니스 계층을 인식하는 데 도움이 된다.
+
+(참고: ```useDefaultFilters``` 옵션은 기본으로 켜져있는데, 이 옵션을 끄면 기본 스캔 대상들이 제외된다. 그냥 이런 옵션이 있구나 정도 알고 넘어가면 되겠다.)
+
+
+## 3. 필터
+
+이번에는 필터에 대해 알아보겠다.
+
+* ```includeFilters```: 컴포넌트 스캔 대상을 추가로 지정한다.
+* ```excludeFilters```: 컴포넌트 스캔에서 제외할 대상을 지정한다.
+
+<br>
+
+먼저, 테스트의 scan 패키지 안에 filter 패키지를 만든다. 그리고 어노테이션을 만들어볼 것이다. filter 패키지 안에 이름을 MyIncludeComponent를 입력하고 IntelliJ에서 Annotation을 선택한다.
+
+<b>MyIncludeComponent 어노테이션</b>의 코드는 다음과 같다.
+
+```java
+package hello.core.scan.filter;
+
+import java.lang.annotation.*;
+
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface MyIncludeComponent {
+}
+```
+
