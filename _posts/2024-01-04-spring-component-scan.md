@@ -360,3 +360,143 @@ public @interface MyIncludeComponent {
 }
 ```
 
+위 코드에서 ```@Target(Element.TYPE)```가 중요하다. TYPE이라고 하면 클래스 레벨에 붙는 것이다.
+
+이 어노테이션이 붙은 것은 컴포넌트 스캔에 추가할 것이라고 이해하면 된다.
+
+이제 이 코드를 복사 붙여넣기 해서 이름을 MyExcludeComponent로 붙일 것이다. 어노테이션 2개를 만든 것이고, MyExcludeComponent 어노테이션이 붙으면 컴포넌트 스캔에서 제외할 것이다.
+
+```java
+package hello.core.scan.filter;
+
+import java.lang.annotation.*;
+
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface MyExcludeComponent {
+}
+```
+
+<br>
+
+이제 filter패키지에 클래스를 두 개 만들 것이다. 하나는 BeanA 클래스이다.
+
+```java
+package hello.core.scan.filter;
+
+@MyIncludeComponent
+public class BeanA {
+}
+```
+
+그리고 마찬가지로 복사 붙여넣기 해서 BeanB 클래스를 생성하고, 어노테이션만 ```@MyExcludeComponent```를 붙인다.
+
+```java
+package hello.core.scan.filter;
+
+@MyExcludeComponent
+public class BeanB {
+}
+```
+
+<br>
+
+이제 테스트를 하나 만들어볼 것이다. filter패키지 안에 ComponentFilterAppConfigTest클래스를 생성한다.
+
+```java
+package hello.core.scan.filter;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.context.annotation.ComponentScan.*;
+
+public class ComponentFilterAppConfigTest {
+
+    @Test
+    void filterScan() {
+        ApplicationContext ac = new AnnotationConfigApplicationContext(ComponentFilterAppConfig.class);
+        BeanA beanA = ac.getBean("beanA", BeanA.class);
+        assertThat(beanA).isNotNull();
+
+        ac.getBean("beanB", BeanB.class);
+    }
+
+    @Configuration
+    @ComponentScan(
+            includeFilters = @Filter(type = FilterType.ANNOTATION, classes = MyIncludeComponent.class),
+            excludeFilters = @Filter(type = FilterType.ANNOTATION, classes = MyExcludeComponent.class)
+    )
+    static class ComponentFilterAppConfig {
+    }
+}
+```
+
+```@Test``` 어노테이션을 붙이고, filterScan()을 입력한다. 먼저 아래에 ComponentFilterAppConfig를 static class로 하나 만든다. 우선 ```@Configuration``` 어노테이션을 붙인다. 그리고 ```@ComponentScan``` 어노테이션을 붙이고, 위와 같이 includeFilters와 excludeFilters를 입력한다. 타입은 ```FilterType.ANNOTATION```을 하고, 클래스는 위와 같이 한다. 이렇게 하면 나만의 컴포넌트를 스캔할 수 있는 기능이 만들어진다.
+
+그 다음에 ```new AnnotationConfigApplicationContext(ComponentFilterAppConfig.class);```을 입력하고, ```ApplicationContext ac```에 담아준다.
+
+beanA를 생성하고, Assertions를 이용해 ```assertThat(beanA).isNotNull();```을 검토한다. (static import를 사용했다.) 이제 beanB를 조회하면, 이 경우 조회하는 순간 Exception이 터져야 한다. 왜냐하면 없기 때문이다.
+
+실행 결과는 다음과 같다.
+
+<img width="1682" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/0345f115-ea9b-4990-97b5-a82bf5b1c540">
+
+'No bean named 'beanB' available'라고 나온다. 왜냐하면 beanB는 MyExcludeComponent로 해버렸기 때문이다. 그래서 컴포넌트 스캔 대상에서 빠져버린 것이다.
+
+<br>
+
+위 테스트를 완료하려면, 다음과 같이 코드를 수정해야 한다.
+
+```java
+package hello.core.scan.filter;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.annotation.ComponentScan.*;
+
+public class ComponentFilterAppConfigTest {
+
+    @Test
+    void filterScan() {
+        ApplicationContext ac = new AnnotationConfigApplicationContext(ComponentFilterAppConfig.class);
+        BeanA beanA = ac.getBean("beanA", BeanA.class);
+        assertThat(beanA).isNotNull();
+
+        assertThrows(
+                NoSuchBeanDefinitionException.class,
+                () -> ac.getBean("beanB", BeanB.class));
+    }
+
+    @Configuration
+    @ComponentScan(
+            includeFilters = @Filter(type = FilterType.ANNOTATION, classes = MyIncludeComponent.class),
+            excludeFilters = @Filter(type = FilterType.ANNOTATION, classes = MyExcludeComponent.class)
+    )
+    static class ComponentFilterAppConfig {
+    }
+}
+```
+
+우선 Assertions를 junit 것으로 넣는다. 그리고 예외인 ```NoSuchBeanDefinitionException.class```을 입력한다. 그 다음에 ```() -> ac.getBean("beanB", BeanB.class)```을 넣는다. 그리고 static import 하여 깔끔하게 변환한다.
+
+이제 테스트가 성공한다.
+
+<img width="1685" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3fa42726-ddd8-4881-ba4b-2b904063fec7">
+
+첫 번째 거는 (beanA) 값이 조회가 되어야 하고, 두 번째 거는 (beanB) NoSuchBeanDefinitionException이 나와야 한다.
