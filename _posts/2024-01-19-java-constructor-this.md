@@ -112,3 +112,38 @@ this는 참조 변수로서, 객체 자신을 가리킨다. this를 이용하여
 <br>
 
 this는 다음과 같이 활용된다.
+
+* <b>this.멤버변수</b>
+
+```java
+class Person {
+    String name;
+    int age;
+    void info () {
+        System.out.println(this.name);
+        System.out.println(this.age);
+    }
+}
+```
+
+<br>
+
+또, this는 다음과 같이 활용될 수 있다.
+
+* <b>this([인자값])</b> : 생성자 호출
+* this 생성자 호출 시 제한사항
+    - <u>생성자 내에서만</u> 호출 가능함
+    - 생성자 내에서 <u>첫 번째 구문에 위치해야</u> 함
+
+```java
+class Person {
+    String name;
+    int age;
+    Person() {
+        this("John");
+    }
+    Person(String name) {
+
+    }
+}
+```
