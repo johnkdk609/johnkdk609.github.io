@@ -11,7 +11,7 @@ char c = '1';
 
 int num = c - '0';
 
-System.out.println((int)ch);    // 49
+System.out.println((int)c);    // 49
 System.out.println(num);        // 1
 ```
 
