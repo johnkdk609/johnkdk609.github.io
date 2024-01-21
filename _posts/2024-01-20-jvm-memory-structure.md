@@ -63,3 +63,70 @@ Person이라는 클래스(설계도)가 클래스 영역에 로드 된다. Perso
 이 인스턴스의 주소가 0x001이라고 가정했을 때, 이 주소값이 p1에 저장되어 있다. (스택의 main 영역에 p1의 주소값이 저장되어 있는 것이다.)
 
 이제 ```p1.name = "Yang";```으로 name에 값을 넣고 있다. 메인 메서드에서 ```p1.name = "Yang";```으로 넣고 있으니, 힙 영역에서 "Yang"의 주소값을 name이 가리키게 된다.
+
+<br>
+
+### static 특징
+
+1. 로딩 시점
+- static: 클래스 로딩 시
+- non-static: 객체 생성 시
+
+2. 메모리상의 차이
+- static: 클래스당 하나의 메모리 공간만 할당
+- non-static: 인스턴스 당 메모리가 별도로 할당
+
+3. 문법적 특징
+- static: 클래스 이름으로 접근
+- non-static: 객체 생성 후 접근
+
+```java
+public class Person {
+    static int pCount;
+
+    String name;
+    int age;
+    String hobby;
+}
+```
+
+```java
+public class PersonTest {
+    public static void main(String[] args) {
+        Person p = new Person();
+        p.name = "Kim";
+
+        Person.pCount++;
+
+        p.pCount++;     // 오류는 나지 않지만 경고 메세지 뜬다.
+    }
+}
+```
+
+4. static 영역에서는 non-static 영역을 직접 접근이 불가능
+
+```java
+public class Main {
+    String str = "문장";
+
+    public static void main(String[] args) {
+        System.out.println(str);    // Non-static field 'str' cannot be referenced from a static context
+    }
+}
+```
+
+인스턴스가 만들어져야지만 접근 가능한 공간이기 때문이다. 다른 세계라고 보면 된다.
+
+그러나 반대로 non-static영역에서 static 영역에는 접근 가능하다.
+
+5. non-static 영역에서는 static 영역에 접근이 가능
+
+```java
+public class Main {
+    static String str = "문장";
+
+    public void print() {
+        System.out.println(str);    // 문제 없음
+    }
+}
+```
