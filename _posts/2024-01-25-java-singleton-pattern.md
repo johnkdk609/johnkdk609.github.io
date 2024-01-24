@@ -2,7 +2,7 @@
 layout: post
 title: 싱글턴 패턴(Singleton Pattern)
 categories: Java
-date: 2024-01-25 15:22:00 +0900
+date: 2024-01-25 03:22:00 +0900
 ---
 <b>싱글턴 패턴(Singleton Pattern)</b>에 대해 알아보겠다.
 
