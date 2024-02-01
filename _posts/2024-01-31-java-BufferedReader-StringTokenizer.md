@@ -233,6 +233,12 @@ public class BufferedReaderPractice {
 }
 ```
 
+위 코드의 출력값은 다음과 같다.
+
+```
+[12, 34, 56, 78, 910, 1112, 1314, 1516, 1718, 1920]
+```
+
 ```BufferedReader br = new BufferedReader(new FileReader("input.txt"));```의 방식으로 파일을 읽고, 그 파일 안에 있는 내용을 토큰 단위로 끊은 다음, 생성한 길이 10의 배열 arr에 순서대로 넣는 것이다.
 
 이때 input.txt 파일은 BufferedReaderPractice클래스가 있는 프로젝트 파일에 위치해야 한다.
