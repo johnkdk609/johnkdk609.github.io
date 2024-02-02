@@ -245,4 +245,14 @@ public class BufferedReaderPractice {
 
 <br>
 
+파일을 읽어오는 또 다른 방식은 다음과 같다. 가령 위에서처럼 input.txt 파일을 읽어온다고 가정해보자.
+
+```java
+BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("input.txt")));
+```
+
+위와 같은 코드로 파일을 읽을 수 있는 것이다.
+
+<br>
+
 이렇게 BufferedReader의 다양한 기능을 활용하면 편리하게, 효과적으로 입력값을 받아올 수 있다.
