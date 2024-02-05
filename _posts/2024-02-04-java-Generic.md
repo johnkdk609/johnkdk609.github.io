@@ -237,3 +237,187 @@ public class BoxTest {
     }
 }
 ```
+
+<br>
+
+## 제한된 제네릭 클래스
+
+그런데, 이 T에 모든 타입이 들어가는 것을 원하지 않을 수도 있다.
+
+타입 문자로 사용할 타입을 명시하였지만, 역시 모든 타입을 사용할 수 있는 문제가 발생한다. 이때 제한된 제네릭 클래스를 사용한다.
+
+구체적인 타입의 제한이 필요할 때 extends 키워드를 사용할 수 있다. (Person의 자손만 타입지정 가능)
+
+```java
+class Box<T extends Person> {
+    private T obj;
+
+    public T getObj() {
+        return obj;
+    }
+
+    public void setObj(T obj) {
+        this.obj = obj;
+    }
+}
+```
+
+위 코드를 보면, ```<T extends Person>```이라고 되어 있다. Person과 그 Person을 상속 받는 자손만 가능하다는 것이다. 그러면 Person의 자손에 대한 로직을 만들 수 있다.
+
+또, ```class Box<T extends Number>```와 같이 입력했다고 가정해보자. Number 클래스는 Integer, Double형 등의 조상 클래스이다. 이를 통해 우리는 타입으로는 Integer나 Double 등만 들어올 수 있다는 것을 예상할 수 있는 것이다. String이나 Person 타입이 들어오는 것을 막을 수 있다.
+
+<br>
+
+클래스를 사용할 때 extends를 썼었는데, <b>인터페이스로 제한할 경우에도 extends 키워드를 사용</b>한다. (implements가 와야 할 것 같지만, 이 경우에는 extends 키워드가 사용되는 것이다.)
+
+또, 클래스와 함께 인터페이스 제약 조건을 이용할 경우 &로 연결한다.
+
+<br>
+
+다음 예시 코드를 보자.
+
+```java
+class Box<T extends Number> {   // 제한된 제네릭 클래스 : Number의 자손만 올 수 있음.
+    private T t;
+
+    // 계산 로직을 작성할 수 있음.
+    public T getT() {
+        return t;
+    }
+
+    public void setT(T t) {
+        this.t = t;
+    }
+}
+
+public class BoxTest {
+    public static void main(String[] args) {
+
+        Box<String> intBox = new Box<>();
+        intBox.setT(111);
+
+        // Box<String> strBox = new Box<>();    // Bound mismatch. The type String is not a valid substitute for the bounded parameter <T extends Number> of the type Box<T>
+        // strBox.setT("Hello");
+
+        Box<Double> dblBox = new Box<>();
+        dblBox.setT(42.21);
+    }
+}
+```
+
+위 코드를 보면, 타입이 Number 클래스와 그 자손들로 제한을 두었다. 그래서 ```Box<String> strBox```을 생성했을 때, 오류가 뜬다.
+
+<br>
+
+이번에는 인터페이스의 에시를 들어보겠다.
+
+```java
+public interface AbleToFly {
+    void fly();
+}
+```
+
+```java
+public interface AbleToSwim {
+    void swim();
+}
+```
+
+```java
+abstract public class Bird implements AbleToFly {
+
+}
+```
+
+```java
+public class Duct extends Bird implements Duckable {
+
+    @Override
+    public void swim() {
+        System.out.println("오리는 수영을 합니다.");
+    }
+
+    @Override
+    public void fly() {
+        System.out.println("오리는 날 수도 있어요.");
+    }
+}
+```
+
+```java
+public interface Duckable extends AbleToSwim, AbleToFly {
+
+}
+```
+
+```java
+public class Penguin extends Bird implements AbletoSwim {
+
+    @Override
+    public void swim() {
+        System.out.println("펭귄은 날 수는 없고 수영만 할 수 있습니다");
+    }
+}
+```
+
+```java
+public class Swan extends Bird implements Duckable {
+
+    @Override
+    public void swim() {
+        System.out.println("백조는 오리처럼 수영도 할 수 있어요.");
+    }
+
+    @Override
+    public void fly() {
+        System.out.println("백조는 오리처럼 날 수도 있어요.");
+    }
+}
+```
+
+```java
+class Box<T> {  // 모든 타입에 대해 적용가능한 Box
+    T t;
+    void setT(T t) {
+        this.t = t;
+    }
+
+    T getT() {
+        return t;
+    }
+}
+
+class FlyBox<T extends AbleToFly> {     // AbleToFly라는 인터페이스를 구현한 타입만 올 수 있는 Box
+    T t;
+    void setT(T t) {
+        this.t = t;
+    }
+
+    T getT() {
+        return t;
+    }
+}
+
+class BirdBox<T extends Bird> {
+    T t;
+    void setT(T t) {
+        this.t = t;
+    }
+
+    T getT() {
+        return t;
+    }
+}
+
+// Bird의 자손이면서.. AbleToFly와 AbleToSwim을 모두 구현한 클래스만 올 수 있음.
+class FlyingAndSwimmingBirdBox<T extends Bird & AbleToFly & AbleToSwim> {
+    T t;
+    void setT(T t) {
+        this.t = t;
+    }
+
+    T getT() {
+        return t;
+    }
+}
+```
