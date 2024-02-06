@@ -235,13 +235,13 @@ if (stack.peek() == '+' && !stack.isEmpty()) {
 stack.push(token);
 ```
 
-이 문제를 해결하기 위해, 위와 같은 코드를 다음과 같이 수정했다.
+이 문제를 해결하기 위해, 위 코드를 다음과 같이 수정했다.
 
 ```java
-while (!stack.isEmpty() && stack.peek() == '*') {
+while (!stack.isEmpty() && stack.peek() == '*') {	// stack이 비어있지는 않은지부터 확인
     converted += stack.pop();
 }
-if (!stack.isEmpty() && stack.peek() == '+') {
+if (!stack.isEmpty() && stack.peek() == '+') {		// stack이 비어있지는 않은지부터 확인
     converted += stack.pop();
 }
 stack.push(token);
