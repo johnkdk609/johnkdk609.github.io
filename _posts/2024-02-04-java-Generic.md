@@ -330,7 +330,7 @@ abstract public class Bird implements AbleToFly {
 ```
 
 ```java
-public class Duct extends Bird implements Duckable {
+public class Duck extends Bird implements Duckable, AbleToFly {
 
     @Override
     public void swim() {
@@ -418,6 +418,204 @@ class FlyingAndSwimmingBirdBox<T extends Bird & AbleToFly & AbleToSwim> {
 
     T getT() {
         return t;
+    }
+}
+
+
+public class Test {
+    public static void main(String[] args) {
+        FlyBox<Butterfly> f1 = new FlyBox<>();  // Butterfly만 들어갈 수 있는 Box
+        f1.setT(new Butterfly());
+        FlyBox<Duck> f3 = new FlyBox<>();
+        f3.setT(new Duck());
+
+        FlyBox<AbleToFly> f2 = new FlyBox<>();
+        f2.setT(new Butterfly());
+        f2.setT(new Duck());
+        f2.setT(new Swan());
+
+        BirdBox<Bird> b1 = new BirdBox<>();
+        // b1.setT(new Butterfly());
+        b1.setT(new Duck());
+
+        FlyingAndSwimmingBirdBox<Duck> b2 = new FlyingAndSwimmingBirdBox<>();   // 제네릭 안에 Penguin은 들어갈 수 없음
+        FlyingAndSwimmingBirdBox<Swan> b3 = new FlyingAndSwimmingBirdBox<>();
+
+        b2.setT(new Duck());
+
+    }
+}
+```
+
+위 코드처럼, 제한된 제네릭 클래스를 사용할 수 있다.
+
+<br>
+
+## 와일드 카드 이용
+
+와일드 카드를 generic type에서 구체적인 타입 대신 사용할 수 있다.
+
+클래스를 정의할 때가 아니고, 타입으로 활용할 때 사용하는 것이다.
+
+<table>
+    <tr>
+        <th>표현</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>Generic type&#60;?&#62;</td>
+        <td>타입에 제한이 없음</td>
+    </tr>
+    <tr>
+        <td>Generic type&#60;? extends T&#62;</td>
+        <td>T와 T를 상속받은 타입들만 사용 가능</td>
+    </tr>
+    <tr>
+        <td>Generic type&#60;? super T&#62;</td>
+        <td>T와 T의 조상 타입만 사용 가능</td>
+    </tr>
+</table>
+
+물음표(?)가 올 수 있다. 이 물음표는 '어떤 제네릭이든 참조할 수 있다'는 것이다. (변수로 쓸 때 해당하는 말이다.)
+
+그리고 extends, super을 사용해 범위를 지정한다.
+
+<br>
+
+코드를 한 번 보겠다. 이전에 사용했던 Bird, Butterfly, ... 의 코드를 활용하겠다.
+
+```java
+package test12_generic_wildcard;
+
+class Box<T> {
+    T t;
+    void setT(T t) {
+        this.t = t;
+    }
+    
+    T getT() {
+        return t;
+    }
+}
+
+
+
+public class Test {
+    public static void main(String[] args){
+    
+    	// 변수를 만들 때
+    	// 제네릭을 참조할 때
+       Box<?> b1; 
+//       Box<? extends Bird> b1;
+//       Box<? super Duck> b1;
+       
+       
+       
+       Box<Duck> b2 = new Box<>(); // Duck의 Box
+       b2.setT(new Duck());
+       
+       Box<Butterfly> b3 = new Box<>(); // Butterfly
+       b3.setT(new Butterfly());
+       
+       Box<Bird> b4 = new Box<>(); // Bird 
+       b4.setT(new Bird());
+       
+       Box<String> b5 = new Box<>(); // String
+       b5.setT("Hahaha");
+       
+       Box<Bird> b11 = new Box<Bird>();
+       
+       // 와일드카드는 우리가 해당 구체적인 타입을 모른다고 가정할 때 아래와 같이 사용한다.
+       Box<?> b10 = new Box<Bird>();
+       Box<?> b12 = new Box<String>();
+       Box<?> b13 = new Box<Integer>();
+       
+       
+       
+       b1 = b2;
+       System.out.println(b1.getT().toString());       
+       
+       b1 = b3;
+       System.out.println(b1.getT().toString());
+       
+       b1 = b4;
+       System.out.println(b1.getT().toString());
+       
+       b1 = b5;
+       System.out.println(b5.getT().toString());
+        
+    }
+}
+```
+
+<br>
+
+이번에는 extends, super 키워드를 이용한 사례를 보겠다.
+
+```java
+package test13_generic_wildcard;
+
+class FlyBox<T extends AbleToFly> {
+    T t;
+    void setT(T t) {
+        this.t = t;
+    }
+    
+    T getT() {
+        return t;
+    }
+}
+
+class BirdBox<T extends Bird> {
+    T t;
+    void setT(T t) {
+        this.t = t;
+    }
+    
+    T getT() {
+        return t;
+    }
+}
+
+class FlyingAndSwimmingBirdBox<T extends Bird & AbleToFly & AbleToSwim> {
+    T t;
+    void setT(T t) {
+        this.t = t;
+    }
+    
+    T getT() {
+        return t;
+    }
+
+
+}
+
+
+public class Test {
+    public static void main(String[] args){
+    
+//       FlyBox<?> f1; 
+//       FlyBox<? extends Bird> f1; 
+       FlyBox<? super Duck> f1; 
+       
+       
+       FlyBox<Duck> f2 = new FlyBox<>();
+       FlyBox<Butterfly> f3 = new FlyBox<>();
+       FlyBox<Bird> f4 = new FlyBox<>();
+       
+       f2.setT(new Duck());
+       f3.setT(new Butterfly());
+       f4.setT(new Bird());
+       
+       f1 = f2;
+       f1.getT().fly();
+       
+//       f1 = f3; // Butterfly의 Box는 들어갈 수 없다.
+//       f1.getT().fly();
+       
+       f1 = f4;
+       f1.getT().fly();
+        
     }
 }
 ```
