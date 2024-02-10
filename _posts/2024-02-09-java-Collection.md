@@ -10,11 +10,11 @@ Collection은 자바에서 자료구조를 다루는 것들을 지칭하는 것�
 
 대표적으로 다음과 같은 것들이 있다.
 
-* List
-* Set
-* Map
-* Queue
-* Stack
+* <b>List</b>
+* <b>Set</b>
+* <b>Map</b>
+* <b>Queue</b>
+* <b>Stack</b>
 
 <br>
 
@@ -96,3 +96,44 @@ Collection Framework 핵심 interface 는 다음과 같다.
         <td>지하철, 버스를 탈 때 대기줄과 같이 들어온 순서대로 나가는 자료구조<br>LinkedList</td>
     </tr>
 </table>
+
+크게 4가지의 인터페이스가 있다. 대강 살펴보자면 다음과 같다. 우선 List는 순서가 있으면서 데이터의 중복이 가능한 것이다. <u>배열인데 크기가 변경 가능한 것</u>이라고 보면 된다. 배열처럼 순서가 있기 때문에 <u>인덱스(Index)로 접근</u>할 수 있다. 0번 인덱스부터 접근할 수 있고, List의 구현체로는 ArrayList, LinkedList, Vector 등이 있다.
+
+다음으로 Set은 말 그대로 집합이다. 기본적으로 <u>순서를 유지하지 않고, 데이터의 중복이 불가능</u>하다. 구현체로는 HashSet, TreeSet 등이 있다.
+
+Map은 <u>키-밸류(key-value) 쌍</u>으로 되어 있는 것이다. 키-밸류 한 쌍이 한 단위로 들어가 있는 것이다. <u>key는 중복이 불가한데, value는 중복이 가능</u>하다. 데이터를 찾을 때 key를 기준으로 찾기 때문이다. 구현체로는 HashMap, TreeMap 등이 있다.
+
+마지막으로 Queue는 <u>선입선출(FIFO, First In First Out) 구조</u>라고 생각하면 된다. 구현체로는 LinkedList가 있다. 보면 List의 구현체로도 LinkedList가 있다. LinkedList는 클래스인데, 같은 클래스라 하더라도 List 측면에서 바라보면 이것은 List가 되는 것이고, Queue로 바라본다면 Queue가 되는 것이다. <b>다형성의 개념이 적용</b>되는 것이라 할 수 있는 것이다. 인터페이스는 약속이기 때문에, '~ 한 기능을 하면 List로 보겠다' 혹은 '~ 한 기능을 하면 Queue로 보겠다'는 것인데, LinkedList에는 그 기능들이 다 들어가 있는 것이다. 그런데 그 중에서 일부만 바라보는 것이다.
+
+<br>
+
+Collection 인터페이스에서 기본적으로 요구하는 것들이 여러 가지가 있다. 아래와 같은 기능들이 있으면 Collection의 Object라고 할 수 있겠다.
+
+<table>
+    <tr>
+        <th>분류</th>
+        <th>Collection</th>
+    </th>
+    <tr>
+        <th>추가</th>
+        <td>add(E e),<br>addAll(Collection&#60;? extends E&#62; c)</td>
+    </tr>
+    <tr>
+        <th>조회</th>
+        <td>contains(Object o),<br>containsAll(Collection&#60;?&#62; c),<br>equals(),<br>isEmpty(),<br>iterator(),<br>size()</td>
+    </tr>
+    <tr>
+        <th>삭제</th>
+        <td>clear(),<br>removeAll(Collection&#60;?&#62; c)<br>retainAll(Collection&#60;?&#62; c)</td>
+    </tr>
+    <tr>
+        <th>수정</th>
+        <td></td>
+    </tr>
+    <tr>
+        <th>기타</th>
+        <td>toArray()</td>
+    </tr>
+</table>
+
+가령 위 표를 봤을 때, 원소를 추가(add)하고 제거(clear)하는 기능이 있다. 이것들은 구체적으로 각각의 Collection을 보면서 살펴볼 것이다.
