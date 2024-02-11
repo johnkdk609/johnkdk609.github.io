@@ -137,3 +137,250 @@ Collection 인터페이스에서 기본적으로 요구하는 것들이 여러 �
 </table>
 
 가령 위 표를 봤을 때, 원소를 추가(add)하고 제거(clear)하는 기능이 있다. 이것들은 구체적으로 각각의 Collection을 보면서 살펴볼 것이다.
+
+<br>
+
+## List
+
+제일 먼저 리스트(List)에 대해 다뤄보겠다.
+
+리스트는 <b>순서가 있고, 중복을 허용</b>한다. 순서가 있다는 것은 <b>인덱스가 있다는 것</b>이다. 즉, 리스트는 배열과 유사하지만 동적이다.
+
+리스트의 구현 클래스로는 ArrayList, LinkedList, Vector 등이 있다.
+
+<br>
+
+간략하게 보자면, ArrayList는 실제 배열로 구현이 되어 있다. 초기에는 작은 크기의 배열로 출발을 한다. 기본적으로 자바에서는 배열의 크기(size)를 초기에 설정하고 사용한다. 그리고 실제 사이즈는 0번부터 시작하는 것으로 관리하였다. (실습 때)
+
+size가 10인 배열을 만들어 두고, 차근차근 채워나가서 절반 정도 채웠다고 하면 ArrayList가 알아서 배열의 크기를 두 배 정도 늘려준다. 또, 늘린 크기의 배열이 절반 정도 찼다고 하면 두 배 정도 늘린다. 이런 식으로 알아서 크기를 늘려주고 있는 것이다. 반대로 줄어들기도 한다. 메모리 관리를 위해서 원소의 개수가 줄어들면 전체 길이도 줄어드는 것이다.
+
+사실 ArrayList는 길이가 늘어날 때 50%만 늘어난다. (1.5배씩) 그리고 Vector의 경우에도 배열로 되어 있는데, 항상 100%씩 늘어난다. (2배씩)
+
+즉, 크기가 고정되어 있는 배열이 새로 크기를 늘리거나 줄여서 배열을 만들어 복사하고 있는 것이다.
+
+<br>
+
+LinkedList는 조금 다르다. 각각의 노드들이 링크와 링크로 연결되어 있다. 하나의 노드에 있어서 두 개의 저장공간이 있다고 할 때, 앞에는 실제 값이 들어가고 뒤에는 그 다음 노드의 참조값이 들어간다. 노드가 꼬리에 꼬리를 물고 쭉 이어지는 구성으로 되어 있는 것이다.
+
+그래서 새로 값을 추가하겠다고 한다면, 새로 노드를 만들어서 참조값을 이어주면 된다.
+
+<br>
+
+즉, List의 특징들은 다음과 같다.
+
+* 내부적으로 배열을 이용하여 데이터를 관리
+* 배열과 다르게 크기가 유동적으로 변함 (동적 자료구조)
+* 배열을 다루는 것과 유사하게 사용할 수 있음
+
+List의 주요 메서드는 다음과 같다. (이전에 본 Collection의 일반적인 메서드들과 비교하며 보겠다.)
+
+<table>
+    <tr>
+        <th>분류</th>
+        <th>Collection</th>
+        <th>List</th>
+    </th>
+    <tr>
+        <th>추가</th>
+        <td>add(E e),<br>addAll(Collection&#60;? extends E&#62; c)</td>
+        <td>add(int index, E element),<br>addAll(int index, Collection&#60;? extends E&#62; c)</td>
+    </tr>
+    <tr>
+        <th>조회</th>
+        <td>contains(Object o),<br>containsAll(Collection&#60;?&#62; c),<br>equals(),<br>isEmpty(),<br>iterator(),<br>size()</td>
+        <td>get(int index),<br>indexOf(Object o),<br>lastIndexOf(Object o),<br>listIterator()</td>
+    </tr>
+    <tr>
+        <th>삭제</th>
+        <td>clear(),<br>removeAll(Collection&#60;?&#62; c)<br>retainAll(Collection&#60;?&#62; c)</td>
+        <td>remove(int index)</td>
+    </tr>
+    <tr>
+        <th>수정</th>
+        <td></td>
+        <td>set(int index, E element)</td>
+    </tr>
+    <tr>
+        <th>기타</th>
+        <td>toArray()</td>
+        <td>subList(int fromIndex, int toIndex)</td>
+    </tr>
+</table>
+
+<br>
+
+위 주요 메서드들을 코드를 통해 보겠다.
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class ListTest1 {
+    public static void main(String[] args) {
+    	// List
+    	// 1. 순서가 있다.
+    	// 2. 중복이 허용된다.
+    	
+    	List<String> names = new ArrayList<String>();
+    	
+    	// 원소 추가
+    	names.add("Jang");
+    	names.add("Kim");
+    	names.add("Yoon");
+    	names.add("Hong");
+    	names.add("Kim"); // 중복
+    	
+    	System.out.println(names);
+    	
+    	// 비어있는지 체크
+    	System.out.println(names.isEmpty());
+    	
+    	// 삭제
+    	// 1. 인덱스를 이용한 삭제
+    	names.remove(0);
+    	System.out.println(names);
+    	
+    	// 2. 값을 이용한 삭제
+    	names.remove("Yoon");
+    	System.out.println(names);
+    	
+    	// 3. 전부 삭제
+//    	names.clear();
+//    	System.out.println(names);
+//    	System.out.println(names.isEmpty());
+    	
+    	// 4. 중복된 값을
+    	names.remove("Kim");
+    	System.out.println(names);
+    	
+    	
+    	// 삭제할 때 주의할 점!
+    	names.clear();
+    	
+    	names.add("학생1");
+    	names.add("학생1");
+    	names.add("학생2");
+    	System.out.println(names);
+    	// 학생1을 다 삭제하고 싶다.
+    	
+    	// 삭제시, 리스트 크기도 바뀌고.. 각 원소들의 index도 바뀐다. - IndexOutOfBoundsException 발생
+//    	for(int i = 0; i < names.size(); i++) {
+//    		if(names.get(i).equals("학생1"))
+//    			names.remove(i);
+//    	}
+//    	System.out.println(names);
+    	
+    	for(int i = names.size() - 1; i >= 0; i--) {
+    		if(names.get(i).equals("학생1"))
+    			names.remove(i);
+    	}
+    	System.out.println(names);
+    	
+    }
+}
+```
+
+위 코드의 출력값은 다음과 같다.
+
+```
+[Jang, Kim, Yoon, Hong, Kim]
+false
+[Kim, Yoon, Hong, Kim]
+[Kim, Hong, Kim]
+[Hong, Kim]
+[학생1, 학생1, 학생2]
+[학생2]
+```
+
+ArrayList에서 삭제 메서드를 수행할 때, 인덱스로 접근하는 것에서 주의를 기울여야 한다. 삭제를 할 때 리스트 크기도 바뀌고, 각 원소들의 index도 바뀌기 때문이다. 위 코드에서 주석 처리된 삭제 연산식을 실행하면 IndexOutOfBoundsException이 발생한다.
+
+위 상황을 해결하기 위해서는 거꾸로 접근하면 된다. 인덱스의 마지막에서 0까지 삭제를 수행하는 것이다.
+
+<br>
+
+이번에는 ListTest2 코드를 보겠다.
+
+같은 List 인터페이스에 속해 있더라도, 구현체에 따라서 성능에 차이가 있다.
+
+```java
+package test01_list;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
+
+public class ListTest2_비교 {
+	public static void main(String[] args) {
+		List<Object> al = new ArrayList<Object>();
+		List<Object> ll = new LinkedList<Object>();
+		List<Object> v = new Vector<Object>();
+		
+		/*
+		    Vector와 ArrayList 모두 내부적으로 배열로 구현되어 있으나
+		    Vector => 크기 2배씩 증가
+		    ArrayList => 크기 1.5배씩 증가.
+		*/
+
+		test1("순차적 추가 -  ArrayList -", al);
+		test1("순차적 추가 - LinkedList -", ll);
+		test1("순차적 추가 -   Vector   -", v);
+
+		test2("중간에 추가 -  ArrayList -", al);
+		test2("중간에 추가 - LinkedList -", ll);
+		test2("중간에 추가 -   Vector   -", v);
+
+		test3("데이터 조회 -  ArrayList -", al);
+		test3("데이터 조회 - LinkedList -", ll);
+		test3("데이터 조회 -   Vector   -", v);
+	}
+
+	public static void test1(String testname, List<Object> list) {
+		long start = System.nanoTime(); // 시작 시간
+		for (int i = 0; i < 50000; i++) {
+			list.add(new String("Hello")); // 뒤에다가 추가
+		}
+		long end = System.nanoTime(); // 끝 시간
+		System.out.printf("%s \t 소요시간: %15d ns. \n", testname, end - start);
+	}
+
+	public static void test2(String testname, List<Object> list) {
+		long start = System.nanoTime(); // 시작 시간
+		for (int i = 0; i < 50000; i++) {
+			list.add(0, new String("Hello")); // 맨앞에다가 추가(중간에 추가)
+		}
+		long end = System.nanoTime(); // 끝 시간
+		System.out.printf("%s \t 소요시간: %15d ns. \n", testname, end - start);
+	}
+
+	public static void test3(String testname, List<Object> list) {
+		long start = System.nanoTime(); // 시작 시간
+		// 리스트에 있는 모든 원소 조회
+		for (int i = 0; i < list.size(); i++) {
+			list.get(i);
+		}
+		long end = System.nanoTime(); // 끝 시간
+		System.out.printf("%s \t 소요시간: %15d ns. \n", testname, end - start);
+	}
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+순차적 추가 -  ArrayList - 	 소요시간:         2048375 ns. 
+순차적 추가 - LinkedList - 	 소요시간:         1569875 ns. 
+순차적 추가 -   Vector   - 	 소요시간:         1113125 ns. 
+중간에 추가 -  ArrayList - 	 소요시간:       355651792 ns. 
+중간에 추가 - LinkedList - 	 소요시간:         2295417 ns. 
+중간에 추가 -   Vector   - 	 소요시간:       351378958 ns. 
+데이터 조회 -  ArrayList - 	 소요시간:         2431042 ns. 
+데이터 조회 - LinkedList - 	 소요시간:      4442079542 ns. 
+데이터 조회 -   Vector   - 	 소요시간:        14436417 ns.
+```
+
+위 코드에서 '순차적 추가'란 뒤에 계속 넣겠다는 것이다. '중간에 추가'한다는 것은 배열의 중간에 값을 넣겠다는 것이다. 증간에 추가를 하면 배열의 경우 일일이 다 뒤로 당겨줘야 한다. 그런데 LinkedList의 경우 참조로 연결되어 있기 때문에, 중간에 추가하고 싶으면 중간에 참조 링크 하나만 끊고 변경하면 된다. 이런 점에서 성능에 차이가 오는 것이다.
+
+위 출력 결과를 보면, 순차적 추가를 할 때에는 Vector가 제일 빠르다. 그리고 중간에 추가할 때에는 ArrayList가 제일 느리고 LinkedList가 제일 빠르다. 데이터를 조회할 때에는 ArrayList가 제일 빠르고 LinkedList가 제일 느리다. LinkedList에서는 노드들이 일직선상에 놓여있지 않기 때문이다.
+
+이렇게 같은 List라 하더라도 성능에 차이가 난다.
