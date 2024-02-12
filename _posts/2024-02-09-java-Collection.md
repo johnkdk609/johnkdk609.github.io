@@ -383,4 +383,62 @@ public class ListTest2_비교 {
 
 위 출력 결과를 보면, 순차적 추가를 할 때에는 Vector가 제일 빠르다. 그리고 중간에 추가할 때에는 ArrayList가 제일 느리고 LinkedList가 제일 빠르다. 데이터를 조회할 때에는 ArrayList가 제일 빠르고 LinkedList가 제일 느리다. LinkedList에서는 노드들이 일직선상에 놓여있지 않기 때문이다.
 
+LinkedList의 경우 제일 첫 번째 노드만 기억하고 있다. 쭉 모든 노드들이 연결되어 있다고 할 때, 제일 첫 번째 노드만 기억하고 있는 것이다. 그래서 어떤 노드를 찾으려면 첫 번째 노드부터 타고 들어가야 한다.
+
 이렇게 같은 List라 하더라도 성능에 차이가 난다.
+
+<br>
+
+만약 ArrayList를 구현해서 사용하고 싶다면 다음과 같이 하면 된다.
+
+```java
+// 문자열을 저장할 List, 구현체는 ArrayList
+List<String> names = new ArrayList<>();
+
+// 추가
+names.add("Kim");
+names.add("Hong");
+names.add("Kim");
+names.add("Jang");
+names.add(0, "Yoon");   // 맨 앞에 추가하겠다는 것
+
+System.out.println(names);
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+[Yoon, Kim, Hong, Kim, Jang]
+```
+
+<br>
+
+Array의 특징은 다음과 같다.
+
+* 같은 타입의 데이터를 묶어 사용하는 자료구조
+* 접근 속도가 빠름
+* 크기를 변경할 수 없어 추가 데이터를 넣을 때, 새로운 배열을 만들고 복사함
+* 데이터 삭제 시, 인덱스를 재조정하기 위해 전체 데이터를 옮겨야 함
+* ArrayList 역시 Array를 활용하므로 이 같은 특징을 가지고 있음
+
+<br>
+
+ArrayList의 주요 메서드들은 다음과 같다.
+
+* add(E e) : 데이터 입력
+* get(int index) : 데이터 추출
+* size() : 입력된 데이터의 크기 반환
+* remove(int i) : 특정한 데이터를 삭제
+* remove(Object o) : 특정한 데이터를 삭제
+* clear() : 모든 데이터 삭제
+* contains(Object o) : 특정 객체가 포함되어 있는지 체크
+* isEmpty() : 비어있는지 체크(true, false)
+* addAll(Collection c) : 기존 등록된 컬렉션 데이터 입력
+* iterator() : iterator 인터페이스 객체 반환
+
+<br>
+
+LinkedList의 특징은 다음과 같다.
+
+* 각 요소를 Node로 정의하고 Node는 다음 요소의 참조 값과 데이터로 구성됨
+* 각 요소가 다음 요소의 링크 정보를 가지며 연속적으로 구성될 필요가 없음
