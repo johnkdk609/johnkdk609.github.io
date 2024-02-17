@@ -442,3 +442,248 @@ LinkedList의 특징은 다음과 같다.
 
 * 각 요소를 Node로 정의하고 Node는 다음 요소의 참조 값과 데이터로 구성됨
 * 각 요소가 다음 요소의 링크 정보를 가지며 연속적으로 구성될 필요가 없음
+
+<br>
+
+## Set
+
+Set은 List와 다르게 <b>순서가 보장되지 않고, 중복을 허용하지 않는다.</b>
+
+List의 중복된 데이터를 제거하는 수단으로 사용될 수 있다. 순서가 없기 때문에 정렬하려면 별도의 처리가 필요하다. (리스트를 만들어서 정렬하는 등의 작업이 필요하다.)
+
+구현 클래스로는 HashSet, TreeSet이 있다. 그런데 기본적으로 HashSet을 사용할 것이다. 이게 좀 더 성능이 좋다.
+
+* HashSet - 내부적으로는 HashTable로 중복 검사를 하고 있다.
+
+모든 Object에는 hashCode() 메서드가 있는데, 이것을 생각하면 된다. 이것으로 내부적으로 중복을 제거하고 있는 것이다.
+
+* TreeSet - 레드블랙트리(Red-Black Tree)로 관리를 하고 있다.
+
+구현까지 깊게 살펴볼 필요는 없겠다.
+
+<br>
+
+대표적인 구현체인 HashSet을 예시 코드로 알아보겠다.
+
+```java
+package test02_set;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class SetTest1 {
+    public static void main(String[] args) {
+        // Set
+    	// - Interface
+    	// 1. 집합
+    	// 2. 중복을 허용하지 않음
+    	// 3. 순서가 보장되지 않는다.
+    	
+    	// HashSet : Class
+    	// - Hashtable, 성능면에서 우수하다고 알려져 있음.
+    	
+    	Set<String> set = new HashSet<>();
+    	
+    	set.add("Park");
+    	set.add("Kim");
+    	set.add("Yoon");
+    	set.add("Jang");
+    	set.add("Hong");
+    	set.add("Park");
+    	
+    	System.out.println(set);
+    	System.out.println(set.size());
+
+    }
+}  
+```
+
+위 SetTest1의 실행 결과는 다음과 같다.
+
+```
+[Hong, Jang, Kim, Park, Yoon]
+5
+```
+
+보면, Park를 두 번 add 했다. 그런데 출력 결과에는 Park가 한 번밖에 안 나온다. 그리고 순서대로 넣었지만 출력물을 보면 넣은 순서가 보장되지 않는 것을 볼 수 있다.
+
+또, Set의 사이즈를 찍어보면 5가 나온다.
+
+<br>
+
+이번에는 Set을 또 다른 측면에서 테스트 해보겠다.
+
+Person 클래스를 생성해서 Person의 집합을 만들 것이다.
+
+```java
+package test02_set;
+
+public class Person {
+    String name;
+    String id; // 주민번호
+    
+    public Person(String name, String id) {
+        super();
+        this.name = name;
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Person [name=" + name + ", id=" + id + "]";
+    }
+}
+```
+
+그리고 아래에서 두 개의 사람 객체를 만들었다. 
+
+```java
+package test02_set;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class SetTest2 {
+    public static void main(String[] args) {
+        Set<Person> set = new HashSet<Person>();
+        // Set에서 중복을 판단하는 방법
+        // 1. hashCode(); 일치시킨다.
+        // 2. equals() 오버라이드.
+        
+        
+        Person p1 = new Person("사람1", "111111");
+        Person p2 = new Person("사람1", "111111");
+        
+        set.add(p1);
+        set.add(p2);
+        
+        System.out.println(p1.hashCode()); // Object로부터 물려받은 계산 로직을 쓰는 것이 아니라..
+        System.out.println(p2.hashCode());
+        
+        System.out.println("사람1".hashCode()); // String에서 오버라이드한 계산로직을 쓰겠다.
+        System.out.println("사람1".hashCode());
+        
+        
+        // 사람이 한 사람만? 아니면 두 사람?
+        System.out.println(set);
+    }
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+1295083508
+249155636
+48857041
+48857041
+[Person [name=사람1, id=111111], Person [name=사람1, id=111111]]
+```
+
+p1과 p2는 다른 사람으로 출력된다. 한편, "사람1"과 "사람2"의 해시코드는 같게 나온다. 이건 또 왜 그런 것일까?
+
+우선 "사람1"과 "사람2"의 해시코드가 같은 이유는 다음과 같다. <b>문자열은 문자열이 같다면 해시코드가 같게 나오는 것</b>이다. 반면, Person 객체는 Object로부터 물려받은 계산 로직을 쓴다. 
+
+그런데 같은 key값을 넣었다면 같은 객체가 생성되게 하고 싶다. 이렇게 하려면, Person 객체를 손 봐야 한다.
+
+Object의 메서드 말고, String에서 오버라이드한 계산 로직을 쓰고 싶은 것이다.
+
+<br>
+
+id가 일치한다면 같은 사람으로 보기 위해서, 일단 해시코드를 일치시켜주었다. <kbd>마우스 우클릭 &#62; Source &#62; Override/Implement Methods &#62; hashCode()</kbd>를 클릭하면 된다. 그러면 처음에는 이렇게 뜬다.
+
+```java
+@Override
+public int hashCode() {
+    return super.hashCode();
+}
+```
+
+보면 Object의 hashCode()를 쓰고 있다. 부모 클래스의 hashCode()를 쓰고 있는 것이다. 이 코드를 다음과 같이 바꿨다.
+
+```java
+@Override
+public int hashCode() {
+    return id.hashCode();
+}
+```
+
+이렇게 하여 id의 hashCode()를 반환하도록 한 것이다.
+
+<br>
+
+hashCode()만 오버라이드 해서는 안 되고, equals()도 해줘야 한다. 마찬가지 방법으로 equals() 메서드를 불러온다. 그러면 equals() 메서드는 처음에는 이렇게 되어있다.
+
+```java
+@Override
+public boolean equals(Object obj) {
+    return super.equals(obj);
+}
+```
+
+equals() 메서드에 파라미터로 Object 객체가 들어올 텐데, 이것이 Person의 인스턴스일 때에만 검사를 할 수 있게 한다. 그리고 Person의 인스턴스라면, 형변환을 하고 id가 서로 같은지 검토하는 것이다.
+
+그리고 만약에 인스턴스가 같지 않다면 false를 반환하게 한다. 그렇게 하기 위해서 다음과 같이 코드를 수정했다.
+
+```java
+@Override
+public boolean equals(Object obj) {
+    if(obj instanceof Person) {
+        Person other = (Person) obj;
+        return id.equals(other.id);
+    }
+    
+    return false;
+}
+```
+
+<br>
+
+이렇게 Person 클래스에 메서드 오버라이드를 수행한 이후의 코드는 다음과 같다.
+
+```java
+package test02_set;
+
+public class Person {
+    String name;
+    String id; // 주민번호
+    
+    public Person(String name, String id) {
+        super();
+        this.name = name;
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Person [name=" + name + ", id=" + id + "]";
+    }
+    
+    // id가 일치한다면 같은 사람이다.
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Person) {
+			Person other = (Person) obj;
+			return id.equals(other.id);
+		}
+		
+		return false;
+	}
+}
+```
+
+그리고 다시 위 SetTest2를 실행 시키면 출력 값이 다음과 같이 나온다.
+
+```
+1449589344
+1449589344
+48857041
+48857041
+[Person [name=사람1, id=111111]]
+```
+
