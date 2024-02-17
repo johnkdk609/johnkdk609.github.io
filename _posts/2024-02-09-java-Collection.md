@@ -687,3 +687,4 @@ public class Person {
 [Person [name=사람1, id=111111]]
 ```
 
+hashCode()와 equals()를 오버라이드 했기 때문에, p1과 p2는 같은 객체로 취급 받는다. 중복을 판단할 때 해시코드로 판단을 하기 때문이다. 이제 set에 하나만 들어 있는 것을 볼 수 있다.
