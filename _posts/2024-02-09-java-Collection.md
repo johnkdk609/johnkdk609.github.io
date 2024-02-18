@@ -688,3 +688,197 @@ public class Person {
 ```
 
 hashCode()와 equals()를 오버라이드 했기 때문에, p1과 p2는 같은 객체로 취급 받는다. 중복을 판단할 때 해시코드로 판단을 하기 때문이다. 이제 set에 하나만 들어 있는 것을 볼 수 있다.
+
+<br>
+
+## Map
+
+Map의 경우 Key(키)와 Value(값)를 하나의 Entry로 묶어서 관리한다. <b>키-밸류 쌍</b>으로 되어 있다는 것이고, <b>순서가 없으며 키에 대한 중복은 없다.</b> 반면 Value는 중복될 수 있다.
+
+Map의 장점으로는 빠른 속도가 있다.
+
+구현 클래스로는 HashMap과 TreeMap이 있다.
+
+<br>
+
+예시 코드로 알아보겠다.
+
+```java
+package test03_map;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class MapTest {
+    public static void main(String[] args) {
+        // Map
+    	// - 사전과 같은 자료구조
+    	// - 키 & 값의 쌍으로 저장
+    	// - 키로 구별(중복 X), 값(중복 가능)
+    	// - 키가 마치 set처럼... 순서가 보장되지는 않는다.
+    	
+    	Map<String, String> map = new HashMap<>();
+    	
+    	// 값을 넣을 때 put
+    	map.put("5반", "Kim");
+    	map.put("6반", "Lee");
+    	map.put("7반", "Park");
+    	map.put("8반", "Seo");
+    	map.put("3반", "Heo");
+    	map.put("4반", "Kim");
+    	
+    	System.out.println(map);
+    	
+    	System.out.println(map.get("3반"));
+    	
+    	map.put("6반", "Song");
+    	System.out.println(map);
+    	
+    	// 똑같은 키에다가 새로운 값을 넣으면 대체가 됩니다.
+    	
+    	System.out.println(map.containsKey("4반"));
+    	System.out.println(map.containsValue("Kim"));
+    	
+    	// 맵의 순회
+    	// 1. keySet()
+    	for(String key : map.keySet()) {
+    		System.out.printf("%s : %s \n", key, map.get(key));
+    	}
+    	
+    	// 2. entrySet()
+    	for(Map.Entry<String, String> entry : map.entrySet()) {
+    		System.out.println(entry.getKey() + " : " + entry.getValue());
+    	}       
+    }
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+{8반=Seo, 7반=Park, 6반=Lee, 5반=Kim, 4반=Kim, 3반=Heo}
+Heo
+{8반=Seo, 7반=Park, 6반=Song, 5반=Kim, 4반=Kim, 3반=Heo}
+true
+true
+8반 : Seo 
+7반 : Park 
+6반 : Song 
+5반 : Kim 
+4반 : Kim 
+3반 : Heo 
+8반 : Seo
+7반 : Park
+6반 : Song
+5반 : Kim
+4반 : Kim
+3반 : Heo
+```
+
+출력 결과를 보면, 넣은 순서대로 나오지 않는다. 왜냐하면 키가 마치 Set처럼 순서가 보장되지 않기 때문이다.
+
+그리고 똑같은 키에 새로운 값을 넣으면 값이 대체된다는 것을 알 수 있다.
+
+또, containsKey() 와 containsValue() 메서드로 키나 밸류가 있는지 확인할 수 있었다.
+
+맵의 순회의 경우, ```map.keySet()```를 활용할 수 있고 또 다른 방법으로는 entrySet()을 활용할 수 있다. keySet()이 key만 가져왔다면, entrySet()은 한꺼번에 가져온다. entrySet()을 사용할 때, 각각은 entry가 된다. 사용하려면 다음과 같이 하면 된다.
+
+```java
+for (Map.Entry<String, String> entry : map.entrySet()) {
+    System.out.println(entry.getKey() + " : " + entry.getValue());
+}
+```
+
+<br>
+
+Map도 Set과 비슷하다. 키를 구별할 때, Map의 key로 Person 클래스를 사용하는 예시 코드를 보자.
+
+```java
+package test03_map;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+public class MapTest2 {
+    public static void main(String[] args) {
+        Map<Person, Integer> map = new HashMap<>();
+        
+        Person p1 = new Person("사람1", "111111");
+        Person p2 = new Person("사람1", "111111");
+        // hashCode, equals 오버라이드 해줘야 한다.
+        
+        
+        map.put(p1, 100);
+        map.put(p2, 98);
+        
+        // 사람이 한 사람만? 아니면 두 사람?
+        System.out.println(map);
+    }
+}
+```
+
+위 코드의 실행 결과는 다음과 같다.
+
+```
+{Person [name=사람1, id=111111]=100, Person [name=사람1, id=111111]=98}
+```
+
+값이 두 개가 들어가 있다. key를 다른 key로 인식하고 있는 것으로 보인다.
+
+똑같이 hashCode()와 equals()를 Override 해줘야 한다. Person 클래스를 다음과 같이 수정해야 하는 것이다.
+
+```java
+package test03_map;
+
+public class Person {
+    String name;
+    String id;
+    
+    public Person(String name, String id) {
+        super();
+        this.name = name;
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Person [name=" + name + ", id=" + id + "]";
+    }
+    
+    @Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Person) {
+			Person other = (Person) obj;
+			return id.equals(other.id);
+		}
+		
+		return false;
+	}
+}
+```
+
+이제 다시 위의 MapTest2를 실행하면 실행 결과는 다음과 같다.
+
+```
+{Person [name=사람1, id=111111]=98}
+```
+
+이번에는 하나만 들어가 있고, 이 값이 새로운 값으로 업데이트 되어 있다.
+
+<br>
+
+Map의 메서드들로는 다음과 같은 것들이 있다.
+
+* V put(K key, V value) : 데이터 입력
+* V get(Object key) : 데이터 추출
+* V remove(K key) : 키의 값을 지우고 반환, 없다면 null을 반환
+* boolean containsKey(Object key) : 특정한 key 포함 여부
+* void putAll(Map&#60;K key, V value&#62; m) : 기존 컬렉션 데이터 추가
+* set&#60;Map.Entry&#60;K, V&#62;&#62; entrySet() : key와 value 쌍을 표현하는 Map.Entry 집합을 반환
