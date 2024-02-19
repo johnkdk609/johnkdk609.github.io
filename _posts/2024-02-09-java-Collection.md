@@ -882,3 +882,68 @@ Map의 메서드들로는 다음과 같은 것들이 있다.
 * boolean containsKey(Object key) : 특정한 key 포함 여부
 * void putAll(Map&#60;K key, V value&#62; m) : 기존 컬렉션 데이터 추가
 * set&#60;Map.Entry&#60;K, V&#62;&#62; entrySet() : key와 value 쌍을 표현하는 Map.Entry 집합을 반환
+
+
+<br>
+
+## Queue
+
+Queue는 인터페이스이다. (인터페이스로는 객체 생성이 안 된다.) 구현체는 LinkedList를 사용한다.
+
+큐는 FIFO(First In First Out) 즉, 가장 먼저 들어온 값이 가장 먼저 빠져나가는 자료구조이다. 리스트를 생각해보면, 값이 쭉 차있을 때, 앞에서도 제거할 수 있고 중간에서 제거할 수 있고 뒤에서 제거할 수도 있으며, 중간에 값을 넣을 수도 있다. 그런데 Queue는 제거는 앞에서만 가능하고, 추가는 뒤에서만 하도록 하는 것이다. 이 두 가지 기능만 쓰면 된다. 실제 링크드리스트는 다양한 메서드 기능을 구현할 수 있지만, Queue로 바라봤을 때에는 그 Queue로만 사용하는 것이다.
+
+Queue의 메서드에는 다음과 같은 것들이 있다.
+
+* boolean offer(E e) : 데이터를 추가
+* E peek() : 가장 앞에 있는 데이터 조회
+* E poll() : 가장 앞에 있는 데이터 빼내기
+* boolean isEmpty() : 큐가 비어 있는지 여부
+
+Queue는 순서가 있고 명칭이 있다. 제일 앞에 있는 것을 '머리(front)'라 하고, 제일 뒤에 있는 것을 '꼬리(rear)'라고 한다. offer()을 하게 되면 꼬리 뒤에 추가가 되어 이것이 새로운 꼬리가 된다. poll()로 제거하는 것은 머리이다. 그리고 머리는 그 다음 원소가 된다. peek()은 머리를 빼내지 않고 값만 확인하는 메서드이다.
+
+<br>
+
+예시 코드를 보겠다.
+
+```java
+package test04_queue;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class QueueTest {
+    public static void main(String[] args) {
+    	// Queue
+    	// - FIFO
+    	// - Queue interface
+    	// - LinkedList class
+    	Queue<Integer> queue = new LinkedList<>();
+    	
+    	queue.offer(10);
+    	
+    	// queue에다가 순차적으로 값 집어넣기
+    	for(int i=0; i<5; i++) {
+    		queue.offer(i);
+    	}
+    	
+    	// queue에서 값을 제거하기
+    	while(!queue.isEmpty()) {
+    		System.out.println(queue.poll());
+    	}
+        
+    }
+}
+```
+
+위 코드의 실행 결과는 다음과 같다.
+
+```
+10
+0
+1
+2
+3
+4
+```
+
+넣은 순서대로 나오는 것을 알 수 있다.
