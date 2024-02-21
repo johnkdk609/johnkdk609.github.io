@@ -1003,3 +1003,81 @@ public class StackTest {
 ```
 
 stack에 넣은 순서대로 나오는 것이 아닌, 마지막에 넣은 것부터 빠져나오는 것을 볼 수 있다.
+
+<br>
+
+## 정렬
+
+정렬이란, 요소들을 특정 기준에 맞추어 오름차순 또는 내림차순으로 재배치하는 것이다.
+
+Collection을 보면 순서가 있는 것이 있고, 없는 것이 있었다. 순서가 있는 Collection으로는 List가 있다. 
+
+<b>순서를 가지는 Collection들만 정렬이 가능</b>하다. Collections의 <b>sort()</b>를 이용하여 정렬을 수행한다.
+
+<br>
+
+Collection Framework에서의 정렬은 두 가지 방법을 사용한다.
+
+1. Comparable interface 구현
+2. Comparator 활용
+
+첫째, Comparable 인터페이스를 구현하면 정렬이 가능해진다.
+
+```java
+public interface Comparable<T> {
+    public int compareTo(T o);
+}
+```
+
+위 코드를 보면, compareTo()를 Override 해줘야 한다. 보면 int형을 반환하고 있다. <b>반환한 수가 음수나 0이면 자리를 유지하고, 양수이면 자리를 바꾸는 것</b>이다.
+
+* 양수 : 자리 바꿈
+* 음수 : 자리 유지
+* 0 : 동일 위치
+
+둘째, Comparator라는 객체를 만들어서 이것을 이용해도 된다.
+
+<br>
+
+코드를 통해 보겠다.
+
+```java
+package test06_sort;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class SortTest {
+    public static void main(String[] args) {
+        List<String> names = new ArrayList<String>();
+
+        names.add("EEE");
+        names.add("BBB");
+        names.add("CCC");        
+        names.add("AAA");
+        names.add("DDD");
+        
+        System.out.println(names);
+        
+        // Collections.sort();
+        Collections.sort(names);
+        
+        System.out.println(names);
+    }
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+[EEE, BBB, CCC, AAA, DDD]
+[AAA, BBB, CCC, DDD, EEE]
+```
+
+Collections 클래스의 static method인 sort()를 호출하는 것이다. 출력 결과를 보면 정렬이 된 것을 확인할 수 있다.
+
+<br>
+
+두 번째 코드를 보겠다. 이번에는 이전에 생성한 Person클래스를 만들어서, Person의 리스트를 만들었다.
+
