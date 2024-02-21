@@ -947,3 +947,59 @@ public class QueueTest {
 ```
 
 넣은 순서대로 나오는 것을 알 수 있다.
+
+<br>
+
+## Stack
+
+Queue가 FIFO였다면, Stack은 LIFO(Last In First Out)이다. 가장 나중에 들어온 값이 가장 먼저 빠져나가는 것이다.
+
+가장 위에 있는 값(가장 나중에 들어간 값)을 'top'이라고 한다.
+
+Stack의 메서드들은 다음과 같다.
+
+* E push(E e) : 데이터를 추가
+* E peek() : 가장 위에 있는 데이터 조회
+* E pop() : 가장 위에 있는 데이터 빼내기
+* boolean isEmpty() : 스택이 비어 있는지 여부
+
+<br>
+
+예시 코드로 알아보겠다.
+
+```java
+package test05_stack;
+
+import java.util.Stack;
+
+public class StackTest {
+    public static void main(String[] args) {
+    	// Stack
+    	// - LIFO
+    	// - Stack 클래스
+    	Stack<Integer> stack = new Stack<>();
+    	
+    	for(int i=0; i<5; i++)
+    		stack.push(i);
+    	
+    	// stack에서 값을 순서대로 꺼내기
+    	// - 가장 나중에 들어간 값이, 가장 먼저 나온다..
+    	while(!stack.isEmpty()) {
+    		System.out.println(stack.pop());
+    	}
+    	
+    }
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+4
+3
+2
+1
+0
+```
+
+stack에 넣은 순서대로 나오는 것이 아닌, 마지막에 넣은 것부터 빠져나오는 것을 볼 수 있다.
