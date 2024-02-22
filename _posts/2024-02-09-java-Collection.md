@@ -1081,3 +1081,112 @@ Collections 클래스의 static method인 sort()를 호출하는 것이다. 출�
 
 두 번째 코드를 보겠다. 이번에는 이전에 생성한 Person클래스를 만들어서, Person의 리스트를 만들었다.
 
+```java
+package test07_comparable;
+
+// 컬렉션 프레임워크에서 정렬가능하도록 만들려면
+// Comparable 인터페이스
+public class Person implements Comparable<Person> {
+    String name;
+    int age;
+    
+    
+    public Person(String name, int age) {
+        super();
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "Person [name=" + name + ", age=" + age + "]";
+    }
+    
+    // 양수 -> 자리바꿈
+    // 음수 -> 그대로
+    // 0 -> 그대로
+
+//	@Override
+//	public int compareTo(Person o) {
+//		// this(자기자신객체) o 객체를 비교해서 => 정수값을 반환.
+//		
+//		// 나이 순으로 정렬을 한다면?
+//		// 기본적으로 오름차순으로 정렬한다면
+//		// 3, 8, 11, 22
+//		// 앞의 숫자가 작고, 뒤에 숫자가 크다.
+//		// 앞 - 뒤 = 음수
+//		
+//		// 만약에 나이가 같다면.... 이름 순서로 하길 원함.
+//		// 이름 : 문자열 => string의 compareTo를 사용하면 오름차순으로..
+//		if(this.age == o.age) {
+//			return this.name.compareTo(o.name);
+//		}
+//		
+//		return this.age - o.age;
+//	}
+	
+    @Override
+	public int compareTo(Person o) {
+		// 1.이름
+		// 2.나이
+		// 이름이 같다면.. 나이를 비교한다.
+		if(this.name.equals(o.name)) {
+			return this.age - o.age;
+		}
+		
+		return this.name.compareTo(o.name);
+		
+	}
+}
+```
+
+```java
+package test07_comparable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class SortTest {
+    public static void main(String[] args) {
+        List<Person> persons = new ArrayList<>();
+     
+        persons.add(new Person("BBB", 22));
+        persons.add(new Person("BBB", 23));
+        persons.add(new Person("AAA", 23));
+        persons.add(new Person("AAA", 11));
+        
+        System.out.println(persons);
+        
+        // 대소 비교 기준이 없으므로 정렬할 수 없음
+        // 1. 해당 클래스에 Comparable 인터페이스 구현
+        // 2. Comparator 만들기 : 다른 클래스를 만들어서 => Comparator 객체를 활용.
+        
+         // Collections.sort(persons); // Person Comparable 인터페이스를 구현하고 있지 않으므로
+         // Collections.sort 사용 불가.
+        
+        Collections.sort(persons);
+     
+        System.out.println(persons);
+    }
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+[Person [name=BBB, age=22], Person [name=BBB, age=23], Person [name=AAA, age=23], Person [name=AAA, age=11]]
+[Person [name=AAA, age=11], Person [name=AAA, age=23], Person [name=BBB, age=22], Person [name=BBB, age=23]]
+```
+
+출력 결과를 보면, 이름 순으로 정렬이 된 것을 볼 수 있다. 그리고 이름이 같으면 나이 순으로 정렬이 되어 있다.
+
+위 Person 클래스에서 주석 처리된 compareTo() 메서드는 나이 순으로 정렬이 되고, 나이가 같다면 이름 순으로 정렬을 시키는 코드이다.
+
+<br>
+
+이번에는 Comparator 객체를 활용해 정렬하는 것을 알아보겠다.
+
+Comparator가 있다면, Comparable을 구현하지 않더라도 Comparator을 사용해서 정렬할 수 있다.
+
+예시 코드는 다음과 같다.
