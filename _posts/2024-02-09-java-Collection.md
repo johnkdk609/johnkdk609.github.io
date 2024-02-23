@@ -1190,3 +1190,81 @@ public class SortTest {
 Comparator가 있다면, Comparable을 구현하지 않더라도 Comparator을 사용해서 정렬할 수 있다.
 
 예시 코드는 다음과 같다.
+
+우선 Person 클래스를 보면 다음과 같다.
+
+```java
+package test08_comparator;
+
+// Comparable 인터페이스를 구현하고 있지 않아서
+// 기본적으로 정렬이 불가능..
+// Comparator가 있다면, Comparable을 구현하지 않더라도 Comparator를 사용해서 정렬할 수 있음.
+public class Person {
+    String name;
+    int age;
+    
+    public Person(String name, int age) {
+        super();
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "Person [name=" + name + ", age=" + age + "]";
+    }   
+}
+```
+
+Comparable 인터페이스를 구현하지 않고 있다. 기본적으로 정렬이 불가능한 상태이다.
+
+그런데, Comparator가 있다면, Comparable 인터페이스를 구현하지 않더라도 정렬을 수행할 수 있다.
+
+<br>
+
+```java
+package test08_comparator;
+
+import java.util.Comparator;
+
+public class PersonComparator implements Comparator<Person>{
+
+	// this, o를 비교했다면
+	// o1, o2를 비교
+	
+	
+    @Override
+    public int compare(Person o1, Person o2) {
+        // 1. 이름순
+        // 2. 나이순
+        if (o1.name.equals(o2.name))
+            return o1.age - o2.age; 
+        
+        return o1.name.compareTo(o2.name);
+    }
+
+}
+```
+
+위와 같이 하면 된다. Comparator은 기본적으로 클래스이고, Comparator을 implements 하면 된다.
+
+예를 들어서 이름으로만 정렬하는 것을 만들겠다고 한다면, 다음과 같이 하면 된다.
+
+```java
+package test08_comparator;
+
+import java.util.Comparator;
+
+// Comparator를 만들기 위해서는 Comparator 인터페이스를 구현
+public class NameComparator implements Comparator<Person> {
+
+	@Override
+	public int compare(Person o1, Person o2) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}
+```
+
+Comparator은 제네릭(Generic)으로 되어 있다. 어떤 타입으로 정렬을 할 것인지 정하는 것이다. 나는 Person과 Person을 비교할 것이기 때문에, 위와 같이 Person 타입을 제네릭 타입으로 넣었다.
