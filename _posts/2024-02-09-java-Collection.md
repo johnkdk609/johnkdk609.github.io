@@ -1248,23 +1248,121 @@ public class PersonComparator implements Comparator<Person>{
 
 위와 같이 하면 된다. Comparator은 기본적으로 클래스이고, Comparator을 implements 하면 된다.
 
-예를 들어서 이름으로만 정렬하는 것을 만들겠다고 한다면, 다음과 같이 하면 된다.
+또, 나이순으로 정렬하고 그 다음에 이름순으로 정렬을 수행하는 코드를 짠다면 다음과 같다.
 
 ```java
 package test08_comparator;
 
 import java.util.Comparator;
 
-// Comparator를 만들기 위해서는 Comparator 인터페이스를 구현
-public class NameComparator implements Comparator<Person> {
+public class PersonComparator2 implements Comparator<Person>{
 
-	@Override
-	public int compare(Person o1, Person o2) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int compare(Person o1, Person o2) {
+        // 1. 나이순
+        // 2. 이름순
+        if(o1.age == o2.age) {
+            return o1.name.compareTo(o2.name); 
+        }
+        return o1.age - o2.age; 
+    }
 
 }
 ```
 
-Comparator은 제네릭(Generic)으로 되어 있다. 어떤 타입으로 정렬을 할 것인지 정하는 것이다. 나는 Person과 Person을 비교할 것이기 때문에, 위와 같이 Person 타입을 제네릭 타입으로 넣었다.
+Comparator은 제네릭(Generic)으로 되어 있다. 어떤 타입으로 정렬을 할 것인지 정하는 것이다. Person과 Person을 비교할 것이기 때문에, 위와 같이 Person 타입을 제네릭 타입으로 넣었다.
+
+그리고 'Add implemented methods'를 클릭하여 compare()를 오버라이드 한다. int 값을 반환하는 것이다. 이번에는 comparator에게 두 가지 객체를 준다. 그러면 이게 두 개를 비교해서, 무엇이 더 큰지에 따라서 정수값을 반환하는 것이다.
+
+<br>
+
+다시 SortTest클래스를 보겠다.
+
+```java
+package test08_comparator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class SortTest {
+    public static void main(String[] args) {
+        List<Person> persons = new ArrayList<>();
+
+     
+        persons.add(new Person("BBB", 22));
+        persons.add(new Person("BBB", 23));
+        persons.add(new Person("AAA", 23));
+        persons.add(new Person("AAA", 11));
+        
+//        System.out.println(persons);
+        
+        // 대소 비교 기준이 없으므로 정렬할 수 없음
+        // 1. 해당 클래스에 Comparable 인터페이스 구현
+        // 2. Comparator 만들기 (Comparator 인터페이스 구현)
+        
+        
+        Collections.sort(persons, new PersonComparator());	// 이름순 그리고 나이순 
+        System.out.println(persons);
+        
+        Collections.sort(persons, new PersonComparator2());	// 나이순 그리고 이름순 
+        System.out.println(persons);
+    }
+}
+```
+
+위 코드의 실행 결과는 다음과 같다.
+
+```
+[Person [name=AAA, age=11], Person [name=AAA, age=23], Person [name=BBB, age=22], Person [name=BBB, age=23]]
+[Person [name=AAA, age=11], Person [name=BBB, age=22], Person [name=AAA, age=23], Person [name=BBB, age=23]]
+```
+
+만약 위 SortTest 코드에서 이전과 같이 ```Collections.sort(persons);```를 입력하면 안 된다. 이제는 Comparator을 넣어줘야 한다. PersonComparator을 만들었으니 ```Collections.sort(persons, new PersonComparator());```의 방식으로 사용해야 하는 것이다.
+
+<br>
+
+이번에는 SortTest2 클래스를 보겠다.
+
+```java
+package test08_comparator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class SortTest2 {
+    public static void main(String[] args) {
+        List<Person> persons = new ArrayList<>();
+
+        persons.add(new Person("BBB", 22));
+        persons.add(new Person("BBB", 23));
+        persons.add(new Person("AAA", 23));
+        persons.add(new Person("AAA", 11));
+        
+        System.out.println(persons);
+        
+        // Comparator 클래스를 만들어도 되지만..
+        // 람다 표현식
+        // - 이름이 없는 함수
+        // - 파라미터로 전달하기 위한 함수
+        // - 주로 길이가 짧을 때
+        
+        // 문법
+        // (매개변수..) -> {함수 본문내용}
+        // 매개변수가 없을 때는? 빈괄호
+        // 매개변수가 1개일 때는? 괄호생략가능
+        //본문내용이 1문장만 있을 때는? 중괄호 생략 가능.
+        // 매개변수의 타입을 생략할 수 있다.
+        
+        Collections.sort(persons,  (Person o1, Person o2)->{
+        	if(o1.name.equals(o2.name)) {
+        		return o1.age - o2.age;
+        	}
+        	return o1.name.compareTo(o2.name);
+        });
+        
+        System.out.println(persons);
+    }
+}
+```
