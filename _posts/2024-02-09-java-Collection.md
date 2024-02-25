@@ -1355,7 +1355,7 @@ public class SortTest2 {
         //본문내용이 1문장만 있을 때는? 중괄호 생략 가능.
         // 매개변수의 타입을 생략할 수 있다.
         
-        Collections.sort(persons,  (Person o1, Person o2)->{
+        Collections.sort(persons,  (Person o1, Person o2) -> {
         	if(o1.name.equals(o2.name)) {
         		return o1.age - o2.age;
         	}
@@ -1366,3 +1366,20 @@ public class SortTest2 {
     }
 }
 ```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+[Person [name=BBB, age=22], Person [name=BBB, age=23], Person [name=AAA, age=23], Person [name=AAA, age=11]]
+[Person [name=AAA, age=11], Person [name=AAA, age=23], Person [name=BBB, age=22], Person [name=BBB, age=23]]
+```
+
+Comparator을 사용할 때 익명 클래스를 사용할 수 있다.
+
+1회성 객체 사용 시, ananymous inner class를 사용하는 것이다. 한 개만 만들어서 그 자리에서 바로 new 키워드로 사용하고 없어진다. Comparator은 인터페이스이다. 인터페이스는 그 자체로 객체 생성이 안 된다. 객체 생성을 하려면 추상메서드가 구현되어야 한다.
+
+중괄호를 열고 이 안에서 바로 정의해버리는 것이다. 부족한 부분을 채우는 데에는 2가지 방법이 있다. 익명 클래스를 이용하는 방법과, 람다 표현식을 사용하는 방법이다.
+
+위 SortTest2 클래스는 람다 표현식을 쓰고 있다. 람다 표현식이란 한 번 쓰고 사용하지 않는 것이다. 이름이 없는 함수이고, 파라미터로 전달하기 위한 함수라고 할 수 있다. 함수 구현의 길이가 짧을 때 임시로 사용한다.
+
+매개변수가 1개일 때에는 괄호 생략이 가능하고, 본문내용이 1 문장만 있을 때에는 중괄호를 생략할 수 있으며, 매개변수의 타입을 생략할 수 있다.
