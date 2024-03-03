@@ -113,7 +113,7 @@ Collection 인터페이스에서 기본적으로 요구하는 것들이 여러 �
     <tr>
         <th>분류</th>
         <th>Collection</th>
-    </th>
+    </tr>
     <tr>
         <th>추가</th>
         <td>add(E e),<br>addAll(Collection&#60;? extends E&#62; c)</td>
