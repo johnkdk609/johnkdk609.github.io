@@ -179,7 +179,7 @@ List의 주요 메서드는 다음과 같다. (이전에 본 Collection의 일�
         <th>분류</th>
         <th>Collection</th>
         <th>List</th>
-    </th>
+    </tr>
     <tr>
         <th>추가</th>
         <td>add(E e),<br>addAll(Collection&#60;? extends E&#62; c)</td>
