@@ -78,7 +78,7 @@ B 클래스 입장에서는 A 클래스를 사용하는 데 있어서 문제점�
 
 예외도 자바에서는 객체이다. 다 클래스로 되어있는 것이다.
 
-<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1990b4a9-4e53-474e-8d3d-8ab61a406bf7" width="1200" alt="Java Exception Hierarchy">
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1990b4a9-4e53-474e-8d3d-8ab61a406bf7" width="1200" alt="Java Exception Hierarchy" title="https://thistechnologylife.com/how-to-effectively-handle-exceptions/">
 
 <br>
 
