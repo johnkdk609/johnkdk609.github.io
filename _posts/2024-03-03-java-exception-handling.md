@@ -176,3 +176,86 @@ UncheckedException은 예외 처리가 강제되지 않지만, 만약 하고 싶
     * throw
 
 <br>
+
+우선 try ~ catch 구문에 대해 알아보겠다.
+
+try ~ catch 구문으로 프로그램 실행 시 발생할 수 있는 예외에 대한 대비코드를 작성할 수 있다. 이는 <u>비정상적인 종료를 막고, 정상적인 상태를 유지할 수 있게 한다.</u>
+
+예외가 발생하면 JVM의 예외처리기가 받아서 처리한다.
+
+```java
+try {
+    // 예외가 발생할 수 있는 코드
+} catch (Exception e) {
+    // 예외가 발생했을 때 처리할 코드
+}
+```
+
+위 코드에서 중괄호(블록)는 생략 불가능하다. 그리고 블럭 안에 또 다른 try ~ catch 구문이 올 수 있다.
+
+<br>
+
+try ~ catch 문을 사용한 예외처리 예시 코드를 보겠다.
+
+```java
+package test02_try_catch;
+
+public class ExceptionTest1 {
+	public static void main(String[] args) {
+		// try ... catch 문을 사용한 예외처리
+		
+		int[] nums = {10};
+		
+		// 1. 예외가 발생했고 제대로 처리한 경우 : 1 4 5
+		// 2. 예외가 발생했는데 처리하지 못했을 때: 1 (2<-에러) 비정상적 종료
+		// 3. 예외가 발생하지 않았을 때? : 1 2 3 5
+		
+		try {
+			// 예외가 발생할 수 있는 코드는 try문 안에 넣는다.
+			System.out.println("정상 코드 1"); // 1
+			System.out.println(nums[3]);	// 2
+			System.out.println("정상 코드 2");	 //3
+			
+		} catch (ArrayIndexOutOfBoundsException e) { // catch() 예외를 파라미터로 받는다.
+			// 예외 대처 코드 작성
+			System.out.println("배열의 인덱스 범위를 벗어났습니다."); // 4
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		System.out.println("프로그램 종료."); //5
+	}
+}
+```
+
+위 코드의 실행 결과는 다음과 같다.
+
+<img width="807" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/46fa93f2-825e-4007-93ee-13c26f4ff035">
+
+<br>
+
+위 코드에서 예외가 발생했고 제대로 처리되어, 1, 4, 5가 출력되었다.
+
+만약에 ```catch (ArithmeticException e)```로 잘못 처리했을 경우, 예외가 발생했는데 처리하지 못하게 되므로 1만 작동하고 비정상적으로 종료될 것이다.
+
+만약 예외가 발생하지 않았다면 1, 2, 3, 5가 출력되었을 것이다.
+
+<br>
+
+정리하면 다음과 같다.
+
+```java
+try {
+    // (1) 예외가 발생할 수 있는 코드
+    // (2) 정상코드
+} catch (Exception e) {
+    // (3) 예외가 발생했을 때 처리할 코드
+}
+// (4) 일반 코드
+```
+
+<b>예외가 발생할 때</b> : 1 3 4
+
+<b>예외가 발생하지 않았을 때</b> : 1 2 4
+
+<br>
