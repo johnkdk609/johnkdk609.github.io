@@ -259,3 +259,130 @@ try {
 <b>예외가 발생하지 않았을 때</b> : 1 2 4
 
 <br>
+
+## 다중 예외처리
+
+하나의 try에 catch문을 여러 개 쓸 수 있다. 왜냐하면 하나의 try 안에 여러 개의 예외 사항이 올 수 있기 때문이다.
+
+처리하는 방법을 간략하게 보자면 다음과 같다.
+
+```java
+try {
+    // exception이 발생할 만한 코드
+} catch (XXException e) {
+    // XXException 발생 시 처리 코드
+} catch (YYException e) {
+    // YYException 발생 시 처리 코드
+}
+```
+
+```java
+try {
+    // exception이 발생할 만한 코드
+} catch (XXException | YYException e) {
+
+    // 필요 시 instanceof를 통해 나누어 작성
+
+    // XXException 발생 시 처리 코드
+    // YYException 발생 시 처리 코드
+}
+```
+
+<br>
+
+다중 예외처리를 코드를 통해 알아보겠다.
+
+직전에 했던 ExceptionTest를 다시 한 번 다뤄보겠다.
+
+```java
+package test02_try_catch;
+
+public class ExceptionTest2 {
+	public static void main(String[] args) {
+		// try ... catch 문을 사용한 예외처리
+		
+		int[] nums = {10};
+		
+		// 1. 예외가 발생했고 제대로 처리한 경우 : 1 4 5
+		// 2. 예외가 발생했는데 처리하지 못했을 때: 1 (2<-에러) 비정상적 종료
+		// 3. 예외가 발생하지 않았을 때? : 1 2 3 5
+		
+		
+		try {
+			// 예외가 발생할 수 있는 코드는 try문 안에 넣는다.
+			System.out.println("정상 코드 1"); // 1
+			System.out.println(nums[0]);	// 2
+			int num = 4 / 0;
+			System.out.println("정상 코드 2");	 //3
+			
+		} catch(ArrayIndexOutOfBoundsException e) { // catch() 예외를 파라미터로 받는다.
+			// 예외 대처 코드 작성
+			System.out.println("배열의 인덱스 범위를 벗어났습니다."); // 4
+		} catch(ArithmeticException e) {
+			System.out.println("계산 오류가 발생했습니다.");
+		}
+		
+		System.out.println("프로그램 종료."); //5
+	}
+}
+```
+
+위 코드의 실행 결과는 다음과 같다.
+
+```
+정상 코드 1
+10
+계산 오류가 발생했습니다.
+프로그램 종료.
+```
+
+<br>
+
+만약 ```catch (Exception e)```로 예외를 처리하면, 이는 모든 예외를 한꺼번에 처리하는 것이다. 예를 들어 모든 객체를 Object로 처리하는 것이다. Exception을 받는 입장에서는, 이 ```e```가 실제로 배열의 인덱스 범위를 넘어간 것인지, 0으로 나눠서 발생한 예외인지 알 수 없다.
+
+구체적으로 써 줘야 구체적인 Exception에 대한 처리가 가능해진다.
+
+위 코드와 같이 ArrayIndexOutOfBoundsException, ArithmeticException 등으로 구체적으로 처리해줄 수 있다. 4를 0으로 나눴으니, ```catch (ArithmeticException e)```에 걸렸고, 출력 결과를 보면 "계산 오류가 발생했습니다."가 정상적으로 출력되었다.
+
+만약 ```catch (ArrayIndexOutOfBoundsException | ArithmeticException e)```의 방식으로 처리하면, 한꺼번에 처리할 수 있다는 장점은 있지만 실제로 어떤 예외에 걸린 것인지 알기 어렵다.
+
+이렇게 한꺼번에 처리했을 경우, ```if (e instanceof ArithmeticException)```과 같이 instanceof로 확인을 해줘야 한다.
+
+```java
+package test02_try_catch;
+
+public class ExceptionTest3 {
+	public static void main(String[] args) {
+		// try ... catch 문을 사용한 예외처리
+		
+		int[] nums = {10};
+		
+		try {
+			// 예외가 발생할 수 있는 코드는 try문 안에 넣는다.
+			System.out.println("정상 코드 1"); // 1
+			System.out.println(nums[3]);	// 2
+			int num = 4 / 0;
+			System.out.println("정상 코드 2");	 //3
+			
+		} catch(ArrayIndexOutOfBoundsException | ArithmeticException  e) { // catch() 예외를 파라미터로 받는다.
+			// 예외 대처 코드 작성
+			System.out.println("배열의 인덱스 범위를 벗어났거나, 계산 오류가 발생했습니다.");
+			if(e instanceof ArithmeticException) {
+				System.out.println("계산 오류입니다.");
+			}
+		}
+		
+		System.out.println("프로그램 종료."); //5
+	}
+}
+```
+
+이렇게 코드를 짜야 하는 것이다. 위 코드의 출력 결과는 다음과 같다.
+
+```
+정상 코드 1
+배열의 인덱스 범위를 벗어났거나, 계산 오류가 발생했습니다.
+프로그램 종료.
+```
+
+<br>
