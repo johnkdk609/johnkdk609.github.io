@@ -386,3 +386,94 @@ public class ExceptionTest3 {
 ```
 
 <br>
+
+초반에 예외 클래스 계층도를 봤었다. 거기서 Exception이 가장 위에 있었고, 그것을 상속 받는 RuntimeException이 있었다. 그리고 그 밑에 다양한 Exception 들이 있었다. Exception이 상속이 이뤄지는 것, 즉 계층이 있는 것이다. 부모와 자식이 있기 때문에, <b>다형성이 여기서도 적용된다. 부모 타입의 클래스로 자식 객체를 참조할 수 있는 것이다.</b>
+
+예외 자체도 클래스이다. 상속 관계가 있을 수도 있고, 형제 관계일 수도 있다. 다형성은 부모 - 자식 인 경우에만 의미가 있다.
+
+* <b>다중 예외처리 유의 사항</b>
+	* JVM이 던진 예외는 catch 문장을 찾을 때는 <b>다형성</b>이 적용됨
+	* 상위 타입의 예외가 먼저 선언되는 경우 뒤에 등장하는 catch 블럭은 동작할 기회가 없음
+	* 상속 관계가 없는 경우는 무관
+	* 상속 관계에서는 작은 범위(자식)에서 큰 범위(조상) 순으로 정의
+
+```java
+try {
+	// exception이 발생할 만한 코드
+} catch (XXException e) {
+	// XXException 발생 시 처리 코드
+} catch (YYException e) {
+	// YYException 발생 시 처리 코드
+} catch (Exception e) {
+	// Exception 발생 시 처리 코드
+}
+```
+
+try ~ catch 문이 순서대로 작동하기 때문에, 예외 클래스가 자식 ~> 조상 순으로 와야 한다.
+
+다음과 같은 예시 코드를 보자.
+
+```java
+package test02_try_catch;
+
+public class ExceptionTest4 {
+	public static void main(String[] args) {
+		// try ... catch 문을 사용한 예외처리
+		
+		int[] nums = {10};
+		
+		// 1. 예외가 발생했고 제대로 처리한 경우 : 1 4 5
+		// 2. 예외가 발생했는데 처리하지 못했을 때: 1 (2<-에러) 비정상적 종료
+		// 3. 예외가 발생하지 않았을 때? : 1 2 3 5
+		
+		try {
+			// 예외가 발생할 수 있는 코드는 try문 안에 넣는다.
+			System.out.println("정상 코드 1"); // 1
+			System.out.println(nums[0]);	// 2
+			int num = 4 / 1;
+			String str = null;
+			str.length();
+			System.out.println("정상 코드 2");	 //3
+			
+		} catch(ArrayIndexOutOfBoundsException e) { // catch() 예외를 파라미터로 받는다.
+			// 예외 대처 코드 작성
+			System.out.println("배열의 인덱스 범위를 벗어났습니다."); // 4
+		} catch(ArithmeticException e) {
+			System.out.println("계산 오류가 발생했습니다.");
+		} catch(Exception e) {
+			System.out.println("모든 예외 처리 가능..");
+		}
+		
+		System.out.println("프로그램 종료."); //5
+	}
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+정상 코드 1
+10
+모든 예외 처리 가능..
+프로그램 종료.
+```
+
+위 코드를 보면, 문자열 str이 null인데, ```str.length()```로 그 문자열의 길이를 알려고 한다. 그런데 문자열이 null이면 객체가 없는 것이므로, 이렇게 부를 수 없다. 그러면 예외가 발생하는 것이다.
+
+이 예외의 경우, ArrayIndexOutOfBoundsException, ArithmeticException 둘 다 처리하지 못했고, 결국 Exception 클래스가 받았다.
+
+만약 위 코드에서 ```catch (Exception e) {```를 제일 위로 올리면, 'Unreachable catch block' 오류가 발생한다. 위에서 모든 것을 처리하기 때문에, 밑에는 기회가 없다는 것이다. 그래서 이렇게 하지 않는다.
+
+Exception 간에도 다형성이 적용되기 때문에, 순서에 유의해야 하는 것이다.
+
+<br>
+
+## Exception 인스턴스의 주요 메서드
+
+Exception 인스턴스에는 메서드가 있다. 그 중에서 크게 이 두 가지를 주로 사용한다.
+
+1. <b>getMessage()</b> : 발생된 예외에 대한 구체적인 메세지를 반환
+2. <b>printStackTrace()</b> : 예외 발생 당시의 호출 스택(Call Stack)을 출력한다.
+
+<br>
+
