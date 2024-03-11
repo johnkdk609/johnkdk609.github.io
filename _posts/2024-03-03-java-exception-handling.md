@@ -219,8 +219,6 @@ public class ExceptionTest1 {
 		} catch (ArrayIndexOutOfBoundsException e) { // catch() 예외를 파라미터로 받는다.
 			// 예외 대처 코드 작성
 			System.out.println("배열의 인덱스 범위를 벗어났습니다."); // 4
-			System.out.println(e.getMessage());
-			e.printStackTrace();
 		}
 		
 		System.out.println("프로그램 종료."); //5
@@ -230,7 +228,11 @@ public class ExceptionTest1 {
 
 위 코드의 실행 결과는 다음과 같다.
 
-<img width="807" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/46fa93f2-825e-4007-93ee-13c26f4ff035">
+```
+정상 코드 1
+배열의 인덱스 범위를 벗어났습니다.
+프로그램 종료.
+```
 
 <br>
 
@@ -477,3 +479,51 @@ Exception 인스턴스에는 메서드가 있다. 그 중에서 크게 이 두 �
 
 <br>
 
+Exception은 항상 메세지를 가지고 있다. 이것을 ```e.getMessage()```의 방식으로, getter을 이용해서 가져올 수 있다.
+
+또, ```e.printStackTrace()```를 해서 실행 과정이 순차적으로 스택에 쌓인 것을 추적해서 볼 수 있다. 
+
+앞서 본 ExceptionTest1 에 코드를 추가해서 보면 다음과 같다.
+
+```java
+package test02_try_catch;
+
+public class ExceptionTest1 {
+	public static void main(String[] args) {
+		// try ... catch 문을 사용한 예외처리
+		
+		int[] nums = {10};
+		
+		// 1. 예외가 발생했고 제대로 처리한 경우 : 1 4 5
+		// 2. 예외가 발생했는데 처리하지 못했을 때: 1 (2<-에러) 비정상적 종료
+		// 3. 예외가 발생하지 않았을 때? : 1 2 3 5
+		
+		try {
+			// 예외가 발생할 수 있는 코드는 try문 안에 넣는다.
+			System.out.println("정상 코드 1"); // 1
+			System.out.println(nums[3]);	// 2
+			System.out.println("정상 코드 2");	 //3
+			
+		} catch (ArrayIndexOutOfBoundsException e) { // catch() 예외를 파라미터로 받는다.
+			// 예외 대처 코드 작성
+			System.out.println("배열의 인덱스 범위를 벗어났습니다."); // 4
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		System.out.println("프로그램 종료."); //5
+	}
+}
+```
+
+위 코드의 실행 결과는 다음과 같다.
+
+<img width="807" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/46fa93f2-825e-4007-93ee-13c26f4ff035">
+
+<br>
+
+## 예외 던지기 throws
+
+이전까지 알아본 try ~ catch 는 예외를 직접 처리하는 것이었다. 반면 던지기(throws)는 간접 처리이다. 내가 처리하지 않고, 남에게 던지는 것이다.
+
+throws라는 키워드로 예외를 던질 수 있다. 그리고 예외가 여러 개 발생할 수 있으면 ,(컴마)를 이용해서 발생할 가능성이 있는 예외들을 나열할 수 있다.
