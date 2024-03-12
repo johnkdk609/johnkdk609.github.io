@@ -524,6 +524,61 @@ public class ExceptionTest1 {
 
 ## 예외 던지기 throws
 
-이전까지 알아본 try ~ catch 는 예외를 직접 처리하는 것이었다. 반면 던지기(throws)는 간접 처리이다. 내가 처리하지 않고, 남에게 던지는 것이다.
+이전까지 알아본 try ~ catch 는 예외를 직접 처리하는 것이었다. 반면 던지기(throws)는 간접 처리이다. 내가 처리하지 않고, 남에게 던지는 것이다. throws라는 키워드로 예외를 던질 수 있다. 
 
-throws라는 키워드로 예외를 던질 수 있다. 그리고 예외가 여러 개 발생할 수 있으면 ,(컴마)를 이용해서 발생할 가능성이 있는 예외들을 나열할 수 있다.
+그리고 예외가 여러 개 발생할 수 있으면 ,(컴마)를 이용해서 발생할 가능성이 있는 예외들을 나열할 수 있다.
+
+메서드가 나 자신을 호출한 곳으로 전달을 하는 것이며, 조상 타입의 예외로 처리 가능하다.
+
+<br>
+
+예시 코드를 통해 알아보겠다.
+
+```java
+package test03_throws;
+
+// CheckedException
+// - 컴파일시 예외 처리를 강제
+// - 둘중 하나는 반드시 해야된다.
+// - 빨간 줄 => throws해서 위임할 수 있다.
+//         => 직접처리(try catch)를 하지않는다면 throws를 써야한다.
+public class ThrowTest1 {
+	
+	public static void main(String[] args) throws ClassNotFoundException {
+		method1(); // 결국 예외 처리 하지 않는다.
+	}
+	
+	public static void method1() throws ClassNotFoundException {
+		// 호출한 곳에서 다시 처리하거나, 위임
+		method2();
+	}
+	
+	public static void method2() throws ClassNotFoundException { // 예외 처리 위임
+		Class.forName("SSAFY"); // "SSAFY"라는 이름의 클래스를 로드!
+		//1. 직접처리
+		//2. 간접처리
+		
+	}	
+}
+```
+
+위 코드를 보면, CheckedException을 계속 throws 해서 main에서 처리하는 것을 강제하는 모습을 보인다.
+
+스택을 보면, 제일 처음에 main 함수가 올라간다. main 함수가 실행 되다가 method1()을 만나면 method1()이 스택에 올라간다. 그리고 method1()을 실행하는 시점에서 method2()를 만날 때, method2()가 스택에 올라간다.
+
+이 경우 method2()는 스택의 Top에 있는 것이고, 이게 실행되고 있다. method2()가 실행이 종료되면 스택에서 빠져나온다. (pop) 그러면 이제 method1()가 스택의 top에 있게 되고, 또 method1()이 return 되면 제어권은 main으로 넘어간다. 이제 main도 끝나면 main이 pop 되고 프로그램이 종료된다.
+
+<br>
+
+위 코드에서 method2()는 ```Class.forName("SSAFY")```의 방식으로, "SSAFY"라는 이름의 클래스를 메모리에 로드하게 하였다. (JVM 메모리가 있을 때, 클래스 로더로 "SSAFY"라는 이름의 클래스가 있으면 찾아서 로드하라는 static 메서드)
+
+그런데, 메서드 옆에 throws 키워드를 붙이기 전에는 ```Class.forName("SSAFY")```에 빨간 줄이 그어진다. CheckedException이기 때문이다. 
+
+CheckedException은 두 가지 옵션을 준다.
+
+1. throws를 선언하거나 (간접 처리)
+2. 여기서 처리 하거나 (직접 처리)
+
+강제로 처리를 해야 하니까, 위 코드의 경우 throws 키워드를 사용해 간접 처리를 하였다. throws를 하여 method2()에서 처리하지 않고, 넘겨버렸다. 그러면 method2()를 호출한 method1()에게 넘어간다.
+
+method1()의 ```method2()```가 빨간 줄이 그어진다. 예외 처리가 위임된 것이다. 그러면 이 method2()를 호출한 곳에서 처리하거나 또 위임해야 한다. 그래서 method1()에서도 throws 를 사용하여 예외를 위임했다. main에서 처리를 할 수밖에 없는 것이다.
