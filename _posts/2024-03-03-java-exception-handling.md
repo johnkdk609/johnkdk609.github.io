@@ -582,3 +582,109 @@ CheckedException은 두 가지 옵션을 준다.
 강제로 처리를 해야 하니까, 위 코드의 경우 throws 키워드를 사용해 간접 처리를 하였다. throws를 하여 method2()에서 처리하지 않고, 넘겨버렸다. 그러면 method2()를 호출한 method1()에게 넘어간다.
 
 method1()의 ```method2()```가 빨간 줄이 그어진다. 예외 처리가 위임된 것이다. 그러면 이 method2()를 호출한 곳에서 처리하거나 또 위임해야 한다. 그래서 method1()에서도 throws 를 사용하여 예외를 위임했다. main에서 처리를 할 수밖에 없는 것이다.
+
+만약에 method2()에서 처리했다면, main 함수 안에 ```method1();```에는 빨간 줄이 생기지 않는다.
+
+<br>
+
+main 메서드에서도 예외 처리를 하지 않으면, 결국 예외가 처리되지 않은 상태로 남는다. (논리적으로 볼 때에 어느 순간에는 예외를 처리해주는 것이 좋다.)
+
+main 메서드에서도 예외를 처리하지 않은 채 실행시키면, 콘솔에 에러 메세지가 나타난다.
+
+결론적으로, <b>CheckedException은 컴파일 시 예외 처리를 강제</b>한다. 빨간 줄이 켜지면, <b>throws를 해서 위임할 수 있다.</b> 그런데 <b>위임했을 때 그 책임은 나를 호출한 곳으로 떠넘겨지고, 어딘가에서는 처리를 해주어야 하는 것이다.</b>
+
+<br>
+
+다른 예시 코드를 보겠다.
+
+```java
+package test03_throws;
+
+// UncheckedException
+// 빨간 줄 없음
+// => 예외 처리 강제하지 않는다.
+// => throws도 강제하지 않는다.
+// => 하고싶으면 try catch로 해라.
+
+// 내부적으로는 예외를 넘기고 있다.
+// 결국에 처리가 되지 않았을 때 비정상적 종료.
+public class ThrowTest2 {
+	public static void main(String[] args) {
+		method1();
+	}
+	
+	public static void method1() {
+		try {
+			method2();
+		} catch(ArithmeticException e) {
+			System.out.println("method1에서 처리가 될까요?");
+		}
+	}
+	
+	public static void method2() {
+		int i = 1/0;
+	}
+
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+method1에서 처리가 될까요?
+```
+
+위 코드의 경우, 빨간 줄이 켜지지 않는다. UncheckedException인 것이다. 아까 같은 경우 CheckedException이어서 예외 처리를 강제했다. 그러나 이 경우에는 예외 처리를 강제하지 않는다.
+
+<b>UncheckedException의 경우 throws도 강제하지 않는다.</b>
+
+다른 말로 하면, 하고 싶다면 <b>try ~ catch 문</b>으로 하라는 것이다. CheckedException만 빨간 줄이 켜지는 이유는, 문법적으로 컴파일 때 체크를 하겠다는 것이다. 반면 UncheckedException은 그렇지 않다. 위 코드의 경우에 throws를 하지 않아도 문제 없이 실행된다. (물론 오류가 뜨기는 한다.)
+
+위 코드의 경우, ```method1()``` 안에서 try ~ catch 문으로 처리를 하였다. 그래서 출력 결과가 catch 문 안에 있는 문장으로 잘 나왔다. 이것은 내부적으로 Exception이 넘겨지고 있다는 것이다.
+
+이는 <b>UncheckedException이 CheckedException과 똑같은 점이다. 내부적으로는 예외를 넘기고 있는 것</b>이다. 결국에 처리되지 않았을 때 비정상적인 종료가 된 것이다.
+
+<br>
+
+또 다른 예시 코드를 보자.
+
+```java
+package test03_throws;
+
+// CheckedException
+// - 컴파일시 예외 처리를 강제
+// - 둘중 하나는 반드시 해야된다.
+// - 빨간 줄 => throws해서 위임할 수 있다.
+//         => 직접처리(try catch)를 하지않는다면 throws를 써야한다.
+public class ThrowTest3 {
+	
+	public static void main(String[] args){
+		method1(); // 결국 예외 처리 하지 않는다.
+	}
+	
+	public static void method1()  {
+		// 호출한 곳에서 다시 처리하거나, 위임
+		try {
+			method2();
+		}catch(ClassNotFoundException e) {
+			// 중간에 try catch로 직접처리했다면 굳이 throws 하지 않아도 된다.
+			System.out.println("잘 처리되었음.");
+		}
+	}
+	
+	public static void method2() throws ClassNotFoundException { // 예외 처리 위임
+		Class.forName("SSAFY"); // "SSAFY"라는 이름의 클래스를 로드!
+		//1. 직접처리
+		//2. 간접처리
+		
+	}	
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+잘 처리되었음.
+```
+
+왜냐하면 ClassNotFoundException으로 처리가 되었고, 중간에 try catch 문으로 직접처리를 했기 때문이다.
