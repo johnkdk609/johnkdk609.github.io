@@ -688,3 +688,60 @@ public class ThrowTest3 {
 ```
 
 왜냐하면 ClassNotFoundException으로 처리가 되었고, 중간에 try catch 문으로 직접처리를 했기 때문이다.
+
+<br>
+
+checked exception은 throws를 둘 중에 하나는 반드시 해야 하기 때문에 써줬었다. 만약 unchecked exception (runtime exception)이면 throws를 하지 않지만, 내부적으로는 throw 가 되고 있다. 만약 하고 싶으면, 그 시점에 try ~ catch 문을 써야 한다.
+
+<b>전달은 되지만, 내가 처리하고 싶은 시점에 try ~ catch를 써야 한다. 안 그러면 비정상적으로 종료된다.</b>
+
+<br>
+
+### 메서드 재정의와 throws
+
+메서드를 재정의할 때, 조상클래스 메서드가 던지는 예외보다 부모 예외를 던질 수 없다.
+
+다음 예시 코드를 보자.
+
+```java
+package test03_throws;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+class Parent {
+	public void method1() throws IOException {}
+	
+	public void method2() throws ClassNotFoundException {}
+	
+	public void method3() {}
+}
+
+
+// ThrowTest4는 Parent클래스의 자식.
+public class ThrowTest4 extends Parent {
+	@Override
+	public void method1() throws FileNotFoundException {
+		
+	}
+	// 자식은 부모가 던지는 예외보다 조상 예외를 던질 수 없다.
+	
+	@Override
+	public void method2() throws Exception {	// 이 부분이 잘못됨
+		
+	}
+	
+	// 하위 클래스의 접근제어자 범위가 상위 클래스보다 크거나 같아야 한다.
+	@Override
+	public void method3() {}
+}
+```
+
+위 코드에서 잘못된 부분은 어디에 있을까?
+
+ThrowTest4 클래스의 method2()가 잘못되었다. 부모 클래스의 method2()에서는 ClassNotFoundException를 던지고 있는데, 자식 클래스의 오버라이드 된 method2() 에서 ClassNotFoundException보다 큰 Exception을 던지고 있기 때문이다.
+
+부모가 작은 실수를 하고 있는데, 자식이 더 큰 실수를 하면 안 된다는 것이다.
+
+객체지향에서 부모가 들어갈 수 있는 자리에는 부모 객체가 들어갈 수도 있고, 자식 객체가 들어갈 수도 있다. 부모가 들어가야 할 자리에는 부모의 부품을 넣을 수도 있고, 자식의 부품을 넣을 수도 있다. 그런데 부품을 갈아 끼웠는데 더 큰 실수를 하면 시스템이 제대로 돌아가지 않을 것이다. 그래서 자식은 항상 같거나 작은 예외를 던져야 하는 것이다. 실수를 개선하는 것은 괜찮다. 반면 더 큰 문제가 발생하는 것은 막아야 한다.
+
