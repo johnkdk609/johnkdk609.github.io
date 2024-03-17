@@ -745,3 +745,163 @@ ThrowTest4 클래스의 method2()가 잘못되었다. 부모 클래스의 method
 
 객체지향에서 부모가 들어갈 수 있는 자리에는 부모 객체가 들어갈 수도 있고, 자식 객체가 들어갈 수도 있다. 부모가 들어가야 할 자리에는 부모의 부품을 넣을 수도 있고, 자식의 부품을 넣을 수도 있다. 그런데 부품을 갈아 끼웠는데 더 큰 실수를 하면 시스템이 제대로 돌아가지 않을 것이다. 그래서 자식은 항상 같거나 작은 예외를 던져야 하는 것이다. 실수를 개선하는 것은 괜찮다. 반면 더 큰 문제가 발생하는 것은 막아야 한다.
 
+<br>
+
+## finally 구문
+
+finally 구문은 예외 발생 여부와 상관 없이 언제나 (always) 실행된다.
+
+```java
+try {
+	// 예외가 발생할 가능성이 있는 코드
+} catch (Exception e) {
+	// 예외 처리 코드
+} finally {
+	// 예외 상관없이 항상 수행해야 하는 코드
+}
+```
+
+예외가 발생했을 때, try → catch → finally 순으로 코드가 실행된다. 예외가 발생하지 않는다면 try → finally 순으로 코드가 실행된다.
+
+중간에 return이 있어도 finally 블록을 수행한 다음 반환된다.
+
+<br>
+
+예시 코드를 보자.
+
+```java
+package test04_finally;
+
+public class FinallyTest1 {
+    public static void main(String[] args) {
+    	
+    	// 정상 실행 시 : 1 2 4 5
+    	// 예외 발생 시 : 1 3 4 5
+    	// 예외 미처리 시: 1 4 (중단)
+    	// catch문에 return이 들어가면(예외발생시): 1 3 4
+    	// try문에 return이 들어갔다면(정상실행시): 1 2 4
+    	
+//    	int[] nums = {10};
+        int num = 1;
+        
+        try {
+            System.out.println("1");
+            int i = 1 / num;
+//            nums[3] = 1;
+            System.out.println("2");
+            return;
+        } catch (ArithmeticException e) {
+            System.out.println("3");
+         
+        } finally {
+            System.out.println("4");
+            
+        }
+        System.out.println("5");
+    }
+}
+```
+
+위 코드의 실행 결과는 다음과 같다.
+
+```
+1
+2
+4
+```
+
+위 코드를 보면, finally 구문까지만 실행되고 아래에 5는 출력되지 않았다. try 문 안에 return 이 있기 때문이다. return이 있을 경우 finally까지는 무조건 실행되고, 그 이후에 종료된다. 맨 아래에 5는 언제나 실행이 되지 않게 되고, 'unreachable code' 즉 죽은 코드가 된다.
+
+<br>
+
+## 자동 자원 반납 구문 (try with resources)
+
+시스템 자원(resources)을 사용할 때 사용하는 구문이다. 대표적으로 파일 입출력을 할 때 사용한다.
+
+입출력을 하기 위해서는 메모리도 확보해야 하고, 여러 가지 시스템 자원을 소모하는 일이 많다. 그럴 때 적절하게 관리를 해줘야 한다. 만약 작업이 끝났다면 메모리 자원을 반납해줘야 한다.
+
+finally 구문은 무조건 실행되기 때문에 <b>finally에서 close()를 통해 입출력에 대한 자원 반납을 주로 한다.</b>
+
+```java
+FileInputStream fis = null;
+try {
+	fis = new FileInputStream("test.txt");
+} catch (IOException e) {
+	e.printStackTrace();
+} finally {
+	try {
+		if (fis != null)
+			fis.close();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+}
+```
+
+위 코드를 보면, Stream을 열고 "test.txt"라는 파일에 접근해서 데이터를 가져오겠다는 것이다. 이 과정에서 IOException이 발생할 수 있다. 그래서 ```fis = new FileInputStream("test.txt");```는 사실 에러가 발생할 수 있는 코드이다.
+
+예외가 발생 가능하고, CheckedException으로 예외 처리가 강제되기 때문에 try ~ catch 문을 사용해야 한다.
+
+그리고 입력에 대한 자원을 반납할 때에는 finally에서 반납을 해줘야 한다. 그런데 finally 문 안에서도 또 예외가 발생할 수 있기 때문에 위와 같이 또 try ~ catch문을 써야 하는 문제가 발생한다.
+
+그래서 이러한 문제를 try with resources 구문으로 해결하는 것이다.
+
+<br>
+
+try with resources 구문은 다음과 같이 작동한다.
+
+```try ()``` → 괄호 안에 객체를 생성하는 코드를 작성하면, 해당 객체는 close()를 호출하지 않아도 블록을 벗어나는 순간 close()가 호출된다.
+
+해당 객체의 클래스가 AutoCloseable이라는 인터페이스를 구현한 클래스이어야만 한다.
+
+```java
+try (FileInputStream fis = new FileInputStream("test.txt")) {
+	// 코드 생략
+} catch (IOException e) {
+	e.printStackTrace();
+}
+```
+
+<br>
+
+예시 코드를 통해 보겠다.
+
+```java
+package test04_finally;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+public class FinallyTest2 {
+    public static void main(String[] args) {
+        // try ~ catch ~ finally => try with resources 
+        FileInputStream fis = null;
+        
+        try {	// 이렇게 하면 너무 복잡함...
+            fis = new FileInputStream("test.txt");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(fis != null)
+                    fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        
+        try (FileInputStream fis2 = new FileInputStream("test.txt")){	// try with resources 구문 활용하여 간단하게 표현.
+        	
+        } catch (IOException e ) {
+        	
+        }
+
+    }
+}
+```
+
+위 코드를 보면, try catch finally 문을 쓸 경우 코드가 너무 많고 복잡해진다. 그런데 아랫 부분에 try with resources 구문을 쓰니 코드가 매우 간결해졌다. finally 문을 작성할 필요가 없는 것이다.
+
+자원을 반납하지 않으면 메모리가 계속 자원을 잡아먹고 있는 것이고, 비효율적인 상태가 된다. 시스템 자원을 사용했으면 반납을 해주는 것이다. 안 그러면 프로그램 때문에 시스템에 부하가 점점 커진다.
