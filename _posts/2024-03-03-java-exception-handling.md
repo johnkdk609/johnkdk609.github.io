@@ -905,3 +905,225 @@ public class FinallyTest2 {
 위 코드를 보면, try catch finally 문을 쓸 경우 코드가 너무 많고 복잡해진다. 그런데 아랫 부분에 try with resources 구문을 쓰니 코드가 매우 간결해졌다. finally 문을 작성할 필요가 없는 것이다.
 
 자원을 반납하지 않으면 메모리가 계속 자원을 잡아먹고 있는 것이고, 비효율적인 상태가 된다. 시스템 자원을 사용했으면 반납을 해주는 것이다. 안 그러면 프로그램 때문에 시스템에 부하가 점점 커진다.
+
+<br>
+
+## 사용자 정의 예외
+
+이번에는 사용자 정의 예외에 대해 알아보겠다. 기존에 정의된 예외 이외에 사용자가 직접 정의 예외를 작성할 수 있다.
+
+만드는 법은 매우 간단하다. <u>Exception 또는 RuntimeException을 상속 받으면 그게 Exception이 된다.</u> 
+
+* <b>checked exception 활용</b> : 명시적 예외 처리 또는 throws 필요 (코드는 복잡해지지만 처리, 누락 등 오류 발생 가능성은 줄어듦)
+* <b>runtime exception 활용</b> : 묵시적 예외 처리 가능 (코드가 간결해지지만 예외 처리, 누락 가능성 발생)
+
+<br>
+
+예시 코드를 보겠다.
+
+```java
+package test05_user_exception;
+
+public class UserExceptionTest {
+
+	public static String[] fruits;
+
+	public static void main(String[] args) {
+
+		fruits = new String[] { "사과", "사과", "오렌지", "토마토" };
+
+		boolean result = eatFruit("사과");
+		System.out.println(result);
+		
+		result = eatFruit("사과");
+		System.out.println(result);
+		
+		result = eatFruit("사과");
+		System.out.println(result);
+		if(result == false) {
+			System.out.println("대처코드..");
+		}
+		
+		// 항상 실행결과를 true / false 확인해야 한다.
+		// 어떤 이유인지 알 수 없다.
+		// 변수가 따로 있어야 되고, 매번 체크.
+		// try ~ catch문 쓸수 없고. if문을 복잡하게 써야한다.
+
+	}
+
+	// 예외처리를 이용하지 않는다면...
+	// 성공했다면 true를 반환하고 실패했다면 false반환한다.
+	public static boolean eatFruit(String name) {
+		for (int i = 0; i < fruits.length; i++) {
+			if (name.equals(fruits[i])) {
+				fruits[i] = null;
+				System.out.println(name + "(을)를 먹었습니다.");
+				return true;
+			}
+		}
+		return false;
+	}
+
+}
+```
+
+과일들이 있는데, 과일을 먹는 상황이다. 하나씩 먹는데, 과일이 더 이상 먹을 수 없는 상황이 올 것이다. 만약 기존에 예외 처리를 하지 않았다면 위 코드의 아랫 부분처럼 eatFruit() 메서드의 방식으로 처리해야 할 것이다.
+
+그런데 이렇게 했을 때 문제점은, 구체적으로 에러 메세지를 전달할 수 없다는 것과, 항상 실행 결과를 true / false로 받아서 확인해야 한다는 것이다. 어떤 이유인지 알 수 없고, 매번 실행 결괏값을 받아서 체크해줘야 한다.
+
+try ~ catch ~ finally 문을 쓸 수 없고, if문을 복잡하게 써야 한다.
+
+<br>
+
+Exception을 만들어서 이를 해결할 수 있다.
+
+과일이 없다는 의미에서 FruitNotFoundException을 생성해보겠다.
+
+```java
+package test05_user_exception;
+
+// Exception을 상속받으면 : CheckedException
+// RuntimeException을 상속받으면 : unchecked exception.
+
+public class FruitNotFoundException extends Exception {
+	
+	// 생성자
+	public FruitNotFoundException(String name) {
+		super(name + "에 해당하는 과일은 없습니다. ㅠㅠ");
+		// 문자열을 넣어서 => 에러메시지.
+	}
+
+}
+```
+
+위의 경우 Exception을 상속 받았으니, CheckedException이다. 생성자를 만들고, 과일 이름을 받아오게 하였다. 생성자가 기본 생성자 말고 문자열이 들어간 생성자가 있다. 에러 메세지를 넣어서 만들 수 있는 것이다.
+
+<b>문자열을 넣어서 생성자를 만들면, 이것이 에러 메세지가 된다.</b>
+
+<br>
+
+이제 위에서 만든 FruitNotFoundException을 사용해보겠다.
+
+```java
+package test05_user_exception;
+
+public class UserExceptionTest2 {
+
+	public static String[] fruits;
+
+	public static void main(String[] args) {
+
+		fruits = new String[] { "사과", "사과", "오렌지", "토마토" };
+		
+		try {
+			eatFruit("사과");
+			eatFruit("사과");
+			eatFruit("사과");
+			eatFruit("사과");
+			eatFruit("사과");
+			eatFruit("사과");
+		} catch (FruitNotFoundException e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+
+	public static void eatFruit(String name) throws FruitNotFoundException {
+		for (int i = 0; i < fruits.length; i++) {
+			if (name.equals(fruits[i])) {
+				fruits[i] = null;
+				System.out.println(name + "(을)를 먹었습니다.");
+				
+			}
+		}
+		// 사용자 정의 예외 발생
+		// throw new 예외클래스생성자();
+		throw new FruitNotFoundException(name); 
+	}
+
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+사과(을)를 먹었습니다.
+사과(을)를 먹었습니다.
+사과에 해당하는 과일은 없습니다. ㅠㅠ
+```
+
+<br>
+
+정상적으로 작동하지 않았을 때 ```throw new FruitNotFoundException(name);```를 한다. 사용자 정의 예외를 발생시키는 것이다. 그런데 이 코드만 추가하면 빨간 줄이 뜬다. 이 에러가 처리되지 않았다는 것이다.
+
+명시적으로 해줘야 한다. ```public static void eatFruit(String name) throws FruitNotFoundException {```로 하는 것이다. CheckedException이기 때문에 '나는 이 에러를 발생할 수 있는 애야'하고 알려줘야 하는 것이다. 예외 처리가 강제되고 있는 것이다.
+
+main 메서드에서 그냥 ```eatFruit("사과");```라고 입력하면 빨간 줄이 뜬다. CheckedException이기 때문에, 처리를 해야 하는 것이다. 메인 메서드에 있는 ```eatFruit("사과");```문을 try ~ catch 문으로 감싸면 된다. 그리고 catch 문에서는 FruitNotFoundException를 반환하게 한다.
+
+출력 결과를 보면, ```System.out.println(e.getMessage());```가 잘 출력되었음을 알 수 있다.
+
+<br>
+
+하나 더 보겠다. 이번에는 UncheckedException을 만들어볼 것이다.
+
+```java
+package test05_user_exception;
+
+public class FruitNotFoundRuntimeException extends RuntimeException {
+	public FruitNotFoundRuntimeException(String name) {
+		super(name + "에 해당하는 과일이 없습니다.");
+	}
+}
+```
+
+위 경우는 RuntimeException이니 심각한 에러는 아니고, 필요할 때에 체크하라는 것이다. RuntimeException을 상속 받고 있다.
+
+생성자를 하나 만들었다.
+
+```java
+package test05_user_exception;
+
+public class UserExceptionTest3 {
+
+	public static String[] fruits;
+
+	public static void main(String[] args) {
+
+		fruits = new String[] { "사과", "사과", "오렌지", "토마토" };
+		
+		try {
+			eatFruit("사과");
+			eatFruit("사과");
+			eatFruit("사과");
+			eatFruit("사과");
+			eatFruit("사과");
+			eatFruit("사과");
+		} catch (FruitNotFoundRuntimeException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	public static void eatFruit(String name) {
+		for (int i = 0; i < fruits.length; i++) {
+			if (name.equals(fruits[i])) {
+				fruits[i] = null;
+				System.out.println(name + "(을)를 먹었습니다.");
+				
+			}
+		}
+		// 사용자 정의 예외 발생
+		// throw new 예외클래스생성자();
+		throw new FruitNotFoundRuntimeException(name); 
+	}
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+```
+사과(을)를 먹었습니다.
+사과(을)를 먹었습니다.
+사과에 해당하는 과일이 없습니다.
+```
+
+위의 경우, RuntimeException이기 필요하면 그때 처리한다. 강제는 아닌 것이다.
