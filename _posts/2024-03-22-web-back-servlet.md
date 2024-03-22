@@ -53,7 +53,7 @@ public class HelloServlet extends HttpServlet {
 }
 ```
 
-위 코드를 Run on Server를 클릭해 작동시킨 다음, 작동한 서버에서 ```/hello```라고 붙여서 요청을 보내면 다음과 같은 화면이 나타난다.
+위 코드를 'Run on Server'를 클릭해 작동시킨 다음, 작동한 서버에서 ```/hello```라고 붙여서 요청을 보내면 다음과 같은 화면이 나타난다.
 
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/821e4987-91c9-4aa1-907c-76fab3754aa5" width="400">
 
