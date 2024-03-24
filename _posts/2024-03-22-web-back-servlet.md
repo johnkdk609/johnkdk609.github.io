@@ -87,3 +87,98 @@ Servlet은 <u>자바 코드 안에 html을 포함한다.</u>
 
 <br>
 
+이제 예시 코드로 알아보겠다.
+
+자바 클래스 파일을 서블릿처럼 동작하게 하려면, jakarta의 Servlet 인터페이스를 implements 해야 한다.
+
+```java
+package com.ssafy.myservlet;
+
+import java.io.IOException;
+
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+
+public class MyServlet1 implements Servlet {
+
+	@Override
+	public void destroy() {
+		//서블릿이 소멸할때
+	}
+
+	@Override
+	public ServletConfig getServletConfig() {
+		//서블릿 설정 객체를 반환
+		return null;
+	}
+
+	@Override
+	public String getServletInfo() {
+		//서블릿 정보를 반환
+		return null;
+	}
+
+	@Override
+	public void init(ServletConfig arg0) throws ServletException {
+		//파라미터로 넘겨받은 서블릿 설정파일을 가지고 초기화 하는 작업
+	}
+
+	@Override
+	public void service(ServletRequest arg0, ServletResponse arg1) throws ServletException, IOException {
+		//요청과 응답을 처리하는 일
+	}
+
+}
+```
+
+Servlet 인터페이스를 implements 하면 위와 같이 여러 개의 메서드를 오버라이드(재정의) 해야 한다. 오버라이드 해야 하는 메서드가 상당히 많은 상황이다.
+
+destroy(), getServletConfig(), getServletInto(), init() 과 같은 메서드들을 매번 재정의하는 것은 비효율적이다.
+
+<br>
+
+그래서 Servlet 인터페이스의 구현체로 GenericServlet이 있다. GenericServlet은 클래스이다. 이제 GenericServlet을 extends 해서 서블릿을 만들어보겠다.
+
+```java
+package com.ssafy.myservlet;
+
+import java.io.IOException;
+
+import jakarta.servlet.GenericServlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+
+public class MyServlet2 extends GenericServlet {
+
+	@Override
+	public void service(ServletRequest arg0, ServletResponse arg1) throws ServletException, IOException {
+		//요청과 응답 처리는 사용자가 해줘 (나머지는 이미 다 해놨으니)
+	}
+
+}
+```
+
+GenericServlet은 추상 클래스(abstract class)이기 때문에, 메서드를 정의해주어야 한다. 그러면 위와 같이 service() 메서드만 구현하면 된다. 앞서 그냥 Servlet 인터페이스를 implements 했을 때와 비교하면 구현할 것이 확연히 줄어든 상황이다.
+
+나머지는 처리해 놨으니, 요청과 응답 처리는 사용자가 하라는 것이다. 요청이 들어왔을 때 어떻게 할지, 응답이 들어왔을 때 어떻게 할지를 정하면 되는 것이다.
+
+<br>
+
+그런데 우리는 주로 통신 규약으로 HTTP를 쓴다. HTTP를 이용해서 요청을 주고 받고 할 것인데, 그냥 HttpServlet을 extends 할 수 있다.
+
+```java
+package com.ssafy.myservlet;
+
+import jakarta.servlet.http.HttpServlet;
+
+public class MyServlet3 extends HttpServlet{
+
+	private static final long serialVersionUID = 1L;
+	
+	//doXXXX 은 적어도 1개는 만들어어야 해
+}
+```
