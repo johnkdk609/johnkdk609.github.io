@@ -250,6 +250,8 @@ response는 응답과 관련이 있다. 내가 보낼 응답에다가 ```.setCon
 
 <br>
 
+### Servlet 등록 방법 (web.xml)
+
 이제 web.xml을 보겠다.
 
 ```xml
@@ -294,3 +296,127 @@ index.html 파일이 있기 때문에, 서버를 Run 하고 보면 다음과 같
 다시 서블릿을 실행하고, 주소에 ```/main```을 붙이면 다음과 같이 화면에 나타난다.
 
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/2cfc4bcf-d6ec-49a8-9517-155d70ca8780" width="400px" />
+
+<br>
+
+### Servlet 등록 방법 (Annotation)
+
+Annotation으로 등록하는 방법을 알아보겠다. 이번에는 web.xml을 사용하지 않고 바로 코드에다가 ```@WebServlet("/main2")```를 붙이는 방식으로 간다.
+
+```java
+package com.ssafy.myservlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/main2")
+public class MyServlet5 extends HttpServlet {
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		response.setContentType("text/html;characterset=UTF-8");
+		PrintWriter writer = response.getWriter();
+
+		writer.write("""
+				<html>
+				  <head><title>Hello! SSAFY!</title></head>
+				  <body>
+				    <h1>Hello! MyServlet5!</h1>
+				  </body>
+				</html>
+				""");
+	}
+}
+```
+
+위와 같이 코드를 수정하고 서버를 Run 한 다음, ```/main2```를 주소에 붙여 작동시키면 다음과 같이 화면에 나타난다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/beb6e06a-21a9-48a3-a575-85fd039172e8" width="400px" />
+
+<br>
+
+이제 등록 방식이 다시 web.xml로 돌아왔다.
+
+<br>
+
+## Servlet 생명 주기 (Life-Cycle)
+
+Servlet 인스턴스는 웹 컨테이너에 의해 제어된다. 서블릿 인스턴스는 ```new Servlet```의 방식으로 만들어진 것이다.
+
+그런데 내가 ```new MyServlet4```, ```new MyServlet5``` 등을 하지 않았다.
+
+이런 것들을 대신 해주는 것이 있는데, 이게 바로 <b>웹 컨테이너</b>이다. 서블릿 컨테이너라는 것은 WAS 안에서 동작을 하는데, 이것이 알아서 ```new Servlet```의 방식으로 만들어주는 것이다.
+
+<br>
+
+Servlet 인스턴스가 존재하지 않으면 다음과 같은 작업을 수행한다.
+
+1. Servlet 클래스 로드
+2. Servlet 클래스 인스턴스 생성
+3. Servlet 인스턴스 초기화
+4. 웹 컨테이너에 의한 서비스 메서드 호출
+5. destroy 메서드를 호출하여 Servlet 종료
+
+서비스 메서드는 요청이 들어올 때마다 호출된다.
+
+이때 load, create instance, init, destroy는 한 번씩만 수행되는 반면, service 호출은 여러 번 수행될 수 있다.
+
+즉 웹 서블릿 컨테이너는 서블릿을 싱글턴(Singleton)으로 관리하고 있는 것이다. 딱 한 번만 생성하고 그것을 가져다가 계속 쓰는 것이다.
+
+매번 요청이 올 때마다 서블릿 객체를 만들고 죽이고, 만들고 죽이는 과정을 하다 보면 컴퓨터가 굉장히 힘들어할 수 있다. 그래서 딱 한 번만 만들고 계속 쓰는 것이다.
+
+<br>
+
+Life Cycle을 코드로 보겠다.
+
+```java
+package com.ssafy.lifecycle;
+
+import java.io.IOException;
+
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/LifeCycle")
+public class LifeCycle extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+    
+	int initCount = 1;
+	int doGetCount = 1;
+	int destroyCount = 1;
+	
+    public LifeCycle() {
+    	System.out.println("생성자호출");
+    }
+
+	public void init(ServletConfig config) throws ServletException {
+		System.out.println(initCount++);
+		System.out.println("init 호출");
+		
+	}
+
+	public void destroy() {
+		System.out.println(destroyCount++);
+		System.out.println("파괴됨");
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println(doGetCount++);
+		System.out.println("doGet호출 ");
+	}
+
+}
+```
+
+어노테이션 방식으로 설정을 하였다. 
