@@ -413,10 +413,135 @@ public class LifeCycle extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println(doGetCount++);
-		System.out.println("doGet호출 ");
+		System.out.println("doGet호출");
 	}
 
 }
 ```
 
 어노테이션 방식으로 설정을 하였다. 
+
+위 코드에서 ```int initCount = 1;```, ```int doGetCount = 1;```, ```int destroyCount = 1;```은 인스턴스 변수를 만들어 놓은 것이다. 어차피 인스턴스는 딱 하나밖에 안 쓸 것이기 때문에 그냥 공유해서 쓴 것이다.
+
+<br>
+
+이제 위 코드를 'Run on Server'을 돌려보겠다.
+
+인터넷 브라우저에 "http://localhost:8080/BackEnd_01_Servlet/LifeCycle"를 입력하고 들어가보겠다. 빈 화면이 뜨는데, 만들어놓은 페이지가 없기 때문이다.
+
+이제 콘솔창을 보겠다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/acb51129-ab27-4fb0-8221-5d7f9afe204e" width="700px" />
+
+위와 같이 나온다.
+
+<br>
+
+이제 브라우저에서 새로 고침을 눌러보겠다. 새로 고침 버튼을 두 번 누른 후 다시 콘솔을 보면 다음과 같다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/38bcf230-9229-49fd-b961-ea4b502a0643" width="700px" />
+
+다시 init이 호출되지 않았다. 이미 만들어진 것을 재활용하기 때문이다. doGet만 계속 증가한다.
+
+<br>
+
+이제 Server 창에서 Stop 버튼을 누르고, 다시 Console 창으로 돌아와서 보면 다음과 같이 되어 있다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/be542f55-8945-4d38-a643-3888dc28212c" width="700px" />
+
+destroy가 된 것이다. 내용을 살짝 바꾸고 저장해서 서버가 알아서 껐다 켜지는데, 그때에도 '파괴됨'이 나타날 것이다.
+
+<br>
+
+다시 서버를 껐다 켜도 콘솔에 init이 호출되지 않는다. 왜냐하면 아직 요청이 안 왔기 때문이다. "http://localhost:8080/BackEnd_01_Servlet/LifeCycle" 와 같은 방식으로 요청이 왔을 때 클래스 로더가 읽어서 "어 없어? 읽어. init 해"의 과정이 들어가는 것이다.
+
+<br>
+
+## Servlet 실습
+
+이제 Servlet에 대해 실습을 진행해볼 것이다.
+
+### GET, POST 비교
+
+우선 GET과 POST의 차이점에 대해 알아보겠다.
+
+<table>
+	<tr>
+		<th>GET</th>
+		<th>POST</th>
+	</tr>
+	<tr>
+		<td>지정된 리소스에서 데이터를 요청하는 데 사용</td>
+		<td>리소스를 생성/업데이트하기 위해 서버에 데이터를 보내는 데 사용</td>
+	</tr>
+	<tr>
+		<td>query string(name/value 쌍)이 URL에 포함되어 전송됨.<br>POST와 비교하여 보안에 취약함</td>
+		<td>HTTP header의 body에 파라미터를 포함하여 전송<br>데이터 길이에 대한 제한 없음<br>매개변수가 브라우저나 웹 서버에 저장되지 않음</td>
+	</tr>
+	<tr>
+		<td>URL이 길이 제한이 있으므로, 전송 가능한 데이터의 길이가 제한적<br>(URL maximum characters : 2048)<br>ASCII 문자만 가능</td>
+		<td>제한 없음. 바이너리 데이터도 허용</td>
+	</tr>
+</table>
+
+<br>
+
+query string이란 어떠한 요청이 있을 때 그 뒤에 ? 가 붙고 그 뒤에 쭉 날라가는 것이다. 이것이 key - value의 형태로 이루어져 있다. query string이 여러 개라면 & 로 연결을 한다.
+
+그런데 query string은 말 그대로 URL 주소에 붙어져서 들어가기 때문에, URL 공간에 넘길 수 있는 데이터의 한계가 있다. 그래서 길이가 제한적이다.
+
+<br>
+
+POST는 서버에 데이터를 보내는 데 사용하기 때문에, URL에 데이터를 붙이지 않고 HTTP header의 body에 데이터를 실어서 보낸다. 그래서 길이는 제한이 없다.
+
+<br>
+
+보통 'GET은 눈에 보여도 괜찮은 것, POST는 눈에 보이면 안 되는 것'이라고 구분하기도 하지만, 사실 컴퓨터를 조금만 알면 개발자 도구 창을 통해 얻어낼 수 있으니 그것 또한 약간의 보완이 필요하다.
+
+<br>
+
+### URL 구성요소
+
+URL의 구성 요소에 대해 알아보겠다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/9de20600-0bb7-4f2c-ad40-a50ae138d1a6" width="400px" />
+
+<table>
+	<tr>
+		<th>구성요소</th>
+		<th>설명</th>
+	</tr>
+	<tr>
+		<th>프로토콜</th>
+		<td>절차를 포함한 통신규약</td>
+	</tr>
+	<tr>
+		<th>서버</th>
+		<td>웹 페이지를 요청할 서버의 주소, 실제 IP 주소나 도메인을 입력할 수 있다.</td>
+	</tr>
+	<tr>
+		<th>경로</th>
+		<td>서버 내의 상세 경로</td>
+	</tr>
+	<tr>
+		<th>쿼리 스트링</th>
+		<td>추가로 서버로 데이터를 전송하기 위해서 사용된다.<br>'?' 마크를 적어 시작을 표시한다. parameter_name=value 형태로 작성하며, 파라미터가 여러 개일 경우 '&'로 구분하여 작성한다.</td>
+	</tr>
+</table>
+
+<br>
+
+프로토콜은 약속이다. 이 약속은 굉장히 많은 종류가 있다. 파일 전송을 처리하는 FTP(File Transfer Protocol), HTTP 등 여러 가지가 있다.
+
+서버에 실제로는 IP 주소를 작성해야 하는데, 그 IP 주소를 외우기는 매우 어렵다. 그래서 그 IP 주소를 대신할 수 있는 이름 같은 것을 등록해두고 쓰는 것이다. 이것을 '도메인'이라고 하고, 등록을 하기 위해서는 금액을 지불해야 한다. 
+
+내가 기본적으로 내 컴퓨터에 갈려면 ```127.0.0.1```을 입력하면 된다. 그러면 본인 컴퓨터의 주소로 들어갈 수 있는 것이다. 실질적으로 웹 상에서 바라보는 내 컴퓨터의 주소는 다르겠지만, 내가 내 컴퓨터의 주소를 가지고 무언가를 하려 한다면 ```127.0.0.1```을 입력하고 들어가면 된다.
+
+이것 말고 내가 localhost라는 이름으로 쓰기로 했으니, Run on Server을 했을 때 브라우저에 localhost라고 나타나는 것이다.
+
+그리고 이 뒤에는 8080과 같이 번호가 붙는데, 이는 포트 번호이다. 포트 번호는 HTTP를 위한 문이라고 생각하면 된다. '8080'이라는 문을 열겠다는 것이다. 8080은 Tomcat에서 사용하고 있는 포트 번호이다. DB는 '3306'이라는 포트 번호를 가지고 있다. 그래서 '127.0.0.1:3306'이라고 하면 이는 내 컴퓨터에서 돌고 있는 MySQL에 접속하겠다는 의미이다. 포트 번호는 여러 개를 쓸 수 있지만, 기본적으로 사용하는 포트 번호가 있으니 건드리지 않는 것이 좋다. http의 기본 포트번호는 80이고, https의 기본 포트번호는 443이다.
+
+<br>
+
+### input tag 실습
+
