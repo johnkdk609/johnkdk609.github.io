@@ -545,3 +545,84 @@ URL의 구성 요소에 대해 알아보겠다.
 
 ### input tag 실습
 
+* text (영어/한글)
+* number
+* radio
+* checkbox
+* select
+* textarea
+* hidden
+
+<br>
+
+GET, POST를 처리할 수 있는 html 파일을 하나 생성한다.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>GET/POST</title>
+</head>
+<body>
+	<h2>GET Form</h2>
+	<form action="" method="GET">
+		<input type="text" name="id">
+		<input type="submit">
+		<button>보내</button>
+	</form>
+	<h2>POST Form</h2>
+	<form action="" method="POST">
+		<input type="text" name="id"> 
+		<input type="submit">
+	</form>
+</body>
+</html>
+```
+
+그리고 해당 프로젝트를 Run on Server로 실행시킨다. 실행시킨 후 웹 브라우저에서 'form_01_get_post.html' 버튼을 클릭하고 들어간다. 그러면 주소가 ```http://localhost:8080/BackEnd_01_Servlet/form_01_get_post.html```가 되어 있을 것이다.
+
+GET From의 input 안에 "John"이라고 입력하고 '제출' 버튼을 클릭하면, URL이 ```http://localhost:8080/BackEnd_01_Servlet/form_01_get_post.html?id=John```로 바뀐다.
+
+해당 요청의 뒤에 새롭게 붙이는 것이다.
+
+POST Form의 input 안에 "John"이라고 입력하고 '제출' 버튼을 클릭하면 무언가 요청이 갔지만 쿼리 스트링에 보이지는 않는다.
+
+개발자 도구에 들어가서 Network 탭에 들어간 다음, 다시 POST Form의 input 안에 "John"을 입력하고 '제출' 버튼을 클릭하면 다음과 같은 화면이 나타난다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/a8fbe55b-05c5-4e7f-a3ae-1be03a769a62" width="750px" />
+
+그리고 여기서 Payload에 들어가보면 다음과 같이 나온다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/de5f60dd-2ca6-428f-8587-9332e3e27c1e" width="400px" />
+
+우리 눈에 보이지는 않지만, 실질적으로는 이런 식으로 서버에 날아간다는 것이다.
+
+<br>
+
+이번에는 다른 html 파일을 보겠다.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>input_text</title>
+</head>
+<body>
+	<h2>GET Form</h2>
+	<form action="ServletParameter" method="GET">
+		<input type="text" name="text"> 
+		<input type="submit">
+	</form>
+
+	<h2>POST Form</h2>
+	<form action="ServletParameter" method="POST">
+		<input type="text" name="text"> 
+		<input type="submit">
+	</form>
+</body>
+</html>
+```
+
+이제는 ServletParameter라는 곳에 요청을 보내고 싶다. 내가 action에 아무 것도 안 쓰면 내 요청을 그대로 보낸다고 하는 것인데, 그렇게 하지 않을 것이다. "ServletParameter"라고 하는 곳에 보내겠다는 것이다.
