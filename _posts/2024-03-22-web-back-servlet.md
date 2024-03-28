@@ -626,3 +626,240 @@ POST Form의 input 안에 "John"이라고 입력하고 '제출' 버튼을 클릭
 ```
 
 이제는 ServletParameter라는 곳에 요청을 보내고 싶다. 내가 action에 아무 것도 안 쓰면 내 요청을 그대로 보낸다고 하는 것인데, 그렇게 하지 않을 것이다. "ServletParameter"라고 하는 곳에 보내겠다는 것이다.
+
+<br>
+
+이제 ServletParamter 클래스를 생성한다.
+
+```java
+package com.ssafy.practice;
+
+import java.io.IOException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/ServletParameter")
+public class ServletParameter extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+    
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String text = req.getParameter("text");
+		
+		System.out.println(text);
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	}
+}
+```
+
+위의 input_text html 파일을 보면, ```name="text"```로 날아오기로 했다. 그리고 GET 요청과 POST 요청이 있다.
+
+그러면 내가 GET 요청을 위해서는 위 ServletParameter 클래스에 doGet메서드를 쓸 수 있고, POST 요청을 위해서는 doPost메서드를 써서 정의한다.
+
+```req``` 안에 ```getParameter()``` 메서드가 있다. 그리고 ```String text = req.getParameter("text");```의 방식으로 기입한다. 여기 있는 "text"는 input으로 날아온 text이다. 이렇게 String text 변수에 담은 다음, 이것을 콘솔에 출력해보겠다.
+
+그리고 실행된 웹 브라우저에서 'form_02_input_text.html' 버튼을 클릭해 ```http://localhost:8080/BackEnd_01_Servlet/form_02_input_text.html```로 이동한 다음, 'GET Form'의 input에 "hello"라고 입력하고 제출 버튼을 클릭한다.
+
+그러면 response에 아무 것도 안 만들어 놨으니 브라우저에서는 아무것도 안 뜬다. 그런데 콘솔창을 보면 다음과 같이 출력되어 있다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/b5253627-d530-4952-a158-01755c870a26" width="700px">
+
+요청 받는 파라미터를 가지고 와서 콘솔에 띄운 것이다.
+
+POST도 마찬가지 방법으로 처리할 수 있다. 
+
+<br>
+
+이번에는 새로운 html 파일을 보겠다.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>GET Form</h2>
+	<form action="ServletParameter2" method="GET">
+		
+		<h3>Text</h3>
+		<label for="text">텍스트 입력</label>
+		<input type="text" name="text" id="text"> <br>
+		
+		<h3>Number</h3>
+		<label for="number">숫자 입력</label>
+		<input type="number" name="number" id="number"> <br>
+		
+		<h3>Radio 버튼</h3>
+		<input type="radio" name="campus" id="su">
+		<label for="su">서울</label><br>
+		<input type="radio" name="campus" id="dj">
+		<label for="dj">대전</label><br>
+		<input type="radio" name="campus" id="gj">
+		<label for="gj">광주</label><br>
+		<input type="radio" name="campus" id="gm">
+		<label for="gm">구미</label><br>
+		<input type="radio" name="campus" id="buk">
+		<label for="buk">부울경</label><br>
+		<br>
+		
+		<h3>Checkbox</h3>
+		<input type="checkbox" name="fruit" id="apple" value="apple">
+		<label for="apple">사과</label><br>
+		<input type="checkbox" name="fruit" id="pear" value="pear">
+		<label for="pear">배</label><br>
+		<input type="checkbox" name="fruit" id="banana" value="banana">
+		<label for="banana">바나나</label><br>
+		<input type="checkbox" name="fruit" id="orange" value="orange">
+		<label for="orange">오렌지</label><br>
+		<br>
+		
+		<h3>Select</h3>
+		<select name="programming-language">
+			<option value="C">씨언어</option>
+			<option value="C++">씨플플</option>
+			<option value="Java">자바</option>
+			<option value="Python">파이썬</option>
+		</select>
+		<br>
+		
+		<h3>TextArea</h3>
+		<textarea rows="10" cols="10" name="content"></textarea>
+		<br>
+		
+		<h3>Hidden</h3>
+		<input type="hidden" name="action" value="hi">
+		<input type="submit">
+	</form>
+</body>
+</html>
+```
+
+위 코드에서는 ServletParameter2가 있으니, ServletParameter2 클래스를 만들겠다.
+
+```java
+package com.ssafy.practice;
+
+import java.io.IOException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/ServletParameter2")
+public class ServletParameter2 extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+    
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		//text / number / checkbox .... 받아서 처리해볼수있다
+		
+		int num = Integer.parseInt(req.getParameter("number"));
+	}
+}
+```
+
+위 html 파일을 보면, GET 방식으로 text도 넘겨보고, number도 보내보고, select도 보내보고, checkbox도 보내는 등 다양한 데이터들을 쭉 보낸다.
+
+그래서 ServletParameter2 클래스에 직접 처리할 수 있다. 저기서 보낸 text, number, checkbox 등을 받아서 처리해볼 수 있는 것이다.
+
+```req.getParameter("~~~")```의 반환 타입은 문자열이다. 그래서 input 태그에서 넘겨받은 데이터를 ```Integer.parseInt()```로 변환해야 한다.
+
+<br>
+
+### Servlet 요청과 응답 (기존 방식)
+
+Servlet 요청과 응답에서 기존 방식은 매핑 주소마다 servlet이 존재했다. 그러다 보니 많은 서블릿이 필요했다.
+
+가령 게시글을 작성하기 위해 ```/write```라는 매핑이 들어왔을 때 Servlet1, 게시글을 수정하기 위해 ```/update```라는 매핑이 들어왔을 때 Servlet2, 게시글 조회를 하기 위해 Servlet3, 게시글을 삭제하기 위해 Servlet4 ... 의 방식이었던 것이다.
+
+그런데 요즘에는 이렇게 Servlet을 여러 개 만드는 것이 아니라, Servlet을 딱 하나만 만들고 그것으로 하여금 기능들을 호출하도록 하였다. 이게 <u>MVC 패턴의 출발</u>이다.
+
+<br>
+
+### Servlet 요청과 응답 (Front Controller)
+
+웹에서 발생하는 모든 요청에 대해 호출되는 Servlet을 만들어 처리함.
+
+Servlet을 딱 하나만 만들고, 그 안에서 필요에 따라 게시글 등록, 수정, 조회, 삭제를 넣는 것이다.
+
+그러면 요청이 그냥 ```/board```의 방식으로 올 것인데, 그것에 따라 게시글 등록, 수정, 조회, 삭제를 어떻게 구분할 수 있을까?
+
+사용자는 모르게 "이것은 어떠한 요청이다"라는 것을 실어서 보내줘야 한다.
+
+<br>
+
+사용자가 모르게 하기 위해 다음과 같이 한다. 
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/0921700b-86dd-4cf1-8233-0809d0670300" width="650px">
+
+구구단을 구할 때 사용하는 html 코드이다. 위 코드를 보면, ```type="hidden"```이라고 되어 있다. 
+
+<br>
+
+또 다른 코드를 보자.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/54552566-19e0-44c2-a4fc-e5905a513c97" width="650px">
+
+signup.html의 코드로, type은 hidden으로 입력되어 있다.
+
+<br>
+
+이제 MainServlet 자바 클래스를 하나 만든다. 
+
+```java
+package com.ssafy.practice;
+
+import java.io.IOException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/MainServlet")
+public class MainServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+    
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doProcess(req, resp);
+	}
+	
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+	}
+	
+
+	private void doProcess(HttpServletRequest req, HttpServletResponse resp) {
+		String action = req.getParameter("action");
+		
+		switch (action) {
+		case "gugu": {
+			// 구구단 처리해서 반환해
+		}
+		case "regist": {
+			// 등록 처리해
+		}
+		default:
+		}
+	}
+}
+```
+
+```/MainServlet```이라는 요청이 있다고 했을 때, doPost의 경우 doGet을 다시 한 번 호출했다. 그리고 doGet에서 doProcess()라는 메서드를 만들 것이다. (이때 doProcess는 만들어져 있는 것이 아니고 내가 만들려고 쓴 것이다.)
+
+그리고 아래에 doProcess() 메서드를 만든다. 그리고 action 변수에 ```req.getParameter("action")```를 담는다. 그리고 switch문으로 case가 "gugu"면 구구단 처리해서 반환하게 하고, "regist"면 등록 처리를 하게 하는 것이다.
