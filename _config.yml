@@ -50,6 +50,8 @@ hydejack:
     precache_assets:
       - /assets/img/swipe.svg
 
+  repository: johnkdk609/johnkdk609.github.io
+
 optional_front_matter:
   remove_originals:    true
 
