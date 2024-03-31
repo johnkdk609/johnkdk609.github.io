@@ -431,3 +431,6 @@ jekyll_compose:
       links:
         - title: Project Link
           url: https://example.com
+
+# Added to solve the "No Github API ~ " issue
+github: [metadata]
