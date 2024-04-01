@@ -42,9 +42,9 @@ jobs:
       - name: Set up GitHub token
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc
+        run: echo "machine github.com login $GITHUB_TOKEN" > ~/.netrc && chmod 600 ~/.netrc
       - name: Debug GitHub token
-        run: echo "GitHub token: ${{ secrets.GITHUB_TOKEN }}" # Add this line for debugging
+        run: echo "GitHub token: ${{ secrets.GH_TOKEN }}" # Add this line for debugging
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
