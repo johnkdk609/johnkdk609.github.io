@@ -41,3 +41,117 @@ STS에서 Dynamic Web Project를 생성할 것이다. Finish를 누르기 전에
 아무튼 지금 내가 쓰는 WAS는 내 전용의 WAS가 아니고 외부적으로 하나 만들고, 프로젝트를 하나 만들 때마다 올려두는 것이다. 그래서 Context root가 기본 default 값은 프로젝트 명으로 잡혀져 있고, 필요하다면 내가 마음대로 바꿔서 쓸 수 있는 것이다.
 
 그리고 필요하다면 web.xml 을 만들어서 사용할 수 있다. (이번에는 web.xml을 따로 만들지 않고 해볼 것이다.)
+
+<br>
+
+사전 제공 코드를 사용하겠다. ```.jsp``` 파일들은 프로젝트 폴더의 webapp 안에 넣으면 된다.
+
+hello.jsp 의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hello</title>
+</head>
+<body>
+	<%
+	String name = "John";
+	%>
+	<h2>Hello JSP</h2>
+	<h4>
+		안녕하세요. <%=name%>입니다.
+	</h4>
+
+	<a href="index.html">홈으로</a>
+</body>
+</html>
+```
+
+위 코드에서, 맨 위에 ```<%@ page language="java", ... %>```가 없으면 그냥 html 파일이다. 그런데 이 코드가 붙음으로써 이 파일이 JSP가 되는 것이다.
+
+위 코드에서 ```<%   %>```를 썼더니 그 안에 자바 코드가 들어가는 것을 알 수 있다. 그리고 ```<%=   %>``` 안에 이전에 쓴 자바 변수 등을 넣으니 출력되는 것을 볼 수 있다.
+
+프로젝트를 Run 해도 되지만, 해당 jsp 파일에 우클릭을 하고 파일째로 서버를 실행시킬 수도 있다. (그런데 이것은 권장되는 방법은 아니다.)
+
+실행시킨 화면은 다음과 같다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/0525fad8-9191-4875-809f-1ca00b812881" width="450px" />
+
+<br>
+
+내가 저장한 변수 name이 화면에 출력되고 있다.
+
+JSP는 결국에는 서블릿이다. JSP 파일이 위와 같이 생기기는 했지만, 실질적으로 변환 파일을 보면 다음과 같이 변한다.
+
+```java
+    out.write("\r\n");
+    out.write("<!DOCTYPE html>\r\n");
+    out.write("<html>\r\n");
+    out.write("<head>\r\n");
+    out.write("<meta charset=\"UTF-8\">\r\n");
+    out.write("<title>JSP</title>\r\n");
+    out.write("</head>\r\n");
+    out.write("<body>\r\n");
+    out.write(" ");
+
+String name = "John";
+
+    out.write("\r\n");
+    out.write(" <h2>Hello JSP</h2>\r\n");
+    out.write(" <h4>안녕하세요. ");
+    out.print(name );
+    out.write("입니다.</h4>\r\n");
+    out.write("</body>\r\n");
+    out.write("</html>");
+```
+
+위 변환된 서블릿에서 계속 보이는 ```out```은 printWriter이라고 보면 되고, ```\r\n```은 Window 때문에 붙는 것이니 크게 신경쓰지 않아도 된다.
+
+자바 코드를 쓰는 부분은 실제로 자바 코드로 되어 있다.
+
+원래는 전부 셀프로 이렇게 작성해야 해서 매우 불편했다. 그래서 HTML 안에서 자바 코드를 쓰는 JSP가 등장한 것이다.
+
+<br>
+
+## JSP 동작
+
+JSP의 동작을 한 번 살펴보겠다.
+
+클라이언트가 어떠한 요청을 날렸을 때, JSP가 Servlet으로 변환이 되고, compiler를 통해 클래스 파일로 만들어진 다음, 그 결과가 HTML이 되어서 사용자에게 응답으로 돌아온다.
+
+이 요청을 보낼 때, 가령 "```01_Hello.jsp``` 줘!"라고 한 것이다. 그러면 그것과 관련된 URL 매핑이 되어 있는 것을 가져다가 자바 서블릿 파일로 변환하는 것이다. 그리고 일련의 과정을 거쳐 내부적으로 HTML 코드로 반환되어야 할 것이 <b>response라는 객체에 담겨서 사용자에게 전달되는 것</b>이다.
+
+다시 말하면, 요청은 request 객체가 동작하는 것이고 응답은 response 객체가 동작하는 것이다. 이런 <b>request, response는 객체이자 통로이다.</b>
+
+<br>
+
+## JSP 구성요소
+
+JSP의 구성요소는 크게 5가지로 얘기할 수 있다.
+
+* <b>지시자 (Directive)</b>
+
+JSP 페이지에 대한 설정 정보를 지정하기 위해서 사용한다.
+
+* <b>스크립트 요소 : 스크립트릿(Scriptlet), 표현식(Expression), 선언부(Declaration)</b>
+
+JSP에서 문서의 내용을 동적으로 생성하기 위해서 사용한다. 즉, 스크립트릿, 표현식, 선언부가 자바 코드를 쓰는 것이라고 보면 된다.
+
+* <b>JSP 기본 객체</b>
+
+요청 및 응답 관련 정보를 얻거나, 응답 결과를 만들기 위해서 사용한다. JSP 기본 객체로는 request, response, out(PrintWriter), page, session, Application 등 다양하게 있었다.
+
+* <b>표현언어 (Expression Language)</b>
+
+JSP를 좀 더 간결하게 작성하기 위해서 사용한다.
+
+* <b>Action Tag 와 JSTL</b>
+
+자주 사용하는 기능을 모아 미리 정의하여 Tag 형태로 작성한다. JSP에서 자바코드를 쉽게 작성할 수 있도록 사용한다. (Action Tag는 하지 않을 것이다.) 우리가 결국에는 자바 코드로 반복문을 돌리기 위해서 직접 for문을 써야 하는데, 이렇게 하면 지저분해진다. HTML 을 쓰는데 태그 형식으로 쓸 수 있지 않을까 하고 등장한 것이 JSTL 이다.
+
+<br>
+
