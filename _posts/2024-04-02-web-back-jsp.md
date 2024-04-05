@@ -504,3 +504,246 @@ include 지시자는 JSP 파일 안에 또 다른 JSP를 넣고 싶을 때 이�
 ```jsp
 <%@ 지시자 속성 = "값" %>
 ```
+
+<br>
+
+<h4>지시자 (Directive) - page</h4>
+
+JSP 페이지 실행 매개변수를 제어. 출력처리, 오류처리 등의 내용을 포함하고 있다.
+
+기본적으로 JSP를 생성하면 다음과 같은 것이 만들어진다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+```
+
+위 page에서 ```pageEncoding="UTF-8"```이 없으면 한글이 다 깨지니, 손대지 말고 항상 넣는 것이 좋다.
+
+페이지에 작성할 수 있는 속성들은 엄청 많다.
+
+<table>
+    <tr>
+        <th>속성</th>
+        <th>설명</th>
+        <th>기본값</th>
+    </tr>
+    <tr>
+        <td>language</td>
+        <td>스크립트에서 사용할 언어 지정</td>
+        <td>java</td>
+    </tr>
+    <tr>
+        <td>contentType</td>
+        <td>JSP가 생성할 문서의 MIME 타입과 캐릭터 인코딩</td>
+        <td>text/html</td>
+    </tr>
+    <tr>
+        <td>import</td>
+        <td>JSP에서 사용할 Java 클래스를 지정</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>session</td>
+        <td>JSP가 세션을 사용할지 여부 지정</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>buffer</td>
+        <td>JSP 페이지의 출력 버퍼 크기 지정. 'none'일 경우 출력 버퍼를 사용하지 않음.</td>
+        <td>8kb</td>
+    </tr>
+    <tr>
+        <td>errorPage</td>
+        <td>JSP 실행 중 에러 발생시 출력할 페이지 지정</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>isErrorPage</td>
+        <td>에러가 발생했을 때 보여줄 페이지인지 지정</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>pageEncoding</td>
+        <td>JSP 소스코드의 인코딩 지정</td>
+        <td>ISO-8859-1</td>
+    </tr>
+    <tr>
+        <td>info</td>
+        <td>현재 JSP 페이지에 대한 설명</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>autoflush</td>
+        <td>버퍼의 내용을 자동으로 브라우저로 보낼지에 대한 설정</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>isThreadsafe</td>
+        <td>현재 JSP가 멀티스레드로 동작해도 안전한지 여부를 설정. 'false'일 경우 SingleThread로 동작</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>extends</td>
+        <td>JSP 페이지를 기본적인 클래스가 아닌 다른 클래스를 상속하도록 변경</td>
+        <td></td>
+    </tr>
+</table>
+
+import의 경우, JSP도 결국에는 Servlet이고 Servlet은 자바 코드이다. 자바 코드에는 내가 만들어둔 객체 등을 집어넣을 수 있다. 그런 것을 하기 위해 import를 할 수 있어야 한다. JSP에서 사용할 자바 클래스를 규정할 수 있는 것이다.
+
+erroPage의 경우, JSP 페이지를 쭉 돌다가 에러가 터지면 이상한 값이 뜨는 것이 아니라, 이러한 errorPage로 갔으면 좋겠다는 설정이다.
+
+isErrorPage의 경우, 에러가 발생했을 때 보여줄 페이지인지를 설정하는 것이다. 즉 이 JSP가 에러를 위한 페이지인지의 속성을 지정하는 것이다.
+
+<br>
+
+에러 페이지를 한 번 만들어보겠다.
+
+우선, 08_divide.jsp 파일의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page errorPage="09_error.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>에러연습</title>
+</head>
+<body>
+	<h2>정수를 0으로 나누어 보자</h2>
+	<%= 2 / 0 %>
+
+	<a href="index.html">홈으로</a>
+</body>
+</html>
+```
+
+그리고 09_error.jsp 파일의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ page isErrorPage="true"%>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>에러</title>
+</head>
+<body>
+	<h2>오류났을 때 오는 페이지</h2>
+	<%=exception.getMessage()%>
+	<a href="index.html">홈으로</a>
+</body>
+</html>
+```
+
+여기서, 08_divide.jsp 파일에서 지시자 중 ```<%@ page errorPage="09_error.jsp" %>```를 주석처리한 후 Run on Server을 하면 다음과 같은 화면이 브라우저에 나타난다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5fc993d5-af84-42d2-81ba-8120ae79468c" width="900px" />
+
+자바에서 정수를 0으로 나누면 예외가 터진다.
+
+콘솔창에는 다음과 같은 메세지가 나타난다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/75db5fd3-332a-43b1-a0e5-b01752e948c1" width="850px" />
+
+0으로 나누려 했을 때 문제가 터지는 것이다.
+
+<br>
+
+에러가 터졌을 때 에러 페이지로 특정 경로를 적어주면 된다. (이번에는 09_error.jsp) 그런데, 08번과 09번 JSP 파일이 동급의 위치에 있기 때문에 ```<%@ page errorPage="09_error.jsp" %>```로 적은 것이다. (항상 경로를 적을 때 절대경로, 상대경로 등 다양한 것을 고려해서 입력해야 한다.)
+
+이제 08_divide.jsp 파일에서 지시자 주석을 풀고 저장한 다음, 다시 웹 브라우저를 보면 다음과 같이 화면이 나타난다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/8ec87391-7745-4933-a13e-de0554a6c7b4" width="450px" />
+
+오류가 났을 때 오는 페이지로 잘 이동한 것을 알 수 있다. 그리고 09_error.jsp 파일의 코드에서 ```<%=exception.getMessage()%>``` 코드로 인해 위 출력 화면에서 '/ by zero' 가 보이고 있다.
+
+그리고 09_error.jsp 파일에서 지시자 쪽에 ```<%@ page isErrorPage="true"%>```가 있는데, 이는 '이 페이지는 에러 페이지입니다.'라는 것을 규정해둔 것이다.
+
+<br>
+
+한편, 아무런 예외가 발생하지 않은 상황에서 09_error.jsp로 가보고 싶을 수도 있다. 가령 08_divide.jsp 파일에서 '2 / 0'을 '2 / 1'로 변경한 다음 저장하고, 홈 화면에서 09_error.jsp 버튼을 클릭하고 들어가면 다음과 같은 화면이 나타난다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/b7dfc8ea-09ec-4e10-bb95-bfafb92711ac" width="900px" />
+
+위와 같은 에러 메세지가 나타난다. NullPointerException이 발생한 것이다. ```"exception" is null``` 즉, 에러가 터지지 않아서 exception 이라는 객체 자체가 없다는 것이다. 객체 자체가 null인데, null이 가지고 있는 메세지라니 이건 말도 안 되는 것이다. 즉, 에러가 날 게 없어서 에러라는 것이다.
+
+<br>
+
+만약 09_error.jsp 에서 ```<%=exception.getMessage()%>``` 부분을 주석처리하고 다시 실행해보면, 다음과 같은 화면이 나온다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/bcec2555-5a9e-4bbd-9c94-b82ceb2d959d" width="450px" />
+
+이번에는 잘 나온다.
+
+그래서 다이렉트로 쓰는 것은 위험할 수 있고, 내가 직접 처리를 해야 하는 것이 나을 수도 있다.
+
+<br>
+
+<h4>지시자 (Directive) - include</h4>
+
+include는 JSP 내에 다른 HTML 문서나 JSP 페이지의 내용을 삽입할 때 사용한다. 반복적으로 사용되는 부분인 header, footer 등을 별도로 작성하여 페이지 내에 삽입하면 반복되는 코드의 재작성을 줄일 수 있다.
+
+```jsp
+<%@ include file="/template/header.jsp" %>
+```
+
+내용만 다른 똑같은 페이지가 많아지기 시작한다면, 반복되는 부분을 재작성하지 않는 것이 매우 중요하다.
+
+예시 코드를 보자. 우선 10_include.jsp 파일의 코드이다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>다른 JSP include</title>
+</head>
+<body>
+	<%@ include file="/template/header.jsp" %>
+	<h2>메인 내용입니다.</h2>
+	<!-- 푸터도 만들어서 작성할수 있다. -->
+</body>
+</html>
+```
+
+그리고 header.jsp 코드이다. 이 코드는 webapp/template 폴더 안에 있다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<h2>헤더의 내용이 들어갈 공간 입니다.</h2>
+```
+
+그리고 출력 결과를 보면 다음과 같다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c0ded534-8ff2-46ce-937f-4e13836716f7" width="450px" />
+
+개발자 도구에 들어가서 보면, HTML 안에 잘 반영된 것을 볼 수 있다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/71cec6e5-41c3-4b35-8508-2394d92f569d" width="900px" />
+
+header.jsp 파일의 경우, 어차피 10_include.jsp의 코드와 겹치는 부분 대부분은 제거하고 간략하게 메인 내용만 쓰면 된다. (그래도 지시자 하나는 남겨두는 것이 글자가 깨질 위험도 없애고 좋다.)
+
+당연히 ```<%@ include file="/template/header.jsp" %>```를 작성할 때, 경로를 정확히 작성해야 한다. 만약 "/header.jsp"라고 쓰고 template를 빠트리면 빨간 줄이 생긴다. 이때 '/'로 시작한다는 것은 webapp의 경로부터 시작하겠다는 것이다. 그리고 '/'이 없으면 현재 내 위치 기준으로 template 폴더에 들어가서 header.jsp에 접근하겠다는 것이다.
+
+<br>
+
+<h4>지시자 (Directive) - taglib</h4>
+
+taglib은 JSTL 또는 사용자가 작성한 커스텀 태그를 사용할 때 작성한다. 불필요한 자바 코드를 줄일 수 있다.
+
+```jsp
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+```
+
+taglib은 나중에 좀 더 구체적으로 다룰 것이다.
