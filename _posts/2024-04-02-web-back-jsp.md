@@ -155,3 +155,193 @@ JSP를 좀 더 간결하게 작성하기 위해서 사용한다.
 
 <br>
 
+## JSP 기본태그
+
+이제 본격적으로 JSP의 내용에 대해 다룰 것이다.
+
+JSP의 기본 태그는 크게 5가지가 있다.
+
+<table>
+    <tr>
+        <th>종류</th>
+        <th>사용용도</th>
+        <th>형식</th>
+    </tr>
+    <tr>
+        <td>스크립트릿(scriptlet)</td>
+        <td>자바코드 작성</td>
+        <td>&#60;&#37;  &#37;&#62;</td>
+    </tr>
+    <tr>
+        <td>선언(declaration)</td>
+        <td>변수와 메서드를 선언</td>
+        <td>&#60;&#37;! &#37;&#62;</td>
+    </tr>
+    <tr>
+        <td>표현식(expression)</td>
+        <td>계산식이나 함수를 호출한 결과를 문자열 형태로 출력</td>
+        <td>&#60;&#37;= &#37;&#62;</td>
+    </tr>
+    <tr>
+        <td>주석(comment)</td>
+        <td>JSP 페이지 설명 작성</td>
+        <td>&#60;&#37;-- --&#37;&#62;</td>
+    </tr>
+    <tr>
+        <td>지시자(directive)</td>
+        <td>JSP 페이지 속성 지정</td>
+        <td>&#60;&#37;&#64; &#37;&#62;</td>
+    </tr>
+</table>
+
+<br>
+
+HTML의 주석은 &#60;!-- --&#62;인데, JSP의 주석과 다른 것을 알 수 있다. 
+
+<br>
+
+### 스크립트릿 (Scriptlet)
+
+스크립트릿은 스크립팅 언어(java)로 작성된 코드 조각을 포함하는 데 사용된다. 
+
+```jsp
+<%
+    // 자바코드 작성
+%>
+```
+
+그러면 스크립트릿을 예시 코드로 알아보자.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>스크립트릿</title>
+</head>
+<body>
+	<h2>스크립트릿 연습</h2>
+	<%
+	int A = 10;
+	int B = 20;
+
+	int sum = A + B;
+	
+	out.println(A + "+" + B + "=" + sum);	
+	out.println(A + "+" + B + "=" + sum);	
+	
+	%>
+	<a href="index.html">홈으로</a>
+</body>
+</html>
+```
+
+우선 위 코드에서, ```<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>```를 보면, language는 자바, contentType은 text로 넘어왔을 때 html로 인쇄했으면 좋겠다는 것, charset은 UTF-8 방식이면 좋을 것 같고, pageEncoding은 UTF-8로 하라는 것이다. 
+
+이때 language의 경우 안 써도 default가 Java인데, 쓸 수 있는 언어도 Java밖에 없다. 그래도 이렇게 자바라고 명시한 이유는, 나중에 발전할 수도 있기 때문이다.
+
+위 코드에서 스크립트릿 안쪽을 보면 변수 A, B가 선언되어 있고, 그것을 더한 30이 sum 변수에 들어간 것을 알 수 있다. 
+
+30을 출력하기 위해서는 어떻게 해야 할까? ```System.out.println()```의 경우 콘솔창에 출력하는 것이니 당장 쓸 것은 아니다. 출력을 위해 기본적으로 가지고 있는 객체가 있는데, ```out```이다. 그래서 ```out.print(sum)```의 방식으로 화면에 띄울 것이다. (out.print(), out.println() 둘 다 딱히 줄바꿈 되지 않으니 아무 거나 쓰면 된다.)
+
+이제 Run on Server을 하고 브라우저를 보면 다음과 같이 나온다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/372b97e9-b025-404e-90c4-73c4456af68e" width="450px" />
+
+<br>
+
+그런데, 화면에 출력되는 것들을 줄바꿈 하고 싶다면 어떻게 해야 할까?
+
+다음 예시 코드를 보자.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>구구단 출력</title>
+</head>
+<body>
+	<h2>구구단</h2>
+	<%
+	for (int i = 2; i < 10; i++) {
+		for (int j = 1; j <= 9; j++) {
+			out.print(i + " * " + j + " = " + (i * j));
+			out.print("<br>");
+		}
+	}
+	%>
+	<a href="index.html">홈으로</a>
+</body>
+</html>
+```
+
+위 코드에 대해 Run on Server를 하면 출력 결과는 다음과 같다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/5a00dbac-ffb0-4b9a-8713-22e94befc10e" width="450px" />
+
+<br>
+
+### 선언부 (Declaration)
+
+다음은 JSP 기본 태그 중 선언부(Declaration)이다. 선언부는 멤버변수의 선언이나 메서드를 선언하는 영역이다.
+
+```jsp
+<%!
+    // 변수 선언
+    // 메서드 선언
+%>
+```
+
+예시 코드를 통해 알아보자.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%! int A = 10;
+	int B = -20;
+
+	String name = "SSAFY";
+
+	public int add(int A, int B) {
+		return A + B;
+	}
+
+	public int abs(int A) {
+		return A > 0 ? A : -A;
+	} %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>선언부</title>
+</head>
+<body>
+	<%
+	int C = 10;
+	// 여기에 메서드를 정의할 수는 없을까?
+	/* 	public int mul(int A, int B){
+		return A*B;
+	} */
+	out.print(add(A, B));
+	out.print("<br>");
+
+	out.print(abs(B));
+	out.print("<br>");
+	%>
+	<a href="index.html">홈으로</a>
+</body>
+</html>
+```
+
+이제 Run on Server을 하고 화면에서 보면 다음과 같다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/9d1fbe65-f0bf-4c4a-b246-f7222d0324d2" width="450px" />
+
+<br>
+
+스크립트릿 안에 메서드를 정의할 수는 없을까? 안 된다. 스크립트릿 안에 작성한 내용은 service() 메서드 안에 정의가 된다. 자바에서는 메서드 안에 메서드를 선언하는 것이 허용되지 않는다. 그래서 스크립트릿 안에서 쓸 수는 없고, 선언부에 작성해야 하는 것이다.
