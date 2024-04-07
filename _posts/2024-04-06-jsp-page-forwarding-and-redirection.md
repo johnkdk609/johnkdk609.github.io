@@ -272,3 +272,13 @@ public class MainServlet extends HttpServlet {
 	}
 }
 ```
+
+위 코드를 보면, service를 하나 만들고 request, response로 단어를 설정해 놨다. 원래는 POST 방식으로 무언가 왔을 때 캐릭터 인코딩 방식을 UTF-8 로 바꿔야 하는데, 지금은 딱히 안 바꿔도 상관없다. 자바 버전이 올라가면서 그런 것들이 필요 없어졌기 때문이다.
+
+어떤 사용자가 "/main"으로 요청을 보냈을 때 모든 요청이 이 Servlet 하나에 몽땅 떨어지게 되어 있다. 이 안에서 구분할 수 있는 포인트는 한 개 있다. 11_regist.jsp 파일을 봤을 때, ```action```이라는 이름으로 처리를 하는 것이다.
+
+다시 MainSerlvet에서 ```String action = request.getParameter("action");```으로 action을 받아온다. 그러면 MainSerlvet에서 switch 구문을 이용해서 ```case "regist":``` 즉 "regist"라는 요청이 들어왔다면 ```doRegist(request, response);```를 실행시키는 것이다. request와 response를 그대로 담아서 보낼 것이고, 이때 switch 구문에 key는 action이어야 한다. (Java 1.7 버전부터 switch 구문의 문자열 구분을 사용할 수 있게 되었다.)
+
+그리고 이제 생성하기 doRegist()를 만든다. 다시 11_regist.jsp 파일을 보면 name이 넘어오고 나이, gender, hobby 같은 것들이 넘어온다. doRegist()에 name, age, gender, hobbies를 ```request.getParameter()```로 가져온다. (age의 경우 정수형이니 parsing을 한다.) 그리고 생성자를 활용해 인간이라는 ```Person p``` 객체를 생성한다.
+
+그런 다음 PersonManager을 불러서 싱글턴이니까 ```getInstance()```로 받아와서 쓴다. 그리고 받아온 ```pm```에다가 생성한 인간 객체 p를 ```regist()``` 하여 등록한다.
