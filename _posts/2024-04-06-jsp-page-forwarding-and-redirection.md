@@ -264,10 +264,12 @@ public class MainServlet extends HttpServlet {
 		
 		request.setAttribute("person", p);
 		
-//		RequestDispatcher disp =  request.getRequestDispatcher("/12_result.jsp");
-//		disp.forward(request, response);
+		// 포워딩
+		RequestDispatcher disp = request.getRequestDispatcher("/12_result.jsp");
+		disp.forward(request, response);
 		
-		response.sendRedirect(request.getContextPath()+"/12_result.jsp");
+		// 리다이렉팅
+//		response.sendRedirect(request.getContextPath()+"/12_result.jsp");
 		
 	}
 }
@@ -282,3 +284,123 @@ public class MainServlet extends HttpServlet {
 그리고 이제 생성하기 doRegist()를 만든다. 다시 11_regist.jsp 파일을 보면 name이 넘어오고 나이, gender, hobby 같은 것들이 넘어온다. doRegist()에 name, age, gender, hobbies를 ```request.getParameter()```로 가져온다. (age의 경우 정수형이니 parsing을 한다.) 그리고 생성자를 활용해 인간이라는 ```Person p``` 객체를 생성한다.
 
 그런 다음 PersonManager을 불러서 싱글턴이니까 ```getInstance()```로 받아와서 쓴다. 그리고 받아온 ```pm```에다가 생성한 인간 객체 p를 ```regist()``` 하여 등록한다.
+
+<br>
+
+여기까지 해서 저장이 끝난 상태이고, 이제 12_result.jsp에다가 보내고 싶다.
+
+12_result.jsp 파일의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="com.ssafy.dto.Person" %>   
+<%@ page import="java.util.Arrays" %>   
+ 
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>결과</title>
+</head>
+<body>
+	<% Person p = (Person)request.getAttribute("person"); %>
+	<table>
+		<tr>
+			<td>이름</td>
+			<td><%=p.getName() %></td>
+		</tr>
+		<tr>
+			<td>나이</td>
+			<td><%=p.getAge() %></td>
+		</tr>
+		<tr>
+			<td>성별</td>
+			<td><%=p.getGender() %></td>
+		</tr>
+		<tr>
+			<td>취미</td>
+			<td><%=Arrays.toString(p.getHobbies()) %></td>
+		</tr>
+	</table>
+	<a href="/BackEnd_02_JSP">홈으로</a>
+</body>
+</html>
+```
+
+12_result.jsp 를 보면 ```java.util.Arrays```를 import 했고, ```Person```도 import 했다. 그리고 ```(Person)request.getAttribute("person");```을 할 것이다. 이게 무슨 말인가 하면, 우리가 이제 12_result.jsp에 포워딩을 할 것인데 그 request이라는 통로를 그대로 유지할 것이고 내가 속성을 집어넣을 것이다. 그래서 다시 MainServlet을 보면 ```request.setAttribute("person", p);```을 하였다.
+
+즉, 내가 지금 통로를 뚫어놨는데 이 통로에다가 p를 집어넣는다. 지금은 MainServlet에 있다. 그리고 이 통로의 연결을 쭉 이어서 12_result.jsp까지 뚫은 것이다.
+
+```java
+RequestDispatcher disp = request.getRequestDispatcher("/12_result.jsp");	// request가 가지고 있는 RequestDispatcher 인터페이스에 저장
+disp.forward(request, response);	// 이제 disp에 request와 response 그대로 담아서 forward
+```
+
+위와 같은 코드로 포워딩을 하는 것이다.
+
+<br>
+
+이제 Run on Server을 하고 11_regist.jsp를 클릭한 다음 사람을 등록한다. 그러면 화면에 다음과 같이 나타난다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1db00959-9493-49d1-b83f-0adf1c7f835e" width="400px" />
+
+<br>
+
+12_result.jsp 페이지에 ```request```통로 안에 있는 ```getAttribute()```로 "person"이라는 이름으로 가져왔는데, 이렇게 가져온 것은 Object 이다. 그래서 강제로 형변환을 해서 집어넣고, 이름, 나이, 성별, 취미를 넣은 것이다.
+
+<br>
+
+만약 MainServlet에서 이러한 방식 (포워딩)을 취하지 않고, ```response.sendRedirect(request.getContextPath()+"/12_result.jsp");``` 를 넣어 리다이렉팅을 할 수도 있다.
+
+sendRedirect는 새롭게 요청을 보내는 것이다. 내부적으로 요청을 보낼 때에는 "/"가 webapp부터 찾으니 문제가 없을 것 같지만, 여기서 그냥 "/12_result.jsp"라고 쓰면 제대로 동작하지 않을 것이다. 이 안에 context root를 써야 하는데, context root는 ```request.getContextPath()```로 가져올 수도 있다.
+
+그런데 이제 다시 Run on Server을 하고, 사람을 등록하면 다음과 같은 화면이 나타난다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/564de2aa-bff3-4221-b03c-b7d0aedf7779" width="900px" />
+
+```java.lang.NullPointerException: Cannot invoke "com.ssafy.dto.Person.getName()" because "p" is null``` 라는 에러 메세지가 나온다. p가 null이라는 것이다.
+
+내가 아까 새롭게 요청을 보냈다. MainServlet에서 p 라고 하는 것을 심어서 클라이언트에게 돌려줄 때, ```request.getContextPath()+"/12_result.jsp"```의 경로로 요청을 다시 보내라는 것이다. 그래서 클라이언트가 result.jsp로 요청을 다시 보내는데, 기존에 있는 통로를 사용하지 않는다. p를 기존 요청에 담아놨는데 이것을 활용할 수 없는 것이다. 왜냐하면 이 통로에는 p가 안 들어있기 때문이다.
+
+<br>
+
+이제 WEB-INF 안에 list를 하나 만들어볼 것이다. 12_list.jsp 파일의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="com.ssafy.dto.Person" %>   
+<%@ page import="java.util.Arrays" %>   
+ 
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>리스트</title>
+</head>
+<body>
+	<h2>목록</h2>
+</body>
+</html>
+```
+
+그리고 MainServlet에서 switch문에 다음과 같이 코드를 기입한다.
+
+```java
+case "list":
+	doList(request, response);
+	break;
+```
+
+그리고 또 다음과 같은 코드를 입력한다.
+
+```java
+private void doList(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	response.sendRedirect("보내");
+}
+```
+
+이렇게 한 이유는, WEB-INF 파일은 접근을 할 수가 없다. WEB-INF 아래에 있는 폴더는 Servlet을 통해서 갈 수밖에 없다. 이렇게 외부적으로 바로 접근할 수 없게 만드는 방식이 있다.
+
+그래서 사실 webapp에 있는 파일들을 WEB-INF에 넣어서 동작시키는 것이 이상적이다.
