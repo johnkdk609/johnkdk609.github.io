@@ -53,3 +53,23 @@ Cookie는 언제 사용하는 것일까? 가령 내가 쿠팡 사이트에 들�
 ## Cookie
 
 Cookie라는 것은 웹 서버가 클라이언트의 웹 브라우저에 저장하는 작은 데이터 조각이다.
+
+필요에 따라 요청(request) 시 서버로 같이 전송된다. 무조건적으로 내가 가지고 있는 모든 쿠키들이 어떤 요청을 보낼 때마다 한 방에 다 가는 것이 아니라, 필요 시에 이러이러한 쿠키들을 보내겠다는 것이다.
+
+쿠키는 Key : Value 형태의 문자열 데이터이다.
+
+그리고 웹 브라우저(클라이언트) 별로 별도의 쿠키를 생성한다. 브라우저는 하나의 컴퓨터이다. 브라우저가 다르다면 다른 사용자인 것이다.
+
+(공식 문서: <a href="https://jakarta.ee/specifications/platform/8/apidocs/javax/servlet/http/cookie">https://jakarta.ee/specifications/platform/8/apidocs/javax/servlet/http/cookie</a>)
+
+<br>
+
+## Cookie 사용 목적
+
+Cookie의 사용 목적은 다음과 같다.
+
+* 세션 관리 (사용자 아이디, 장바구니 등)를 위해 사용
+* 사용자가 설정한 환경 등을 기억하여 페이지 제공
+* 사용자의 행동과 패턴을 분석
+* 사용자의 관심에 따른 광고를 타겟팅 하기 위해서 사용
+
