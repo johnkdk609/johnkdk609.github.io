@@ -81,8 +81,6 @@ hello.jsp 의 코드는 다음과 같다.
 
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/0525fad8-9191-4875-809f-1ca00b812881" width="450px" />
 
-<br>
-
 내가 저장한 변수 name이 화면에 출력되고 있다.
 
 JSP는 결국에는 서블릿이다. JSP 파일이 위와 같이 생기기는 했지만, 실질적으로 변환 파일을 보면 다음과 같이 변한다.
@@ -250,8 +248,6 @@ HTML의 주석은 &#60;!&#45;&#45; &#45;&#45;&#62;인데, JSP의 주석과 다�
 
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/372b97e9-b025-404e-90c4-73c4456af68e" width="450px" />
 
-<br>
-
 그런데, 화면에 출력되는 것들을 줄바꿈 하고 싶다면 어떻게 해야 할까?
 
 다음 예시 코드를 보자.
@@ -341,8 +337,6 @@ HTML의 주석은 &#60;!&#45;&#45; &#45;&#45;&#62;인데, JSP의 주석과 다�
 이제 Run on Server을 하고 화면에서 보면 다음과 같다.
 
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/9d1fbe65-f0bf-4c4a-b246-f7222d0324d2" width="450px" />
-
-<br>
 
 스크립트릿 안에 메서드를 정의할 수는 없을까? <b>안 된다.</b> 스크립트릿 안에 작성한 내용은 service() 메서드 안에 정의가 된다. <u>자바에서는 메서드 안에 메서드를 선언하는 것이 허용되지 않는다. 그래서 스크립트릿 안에서 쓸 수는 없고, 선언부에 작성해야 하는 것</u>이다.
 
