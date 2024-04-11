@@ -31,6 +31,8 @@ dispatcher.forward(request, response);
 
 request, response 객체가 전달되어 사용되기 때문에 객체가 사라지지 않는다. 브라우저에는 최초 요청한 주소가 표시된다.
 
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/63574f69-c7c6-4141-91c5-0240857181b6" width="700px" />
+
 클라이언트가 요청을 보냈는데, JSP나 Java Servlet가 이를 받아서, 또 다른 JSP 혹은 Java Servlet에게 포워딩(forwarding) 하는 것이다. 사용자가 연결한 통로가 없어지지 않고 그대로 다음 페이지까지 연결이 되는 것이다. 응답도 마찬가지로 계속 이어져 있다.
 
 요청을 함과 동시에 응답할 수 있는 통로도 같이 뚫어 넣는데, 그것 또한 같이 연결이 되어 있는 것이다.
@@ -48,6 +50,8 @@ response에게 sendRedirect()를 하는 것이다.
 이전에 알아본 포워딩 방식을 생각해 봤을 때 그대로 유지하고 다른 데로 가야 하니까, request라는 객체 안에 getRequestDispatcher()를 동작을 시켰다. 반면 sendRedirect()는 응답에다가 새로운 주소를 집어 넣고 "야 다시 보내" 라고 하는 것이다.
 
 브라우저가 새로운 요청을 만들어 내기 때문에 최초 요청 주소와 다른 요청 주소가 화면에 보여진다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/4e0cdd60-1cac-46d7-98bb-aef7869e2584" width="700px" />
 
 클라이언트가 요청1 을 보냈을 때, JSP나 Java Servlet이 이를 받을 것이다. 그러면 이 요청1을 받은 것이 sendRedirect() 요청을 하면 이 응답이 사용자에게 돌아간다. 이때에는 300번대 코드가 넘어간다. 그러면 이 클라이언트가 300번대 코드를 받고 어떤 URL 주소를 받았으면, 곧바로 다시 한 번 이 URL로 요청을 날린다.
 
