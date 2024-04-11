@@ -66,7 +66,7 @@ STS로 알고리즘 문제를 풀 때, <kbd>Ctrl + F11</kbd>를 많이 눌렀었
 
 <br>
 
-<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/6f8c564d-1637-4cab-884a-c4ea8bf02448" width="1000px" />
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/64fe34e0-0b27-4d8b-98ba-1e2ec00122e7" width="1000px" />
 
 <br>
 
