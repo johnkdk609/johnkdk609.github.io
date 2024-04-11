@@ -64,11 +64,7 @@ STS로 알고리즘 문제를 풀 때, <kbd>Ctrl + F11</kbd>를 많이 눌렀었
 
 <b>웹 아키텍처(Web Architecture)</b>가 어떻게 되어 있는지 알아보겠다.
 
-<br>
-
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/64fe34e0-0b27-4d8b-98ba-1e2ec00122e7" width="1000px" />
-
-<br>
 
 우선 User가 있다. 우리가 바로 User이다.
 
