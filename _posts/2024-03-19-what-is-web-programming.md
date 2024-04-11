@@ -64,6 +64,12 @@ STS로 알고리즘 문제를 풀 때, <kbd>Ctrl + F11</kbd>를 많이 눌렀었
 
 <b>웹 아키텍처(Web Architecture)</b>가 어떻게 되어 있는지 알아보겠다.
 
+<br>
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/6f8c564d-1637-4cab-884a-c4ea8bf02448" width="1000px" />
+
+<br>
+
 우선 User가 있다. 우리가 바로 User이다.
 
 그리고 User는 브라우저를 사용한다. 이 브라우저가 클라이언트(Client)이다. 우리가 자주 사용하는 크롬(Chrome)이 브라우저이다.
