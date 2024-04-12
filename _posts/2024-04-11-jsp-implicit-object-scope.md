@@ -97,11 +97,11 @@ servlet과 페이지 간 정보를 공유하기 위해서 메서드를 지원하
 
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/6f8c3162-4c15-4166-bfe6-3a1e5b7aa05e" width="450px" />
 
-지금 내가 보고 있는 이 페이지는 02_SecondScope.jsp 이다.
+지금 내가 보고 있는 이 페이지는 04_SecondScope.jsp 이다.
 
 <br>
 
-02_SecondScope.jsp 파일의 코드는 다음과 같다.
+04_SecondScope.jsp 파일의 코드는 다음과 같다.
 
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -125,7 +125,7 @@ servlet과 페이지 간 정보를 공유하기 위해서 메서드를 지원하
 
 <br>
 
-지금 내가 보고 있는 이 페이지는 02_SecondScope.jsp 이다. 그런데 위에 URL을 보면 ```03_FirstScope.jsp```라고 되어 있다. 어떻게 이것이 Second 인 것일까?
+지금 내가 보고 있는 이 페이지는 04_SecondScope.jsp 이다. 그런데 위에 URL을 보면 ```03_FirstScope.jsp```라고 되어 있다. 어떻게 이것이 Second 인 것일까?
 
 콘솔창에 로그를 보면 다음과 같다.
 
@@ -133,10 +133,42 @@ servlet과 페이지 간 정보를 공유하기 위해서 메서드를 지원하
 
 포워딩을 바로 했기 때문에 주소가 바뀌지 않은 채로 이곳으로 넘어왔더니, 페이지 속성만 null 이라고 한다.
 
-페이지 영역은 각 페이지마다 생성되는 고유한 영역이다. 그래서 03_FirstScope.jsp 페이지에서 있던 페이지 속성이 02_SecondScope.jsp 까지 넘어오지 않은 것이다. 왜냐하면 새롭게 만들어진 것이기 때문이다.
+페이지 영역은 각 페이지마다 생성되는 고유한 영역이다. 그래서 03_FirstScope.jsp 페이지에서 있던 페이지 속성이 04_SecondScope.jsp 까지 넘어오지 않은 것이다. 왜냐하면 새롭게 만들어진 것이기 때문이다.
 
 First 에서 Second 로 포워딩(forwarding)을 했다. 즉, 그 요청을 가지고 그대로 넘겨져 왔으니 request가 사라져 있는 것이다.
 
 세션이라고 하는 것은 웹 브라우저와 관련된 것이니, 브라우저를 전부 다 끄지 않으면 세션은 유지된다. 
 
 그리고 application이라고 하는 것은 나의 WAS에 이 값을 저장하는 것이다.
+
+<br>
+
+이제 '세번째 페이지' 버튼을 클릭하면 다음과 같이 화면이 바뀐다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/e26cc96b-3c21-4f09-8978-d61082e0717f" width="450px" />
+
+이제는 요청도 없어졌다.
+
+04_SecondScope.jsp를 보면, 아래에 a 태그를 이용해 05_ThirdScope.jsp로 가게 해 두었다. 결국에 sendRedirect 한 것으로 새롭게 요청을 보낸 것과 똑같다. 새롭게 요청을 보낸 것이니 기존의 request에 담아둔 것이 없고, 위 결과처럼 session과 application만 유지가 된 것이다.
+
+크롬 브라우저에서 시크릿 탭을 켜고 같은 주소(http://localhost:8080/BackEnd_03_Cookie_Session/05_ThirdScope.jsp)로 들어가니 다음과 같이 나온다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7cdaca17-82f2-48eb-a32f-cbb3e915b660" width="450px" />
+
+세션도 없다. 아직 서버를 끄지는 않았기 때문에 application이 그대로 있는 것이 맞다. 세션은 브라우저 별로 관리가 되므로 지금 이 상황에서 세션이 없는 것이 맞다.
+
+<br>
+
+어플리케이션까지 없애고 싶으면 어떻게 해야 할까?
+
+STS에서 서버를 끄고, 05_ThirdScope.jsp에 직접 마우스 우클릭 후 Run on Server을 하면 다음과 같이 화면에 나온다. (원래 이렇게 직접 접근하는 것은 바람직하지 않다.)
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/76041e3b-d325-4ac5-a081-a6e7bc204cda" width="450px" />
+
+서버를 꺼버렸으니 다음과 같이 application도 null이 나오는 것이다.
+
+<br>
+
+왜, 어떨 때에는 이 영역이 살아있고, 어떨 때에는 이 영역이 죽는지 잘 이해를 하고 있어야 한다. 그래서 경우에 따라 "이때는 이 영역에 저장해야겠다"는 것을 알아야 한다.
+
+어플리케이션 영역에 저장할 일은 거의 없을 것이고, 세션 영역 혹은 리퀘스트 영역에 저장할 일이 많을 것이다.
