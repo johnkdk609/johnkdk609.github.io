@@ -251,7 +251,7 @@ Run on Server을 하고, 홈 화면에서 07_LoginForm.jsp 버튼을 클릭한�
 		// request.getCookies() 반복문 돌면서 JSESSIONID 쿠키를 찾아서 값을 이용해서 메모리에 접근을 해야한다.
 		
 		/* HttpSession mySession = request.getSession();
-		// 이름을 session 이라고 하면 X?
+		// 이름을 session 이라고 하면 안 된다. JSP에는 "session"이라는 기본 객체를 가지고 있기 때문
 		mySession.setAttribute("id", id); */
 		
 		session.setAttribute("id", id); // JSP가 session 영역을 기본으로 접근할 수 있으니까... 
@@ -299,7 +299,7 @@ Main.jsp 파일의 코드는 다음과 같다.
 			response.sendRedirect("07_LoginForm.jsp");
 		} else {
 			%>
-			<%-- <%=request.getParameter("password") %> 위험해! --%>
+			<%-- <%=request.getParameter("password") %> 비밀번호 노출.. 위험! --%>
 			<%=session.getAttribute("id") %>
 			<%
 		}
@@ -317,3 +317,64 @@ Main.jsp 파일의 코드는 다음과 같다.
 </body>
 </html>
 ```
+
+다시 위 07_LoginCheck.jsp 파일을 봤을 때, ```session.setAttribute("id", id);```를 한다. JSP가 session 영역을 기본으로 접근할 수 있기 때문이다. 서블릿에서는 이렇게 쓰는 것이 맞다.
+
+로그인이 실패했을 때에는 ```response.sendRedirect("07_LoginForm.jsp");```를 통해 07_LoginForm.jsp로 리다이렉트 되게 하였다. 로그인 페이지에서 id에 "ssafy", pw에 "1234"를 입력하고 들어가면 다음과 같이 정상적으로 작동한다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/632b0214-037f-4e09-be83-0c793fb9ba69" width="450px" />
+
+<br>
+
+만약 이렇게 보내지 않고 ```request.getRequestDispatcher("08_Main.jsp").forward(request, response);```을 하면 어떻게 될까? 그러면 로그인 페이지에서 id에 "ssafy", pw에 "1234"를 입력하고 들어갈 경우, 눈에 보이는 것은 Main.jsp 인데 위에 주소는 07_LoginCheck.jsp로 되어 있다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/35dab116-2ce2-40fc-92de-636747ff7c6e" width="450px" />
+
+위에서 리다이렉트 할 때와는 다른 점을 볼 수 있다.
+
+그런데 여기서 Main.jsp 파일의 코드 중 ```<%=request.getParameter("password") %>```을 입력하고 아이디와 비밀번호를 입력할 경우 비밀번호가 함께 출력될 수 있는 위험이 있다.
+
+포워딩을 하면 이 통로에 있던 데이터가 그대로 Main.jsp로 넘어갈 수 있다. 그래서 이 데이터가 전혀 필요가 없고, 가져와서는 안 되는데 가지고 오는 것이다. 이럴 때에는 안 쓰는 것이 좋다.
+
+그래서 이런 상황에서는 리다이렉트를 쓰는 것이 바람직하다.
+
+<br>
+
+위 Main.jsp 파일을 좀 더 정교화하기 위해 id가 null이면 다시 07_LoginForm.jsp로 리다이렉트 하였다. 나중에는 Spring의 Filter나 Interceptor을 이용해서 그것만 전담하는 것을 만들 것이다.
+
+그리고 로그아웃을 위한 JSP를 연결해놨다. 
+
+form 태그 안에 버튼을 만들었을 때, 이것이 submit으로 동작한다. button의 기본 값은 submit인 것이다.
+
+07_Logout.jsp 파일의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>로그아웃</title>
+</head>
+<body>
+	<!-- 로그아웃 하는 방법 -->
+    <%-- <%session.removeAttribute("id"); %> --%>
+	
+	<% session.invalidate(); %>	
+	
+	<script>
+		alert("로그아웃 했습니다.")
+		location.href="index.html";
+	</script>
+	
+</body>
+</html>
+```
+
+로그아웃을 하는 방법은 크게 2 가지가 있다.
+
+1. ```session.removeAttribute("id")``` - 직접 세션을 아예 지워버리는 것이 아니라, 그 세션에 들어가서 "id"만 살짝 지우면서 로그아웃을 하는 방법
+2. ```session.invalidate();``` - 아예 세션을 지워버리는 메서드
+
+로그아웃을 했으면 로그인 페이지로 보내든지, index.html로 보내야 한다. 이번에는 자바스크립트 문법으로 작성했다. (그냥 sendRedirect 하면 되기는 하다.)
