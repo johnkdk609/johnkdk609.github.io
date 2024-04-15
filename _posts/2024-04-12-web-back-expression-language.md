@@ -282,8 +282,167 @@ public class Person implements Serializable {
 
 Run on Server을 하고 04_Op.jsp를 클릭하면 다음과 같은 화면이 나온다.
 
-<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c5b870db-fc77-4a4a-90eb-aaca135116d2" width="450px" />
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c5b870db-fc77-4a4a-90eb-aaca135116d2" width="500px" />
 
 위 코드를 보면, '$'가 EL로 인식되지 않게 하고 화면에 출력하기 위해서 escape 문자인 '/'를 '$' 앞에 붙였다. 
 
 'div'를 사용한 경우 컴파일이 안 되는 것은 아닌데, 계속 빨간 줄이 뜬다. 그래서 주석처리 하였다.
+
+<br>
+
+다음으로는 "eq" (equals)를 예시 코드로 알아보자. 05_eq.jsp 의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EL</title>
+</head>
+<body>
+	<!-- request 영역에서 id 파라미터를 꺼내와보자 -->
+	<%=request.getParameter("id")%> <br>
+	${param.id} <br>
+	
+	== : <%=request.getParameter("id") == "ssafy" %><br>
+	equals() : <%=request.getParameter("id").equals("ssafy") %><br>
+	
+	== (EL) : ${param.id == "ssafy"}<br>
+	eq (EL) : ${param.id eq "ssafy"}<br>
+
+</body>
+</html>
+```
+
+위 코드를 보면, ```<%=request.getParameter("id")%>```로 해서 request가 가지고 있는 id를 꺼내왔다. 또 다른 방식이 있는데, EL 표현으로 하여 ```${param.id}```을 하는 것이다. param이라는 객체가 있다. param의 key인 id를 꺼내는 것이다. 가령 id = "ssafy" 이면 화면에 둘 다 "ssafy"로 출력된다.
+
+이제 비교를 해보겠다. "==" 연산자로 비교를 할 것이다. 여기서 표현식의 결과를 바로 쓰고 싶으니 ```<%=request.getParameter("id") == "ssafy" %>```를 입력한다.
+
+"equals()"로 파악해보기 위해 ```<%=request.getParameter("id").equals("ssafy") %>```도 입력해본다.
+
+이제 EL 표현으로 사용한 "=="과 "eq"를 알아보겠다. ```${param.id == "ssafy"}``` 및 ```${param.id eq "ssafy"}```을 입력한다.
+
+그런데 현재 그냥 ```<%=request.getParameter("id")%>```를 하면 null이 반환된다. 왜냐하면 request의 "id"가 비어있기 때문이다. 이를 해결하기 위해 URL에 query String을 입력한다.
+
+위 코드의 출력 결과는 다음과 같다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/eb037854-d9a4-46aa-aadf-813d671d1c92" width="500px" />
+
+<br>
+
+## EL (Expression Language) 내장 객체
+
+다음으로 EL에 내장되어 있는 객체를 꺼내서 쓸 때 어떻게 쓰는지 알아보겠다.
+
+<table>
+	<tr>
+		<th style="text-align: center;">분류</th>
+		<th style="text-align: center;">객체</th>
+		<th style="text-align: center;">타입</th>
+		<th style="text-align: center;">설명</th>
+	</tr>
+	<tr>
+		<td style="text-align: center;">JSP</td>
+		<td>pageContext</td>
+		<td style="text-align: center;">Java Bean</td>
+		<td>현재 페이지의 page context instance</td>
+	</tr>
+	<tr>
+		<td style="text-align: center;" rowspan="4">scope</td>
+		<td>pageScope</td>
+		<td style="text-align: center;">Map</td>
+		<td>page 기본 객체에 저장된 속성을 저장하는 객체</td>
+	</tr>
+	<tr>
+		<td>requestScope</td>
+		<td style="text-align: center;">Map</td>
+		<td>request 기본 객체에 저장된 속성을 저장하는 객체</td>
+	</tr>
+	<tr>
+		<td>sessionScope</td>
+		<td style="text-align: center;">Map</td>
+		<td>session 기본 객체에 저장된 속성을 저장하는 객체</td>
+	</tr>
+	<tr>
+		<td>applicationScope</td>
+		<td style="text-align: center;">Map</td>
+		<td>application 기본 객체에 저장된 속성을 저장하는 객체</td>
+	</tr>
+	<tr>
+		<td style="text-align: center;" rowspan="2">요청 파라미터</td>
+		<td>param</td>
+		<td style="text-align: center;">Map</td>
+		<td>JSP 내장 객체 request의 getParameter(name) 메서드와 동일한 역할을 한다.<br>${param.name} 또는 ${param["name"]}의 형태로 사용한다.</td>
+	</tr>
+	<tr>
+		<td>paramValues</td>
+		<td style="text-align: center;">Map</td>
+		<td>JSP 내장 객체 request의 getParameterValues(name) 메서드와 동일한 역할을 한다.</td>
+	</tr>
+</table>
+
+EL 표현식도 page, request, session, application 같은 것들을 쓸 수 있는데, JSP가 이미 같은 이름을 가지고 있기 때문에 "pageScope", "requestScope", "sessionScope", "applicationScope"라는 이름으로 접근할 수 있다. 
+
+그리고 param, (여럿이서 들어오면) paramValues 을 위와 같이 쓸 수 있다.
+
+<br>
+
+이제 예시 코드를 보겠다. 06_pageScope.jsp 파일의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EL</title>
+</head>
+<body>
+	<%
+	// pageContext.setAttribute("name", "page kim");
+	request.setAttribute("name", "request kim");
+	session.setAttribute("name", "session kim");
+	application.setAttribute("name", "application kim");
+	%>
+	
+	JSP Page 영역 접근 : <%=pageContext.getAttribute("name") %> <br>
+	EL (Page) : ${pageScope.name} <br>
+	EL (Request) : ${requestScope.name} <br>
+	EL (Session) : ${sessionScope.name} <br>
+	EL (Application) : ${applicationScope.name} <br>
+	
+	그냥 냅다 name 속성 가져와 : ${name } <br>
+
+
+	쿠키(대괄호 접근) : ${cookie["JSESSIONID"].value} <br>
+	쿠키(. dot 접근) : ${cookie.JSESSIONID.value } <br> 
+
+</body>
+</html>
+```
+
+우선 JSP를 이용해서 pageContext, request, session, application에 "page kim", "request kim", "session kim", "application kim"을 저장했다.
+
+우선 JSP로 한 번 꺼내봤다. 그리고 같은 내용을 EL로 한 번 꺼내봤다. 그리고 나머지 request, session, application도 쭉 꺼내봤다. 
+
+그리고 한 번 냅다 name 속성을 가져와봤다. 냅다 name을 쓰면 page 영역을 가져온다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/bd74e7db-0e39-4375-a5ea-0717fe6f2441" width="500px" />
+
+그런데, 위 코드에서 ```pageContext.setAttribute("name", "page kim");```을 주석처리한 다음 화면을 새로고침 하면 다음과 같이 나온다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7d125f44-7f65-4887-ae09-b310b6059307" width="500px" />
+
+name 속성이 "page kim"이 아니라 "request kim"으로 바뀐 것이다. 
+
+JSP 영역에는 page 영역이 있었고, 그것보다 큰 request 영역이 있었고, 그보다 큰 session 영역, 그리고 가장 큰 application 영역이 있었다.
+
+이때 <b>아무것도 내가 지정하지 않았으면 나와 가까운 것부터 찾아서 있는지 확인한다.</b> name이라는 속성이 page 영역에 있는지 보는 것이다. 만약 없으면 request 영역에서 찾아보고, 또 없으면 session 영역에서, 그리고 그마저도 없으면 application 영역에서 찾는 것이다.
+
+(그런데 코드를 작성할 때 명확하게 작성하면 좋지만, 위와 같이 그냥 name 속성을 가져오는 경우가 허다하다.)
+
+<br>
+
