@@ -256,3 +256,34 @@ public class Person implements Serializable {
 
 <br>
 
+연산자를 화면에 출력해보자.
+
+04_Op.jsp 파일의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EL</title>
+</head>
+<body>
+	\${5+2} : ${5+2} <br>
+	\${5/2} : ${5/2} <br>
+	<%-- \${5 div 2} : ${5 div 2} <br> --%>
+	\${5 gt 2} : ${5 gt 2} <br>
+	\${5 < 2} : ${5 < 2} <br>
+	<!-- 그 외 나머지 들은 직접 작성을 해보면서 익히자 -->
+</body>
+</html>
+```
+
+Run on Server을 하고 04_Op.jsp를 클릭하면 다음과 같은 화면이 나온다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/c5b870db-fc77-4a4a-90eb-aaca135116d2" width="450px" />
+
+위 코드를 보면, '$'가 EL로 인식되지 않게 하고 화면에 출력하기 위해서 escape 문자인 '/'를 '$' 앞에 붙였다. 
+
+'div'를 사용한 경우 컴파일이 안 되는 것은 아닌데, 계속 빨간 줄이 뜬다. 그래서 주석처리 하였다.
