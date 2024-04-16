@@ -240,3 +240,78 @@ ${person} <br>
 그러고 나서 ```${person}```을 입력해 출력을 하였다. 그래서 위와 같이 값들이 출력되는 것이다. 이때 property는 세터를 호출하는 것이다. 게터가 그냥 가져와서 쓰는 것이라면, 세터는 직접 내가 값을 입력하고 싶을 때 사용하는 것이다. 
 
 <br>
+
+이번에는 다른 코드를 보겠다. 08_FruitSelect.jsp 의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>과일선택</title>
+</head>
+<body>
+	<form action="08_FruitResult.jsp">
+		<select name="fruit">
+			<option value="1">파인애플</option>
+			<option value="2">망고스틴</option>
+			<option value="3">멜론</option>
+			<option value="4">사과</option>
+		</select> 
+		<input type="submit">
+	</form>
+</body>
+</html>
+```
+
+위 코드에서 ```action="08_FruitResult.jsp"```은 "어디에다가 보낼까요?" 이다. 즉, 08_FruitResult.jsp로 보내는 것이다. 이때 form 태그에 ```method="~~~"```을 입력할 수 있는데, 이것이 생략돼 있으면 기본적으로 GET 방식이 적용된다.
+
+그리고 select 태그를 이용해서 value를 1, 2, 3, 4로 주고 과일을 고르게 하였다. 
+
+08_FruitResult.jsp의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>과일선택</title>
+</head>
+<body>
+	<!-- else 가 없다 -->
+	<h3>C:if</h3>
+	<c:if test="${param.fruit == 1}">
+		<div style="color: yellow">파인애플</div>
+	</c:if>
+	<c:if test="${param.fruit == 2}">
+		<div style="color: pink">망고스틴</div>
+	</c:if>
+	<c:if test="${param.fruit == 3}">
+		<div style="color: green">멜론</div>
+	</c:if>
+	<c:if test="${param.fruit == 4}">
+		<div style="color: red">사과</div>
+	</c:if>
+	
+	<!-- if / else if / else 느낌으로 -->
+	<h3>C:Choose</h3>
+	<c:choose>
+		<c:when test="${param.fruit == 1}">
+			<div style="color: yellow">파인애플</div>
+		</c:when>
+		<c:when test="${param.fruit == 2}">
+			<div style="color: pink">망고스틴</div>
+		</c:when>
+		<c:otherwise>
+			<div>그 외의 과일입니다.</div>
+		</c:otherwise>
+	</c:choose>
+
+</body>
+</html>
+```
