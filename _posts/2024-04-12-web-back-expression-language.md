@@ -381,6 +381,23 @@ Run on Server을 하고 04_Op.jsp를 클릭하면 다음과 같은 화면이 나
 		<td style="text-align: center;">Map</td>
 		<td>JSP 내장 객체 request의 getParameterValues(name) 메서드와 동일한 역할을 한다.</td>
 	</tr>
+	<tr>
+		<td style="text-align: center;">쿠키</td>
+		<td>cookie</td>
+		<td style="text-align: center;">Map</td>
+		<td>request 안에 있는 쿠키를 가져올 수 있다.</td>
+	</tr>
+	<tr>
+		<td style="text-align: center;" rowspan="2">요청헤더</td>
+		<td>header</td>
+		<td style="text-align: center;">Map</td>
+		<td>request의 getHeader(name) 메서드와 동일한 역할을 한다.</td>
+	</tr>
+	<tr>
+		<td>headerValues</td>
+		<td style="text-align: center;">Map</td>
+		<td>request의 getHeaders(name) 메서드와 동일한 역할을 한다.</td>
+	</tr>
 </table>
 
 EL 표현식도 page, request, session, application 같은 것들을 쓸 수 있는데, JSP가 이미 같은 이름을 가지고 있기 때문에 "pageScope", "requestScope", "sessionScope", "applicationScope"라는 이름으로 접근할 수 있다. 
@@ -446,3 +463,4 @@ JSP 영역에는 page 영역이 있었고, 그것보다 큰 request 영역이 �
 
 <br>
 
+그리고 쿠키를 가져오기 위해서 위 코드에서는 ```${cookie["JSESSIONID"].value}```의 방식으로 접근하였다. 이처럼 대괄호로 접근할 수 있고, ```${cookie.JSESSIONID.value }``` 방식처럼 .(dot)으로 접근할 수도 있다. 이때 ```.value```를 붙여야 값이 나온다. (이것을 뒤에 붙이지 않으면 객체 주소값이 나온다.)
