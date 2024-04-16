@@ -57,11 +57,186 @@ JSTL을 사용하려면 우선 taglib 지시자를 이용해 태그 사용 선�
 <% taglib prefix="c" uri="jakarta.tags.core" %>
 ```
 
-* 사용하고자 하는 기능에 따라 어떤 라이브러리를 사용할지 작성한다. (ex: core)
-* 사용할 태그를 구분하기 위해서 prefix를 작성해준다.
+사용하고자 하는 기능에 따라 어떤 라이브러리를 사용할지 작성한다. (ex: core) URI를 결정해야 하는데, 매번 URI를 쓰기 좀 힘드니, 사용할 태그를 구분하기 위해서 prefix(접두어)를 작성해준다.
 
 ```jsp
 <c:out value="Hello! JSTL" />
 ```
 
-* prefix에 작성한 접두사를 적어주고, 기능에 따른 태그를 선택하여 작성한다.
+위 코드를 보면, c라고 하는 namespace 안에 "out"이라고 이미 정의되어 있는 기능을 사용하겠다는 것이다. prefix에 작성한 접두사를 적어주고, 기능에 따른 태그를 선택하여 작성한다.
+
+<br>
+
+예시 코드를 보자. 07_HelloJSTL.jsp의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JSTL</title>
+</head>
+<body>
+
+	<h3>C:out</h3>
+	<c:out value="Hello JSTL1"></c:out> <br>
+	<c:out value="Hello JSTL2"/> <br>
+	
+	<hr>
+	<h3>C:set</h3>	
+	<c:set var="name" value="Kim"/> ${name } <br>
+	<c:set var="name2">Jang</c:set> ${name2 } <br>
+	
+	<c:set var="person" value="<%=new com.ssafy.dto.Person() %>"/>
+	<c:set target="${person}" property="name" value="Kim2"/>
+	${person} <br>
+
+</body>
+</html>
+```
+
+Run on Server을 하고 07_HelloJSTL.jsp를 클릭하면 다음과 같은 화면이 출력된다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/b6687235-2bbd-4340-9179-1e20dd6e2851" width="500px" />
+
+위 코드에서 태그 안에 적을 내용이 없다면, ```<c:out value="Hello JSTL2"/>```와 같이 그냥 하나의 태그로 닫아도 된다.
+
+prefix를 "c"로 하지 않아도 정상적으로 잘 출력된다. URI의 식별자를 가령 "f"로 바꿔도 상관없는 것이다. 하지만, 관례이기 때문에 core은 "c"로 쓰는 것이 맞다.
+
+관례로 쓰이는 것은 다음과 같다.
+
+<table>
+    <tr>
+        <th style="text-align: center;">라이브러리</th>
+        <th style="text-align: center;">접두어</th>
+        <th style="text-align: center;">URI</th>
+        <th style="text-align: center;">기능</th>
+    </tr>
+    <tr>
+        <td style="text-align: center;">코어</td>
+        <td style="text-align: center;">c</td>
+        <td>jakarta.tags.core</td>
+        <td>변수 선언, 제어문, 페이지 이동 등의 기능 제공</td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">포맷</td>
+        <td style="text-align: center;">fmt</td>
+        <td>jakarta.tags.fmt</td>
+        <td>숫자, 날짜, 시간의 포맷팅 기능, 국제화 기능 제공</td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">함수</td>
+        <td style="text-align: center;">fn</td>
+        <td>jakarta.tags.functions</td>
+        <td>문자열, 컬렉션 처리 등의 다양한 함수 제공</td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">데이터베이스</td>
+        <td style="text-align: center;">sql</td>
+        <td>jakarta.tags.sql</td>
+        <td>데이터베이스에 데이터를 삽입/수정/삭제/조회 기능 제공</td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">XML</td>
+        <td style="text-align: center;">x</td>
+        <td>jakarta.tags.xml</td>
+        <td>XML 문서를 처리할 때 필요로 하는 기능을 제공</td>
+    </tr>
+</table>
+
+(<a href="https://jakarta.ee/specifications/tags/3.0/jakarta-tags-spec-3.0" target="_blank">Jakarta Standard Tag Library 공식 홈페이지</a>에 들어가면 자세히 볼 수 있다.)
+
+특히 JSTL - Core 에 대해서 좀 더 구체적으로 보면 다음과 같다.
+
+<table>
+    <tr>
+        <th style="text-align: center;">기능분류</th>
+        <th style="text-align: center;">태그</th>
+        <th style="text-align: center;">설명</th>
+    </tr>
+    <tr>
+        <td style="text-align: center;" rowspan="2">변수 지원</td>
+        <td>set</td>
+        <td>JSP에서 사용할 변수를 지정된 범위의 속성으로 설정한다.</td>
+    </tr>
+    <tr>
+        <td>remove</td>
+        <td>설정한 변수를 제거한다.</td>
+    </tr>
+    <tr>
+        <td style="text-align: center;" rowspan="4">흐름 제어</td>
+        <td>if</td>
+        <td>조건에 따라 내부 코드를 수행한다.</td>
+    </tr>
+    <tr>
+        <td>choose</td>
+        <td>다중 조건을 처리할 때 사용한다.</td>
+    </tr>
+    <tr>
+        <td>forEach</td>
+        <td>컬렉션의 각 항목에 대해 반복 처리할 때 사용한다.</td>
+    </tr>
+    <tr>
+        <td>forTokens</td>
+        <td>구분자로 분리된 각각의 토큰을 처리할 때 사용한다.</td>
+    </tr>
+    <tr>
+        <td style="text-align: center;" rowspan="3">URL 처리</td>
+        <td>import</td>
+        <td>URL을 사용하여 다른 자원의 결과를 삽입한다.</td>
+    </tr>
+    <tr>
+        <td>redirect</td>
+        <td>지정한 경로로 리다이렉트 한다.</td>
+    </tr>
+    <tr>
+        <td>url</td>
+        <td>URL을 재작성한다.</td>
+    </tr>
+    <tr>
+        <td style="text-align: center;" rowspan="2">기타 태그</td>
+        <td>catch</td>
+        <td>예외 처리에 사용한다.</td>
+    </tr>
+    <tr>
+        <td>out</td>
+        <td>변수나 표현식의 결과를 HTML 출력에 쓸 때 사용한다.</td>
+    </tr>
+</table>
+
+<br>
+
+다시 위의 07_HelloJSTL.jsp 코드를 보자.
+
+이번에는 ```c:set```을 보자. 공식 문서에서는 해당 구문에 대해 다음과 같이 설명한다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/cd7c8cc1-d27f-4e41-ac89-242cb16ab4c9" width="700px" />
+
+일단 딱 봐도 var은 변수 이름이다. 그리고 value는 값이다. 
+
+그리고 scope라는 것을 사용할 수 있는데, 보면 page, request, session, application을 쓸 수 있다고 한다. 
+
+웬만한 공식문서에서 중괄호({})가 있으면, "이것들 중에 하나 쓰면 돼" 라는 뜻이다. 그리고 밑줄이 그어져 있다는 것은 그것이 default라는 것이다. 그리고 대괄호([])가 등장하면 그것은 옵션이라는 뜻으로 생략 가능하다는 것이다.
+
+<br>
+
+```c:set```의 경우 변수명 name의 경우 value를 "Kim"으로 지정하고, 변수명 name2의 경우 value를 직접 쓰는 것이 아니라 body에 "Jang"을 입력했다.
+
+그래서 Kim과 Jang이 화면에 출력된 것이다.
+
+```jsp
+<c:set var="person" value="<%=new com.ssafy.dto.Person() %>"/>
+<c:set target="${person}" property="name" value="Kim2"/>
+${person} <br>
+```
+
+부분을 보면, 변수명은 "person"이고 값(value)은 Person의 생성자를 호출하였다. 이것은 즉, "person" 이라고 하는 변수의 값으로 ```new Person()```을 하여 담은 것이다. 이렇게 풀 패키지명으로 쓰면 import를 따로 하지 않아도 된다.
+
+그리고 이번에는 target 속성을 사용했다. target 속성에는 객체를 쓴다. 그리고 property는 설정으로 "name"이라 쓰고 value는 "Kim2"라고 하였다.
+
+그러고 나서 ```${person}```을 입력해 출력을 하였다. 그래서 위와 같이 값들이 출력되는 것이다. 이때 property는 세터를 호출하는 것이다. 게터가 그냥 가져와서 쓰는 것이라면, 세터는 직접 내가 값을 입력하고 싶을 때 사용하는 것이다. 
+
+<br>
