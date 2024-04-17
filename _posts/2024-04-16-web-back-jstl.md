@@ -268,7 +268,7 @@ ${person} <br>
 
 위 코드에서 ```action="08_FruitResult.jsp"```은 "어디에다가 보낼까요?" 이다. 즉, 08_FruitResult.jsp로 보내는 것이다. 이때 form 태그에 ```method="~~~"```을 입력할 수 있는데, 이것이 생략돼 있으면 기본적으로 GET 방식이 적용된다.
 
-그리고 select 태그를 이용해서 value를 1, 2, 3, 4로 주고 과일을 고르게 하였다. 
+그리고 select 태그를 이용해서 name은 "fruit", 그리고 각 옵션의 value를 1, 2, 3, 4로 주고 과일을 고르게 하였다. 
 
 08_FruitResult.jsp의 코드는 다음과 같다.
 
@@ -315,3 +315,30 @@ ${person} <br>
 </body>
 </html>
 ```
+
+우선 위에서 taglib으로 jakarta.core을 가져왔다. 여기서는 ```<c:if>``` 태그를 사용해보려 한다. 이는 JSTL로 조건문을 사용하는 것이다.
+
+이제 Run on Server을 하고 08_FruitSelect.jsp를 클릭하면 과일을 고를 수 있다.
+
+<img width="565" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/505c80b3-a156-4ea8-ab68-3408379b7c60">
+
+그런데 여기서 "망고스틴"을 선택하고 제출 버튼을 누르면 URL이 08_FruitResult.jsp로 바뀔까?
+
+바뀐다.
+
+<img width="628" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3e13a4b5-8281-401d-b89c-311cb4dc620a">
+
+```action="08_FruitResult.jsp"```라고 쓴 것은, 이곳으로 요청을 보냈다는 것이다. "이거 해줘"라는 것이다. 요청을 보낸 것이니 바뀌어야 한다. 내부적으로 포워딩이나 리다이렉팅을 한 게 아니라, 그냥 요청을 날린 것이다. 
+
+<br>
+
+그 다음으로는 ```<c:choose>```를 사용해보겠다. JSTL에서 if / else if / else 의 느낌으로 조건문을 쓰려면 이 방법을 사용해야 한다. 일단은 ```<c:when>```을 쓰다가, 마지막에 ```<c:otherwise>```를 입력한다.
+
+위 코드에서 파인애플, 망고스틴은 따로 처리했고, 나머지 과일들은 "그 외의 과일입니다"라고 처리한 것이다.
+
+<img width="614" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/bdcf1813-2d26-4325-82ec-398efa69584d">
+
+```<c:if>```는 if문밖에 없는 느낌이라면, ```<c:when>, <c:otherwise>```는 if, else if, else 의 느낌이다.
+
+<br>
+
