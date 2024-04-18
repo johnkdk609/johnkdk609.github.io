@@ -342,3 +342,53 @@ ${person} <br>
 
 <br>
 
+이번에는 JSTL 중 forEach를 사용해보겠다. 09_ForEach.jsp 의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>드라마 반복</title>
+</head>
+<body>
+	<%
+	String[] dramaList = { "파리의 연인", "고려거란전쟁", "대조영", "오징어게임" };
+	pageContext.setAttribute("dramaList1", dramaList);
+	%>
+
+	<h3>C:forEach</h3>
+	<ol>
+		<c:forEach items="${dramaList1}" var="drama">
+			<li>${drama}</li>
+		</c:forEach>
+	</ol>
+	
+	<hr>
+	
+	<c:forEach var="drama" items="${dramaList1}" varStatus="status" begin="1" end="3" step="2">
+		<div>${status.index} : ${drama} index</div>
+	</c:forEach>
+	<hr>
+	<c:forEach var="drama" items="${dramaList1}" varStatus="status" begin="1" end="3" step="2">
+		<div>${status.count} : ${drama} count</div>
+	</c:forEach>
+
+</body>
+</html>
+```
+
+위 코드를 보면, pageContext에 저장을 하기 위해 ```pageContext.setAttribute("dramaList1", dramaList);```를 입력하였다.
+
+그리고 반복문을 사용하기 위해 ```forEach```를 사용하였다. items는 반복할 수 있는 것이 들어가야 하는 곳이다. 그리고 dramaList1을 하나씩 돌면서 내부적으로 꺼내 쓸 이름이 필요할 것 같은데 그게 여기서는 ```var="drama"```이다. 여기서 ```<ol>``` 태그를 사용했다. 
+
+그리고 아래에서 인덱스 번호로, 그리고 카운트 번호로 화면에 출력되게 하였다. begin="1"은 1부터 시작을 하라는 것이다. 일단 출력 결과는 다음과 같다.
+
+<img width="581" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3cd6a8d9-ad4f-4c81-8ba4-0e60dd9a1172">
+
+index로 출력했을 때에는 실제로 index가 반영돼 출력된 것을 볼 수 있다. 반면 count로 하니 실제 개수로 시작한 것이다. 이 차이를 이해해야 한다.
+
+<br>
