@@ -392,3 +392,125 @@ ${person} <br>
 index로 출력했을 때에는 실제로 index가 반영돼 출력된 것을 볼 수 있다. 반면 count로 하니 실제 개수로 시작한 것이다. 이 차이를 이해해야 한다.
 
 <br>
+
+다음은 JSTL의 checkBox이다. 10_checkBox.jsp의 코드는 다음과 같다.
+
+```js
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>반찬고르기</title>
+</head>
+<body>
+	<h2>반찬을 골라보자</h2>
+	<form action="10_checkBoxResult.jsp">
+		<input type="checkbox" name="dish" value="감자채볶음">감자채볶음
+		<input type="checkbox" name="dish" value="오징어젓갈">오징어젓갈
+		<input type="checkbox" name="dish" value="장조림">장조림 <br>
+		<input type="checkbox" name="dish" value="고등어순살조림">고등어순살조림
+		<input type="checkbox" name="dish" value="쏘시지야채볶음">쏘시지야채볶음
+		<input type="checkbox" name="dish" value="해물비빔소스">해물비빔소스
+		<button>구매</button>
+	</form>
+</body>
+</html>
+```
+
+이제 Run on Server을 클릭하고 화면에서 보면 다음과 같다.
+
+<img width="557" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7967621c-2e91-4e56-8dc1-ae465172ad5a">
+
+이제 가령 장조림, 쏘시지야채볶음을 체크하고 '구매' 버튼을 누르면 10_checkBoxResult.jsp로 넘어간다.
+
+10_checkBoxResult.jsp 의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>반찬고르기</title>
+</head>
+<body>
+	<c:forEach var="item" items="${paramValues.dish }" varStatus="status">
+		${item }<c:if test="${not status.last }">,</c:if>
+	</c:forEach>
+
+</body>
+</html>
+```
+
+그러면 출력 결과는 다음과 같다.
+
+<img width="800" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/cf6ae4ae-fc13-4485-898a-8f8de1f78d8d">
+
+<br>
+
+이번에는 JSTL의 forToken을 보겠다. 11_forToken.jsp의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>캠퍼스</title>
+</head>
+<body>
+	<h3>c:forToken</h3>
+	<c:forTokens var="campus" items="서울,대전,구미.광주.부울경" delims=",">
+		${campus}<br>
+	</c:forTokens>
+	
+	<h3>c:forToken</h3>
+	<c:forTokens var="campus" items="서울,대전,구미.광주.부울경" delims=",.">
+		${campus}<br>
+	</c:forTokens>
+
+</body>
+</html>
+```
+
+```delims=","```로 ,(컴마)만 구분자로 설정할 수도 있고, ```delims=",."```와 같이 입력하여 구분자로 ,(컴마)와 .(점)을 설정할 수도 있다. 위 코드의 출력 결과는 다음과 같다.
+
+<img width="539" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/8d861ec6-b015-4847-81eb-43ce45c2bdd4">
+
+<br>
+
+이번에는 JSTL의 예외처리이다. 12_catch.jsp의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>예외처리</title>
+</head>
+<body>
+	<h3>c:catch</h3>
+	<c:catch var="errmsg">
+		<div>예외 발생 전</div>
+		<div><%=2 / 0%></div>
+		<div>예외 발생 후</div>
+	</c:catch>
+	${errmsg}
+</body>
+</html>
+```
+
+```<c:catch>```를 이용해서 try ~ catch 구문과 같이 예외를 잡는 것이다. ```var="errmsg"```를 입력하여 exception 객체 이름을 결정할 수 있다. 그리고 아래에 ```${errmsg}```를 붙여 에러 메세지가 출력되게 하였다.
+
+출력 결과는 다음과 같다.
+
+<img width="532" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/060016f9-c22f-4585-95d9-9ffd4a0040f5">
