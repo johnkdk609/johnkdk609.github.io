@@ -120,3 +120,16 @@ Rod Johnson의 Spring의 특징들은 다음과 같았다.
 
 <br>
 
+## Spring Framework Runtime 설명
+
+우선 Spring Framework Runtime과 관련한 그림을 보자.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/77b9b120-a340-4977-8a60-ab13eb385bd4" width="700px" alt="https://docs.spring.io/spring-framework/docs/4.3.x/spring-framework-reference/html/overview.html">
+
+스프링 프레임워크를 실행했을 때, Core Container에는 Beans, Context 등이 깔려 있고, 그 위에 AOP 등이 있다. 그리고 그 위에는 DB, WEB이 있다.
+
+<br>
+
+스프링이 2003년에 나온 만큼 우리 삶에 미치고 있는 영향이 매우 크다.
+
+전자정부 프레임워크가 스프링 기반으로 동작하고 있다. 그래서 한국에서는 자바, 스프링 개발자가 취업 경쟁력이 높다.
