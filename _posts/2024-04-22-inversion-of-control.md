@@ -67,3 +67,51 @@ public class Test {
 위 코드를 실행하면 콘솔에 다음과 같이 출력된다.
 
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/bf96f960-e2a9-4ad4-9eb7-923239aa1959" width="350px" />
+
+프로그래머가 데스크톱에 대한 의존성을 가지고 있다. 프로그래머는 컴퓨터가 꼭 필요하다. 프로그래머를 만들기 위해서는 컴퓨터를 꼭 만들어서 줘야 한다. 이를 "의존성이 있다"라고 표현한다.
+
+<br>
+
+<u>ClassA 객체가 어떤 일을 처리하기 위해서 ClassB 객체의 도움을 받아야만 일을 처리할 수 있다면 <b>'ClassA는 ClassB에 의존한다.'</b> 라고 표현한다.</u>
+
+<br>
+
+프로그래머가 일을 처리하기 위해서는 컴퓨터가 필요하니까, 내가 컴퓨터를 집어 넣어줬다.
+
+Programmer가 Desktop 클래스에 의존성을 가지고 있는데, 내가 Laptop으로도 일을 하고 싶어졌다. 그러면 코드를 고쳐야 하는데 몇 군데를 고쳐야 할까?
+
+다음 두 군데를 고쳐야 한다.
+
+```java
+public class Programmer {
+	private Desktop computer;	// 이 부분 고쳐야 함
+
+	public Programmer() {
+		computer = new Desktop();	// 이 부분 고쳐야 함
+	}
+
+	public void coding() {
+		System.out.println(computer.getInfo() + "으로 개발을 합니다.");
+	}
+}
+```
+
+그리고 Laptop 클래스의 코드는 다음과 같을 것이다.
+
+```java
+public class Laptop {
+	// 필요한 필드...
+
+	// 해당 컴퓨터 정보를 반환
+	public String getInfo() {
+		return "랩톱";
+	}
+}
+```
+
+이렇게 코드를 수정하기 전에, 먼저 수행해야 하는 것이 있다. 
+
+<br>
+
+## 객체생성 의존성 제거
+
