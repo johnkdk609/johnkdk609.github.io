@@ -115,3 +115,87 @@ public class Laptop {
 
 ## 객체생성 의존성 제거
 
+객체생성 의존성을 제거한다는 것이 무슨 뜻일까?
+
+현재 코드에서는 프로그래머가 한 명 만들어질 때마다 ```new Desktop()```을 통해서 만들어줘야 했다. 그런데 이제는 Programmer가 객체를 생성하지 않겠다는 것이다.
+
+다음과 같이 코드를 수정한다.
+
+```java
+package com.ssafy.di2_객체의존성제거;
+
+public class Programmer {
+	private Desktop desktop;
+	
+	//객체 생성 의존성 제거
+	public Programmer(Desktop desktop) {
+		//직접 생성하는 것이 아닌, 데스크톱을 인자로 받아서 제공하겠다.
+		this.desktop = desktop;
+	}
+	
+	public void coding() {
+		System.out.println(desktop.getInfo()+"으로 개발을 합니다.");
+	}
+}
+```
+
+위와 같이 ```public Programmer(Desktop desktop)```와 같이 수정하여 Desktop을 인자로 받아서 던져준다. 이제 내가 데스크톱을 생성하는 것이 아니고, 데스크톱을 지정해주는 것이다.
+
+이렇게 더 이상 프로그래머는 의존성에 대한 부담이 없다. 프로그래머 한 명이 올 때마다 컴퓨터를 사줘야 하는 상황이 아닌 것이다.
+
+이제 외부에서 생성한 데스크톱을 집어넣어줄 것이다.
+
+<br>
+
+이제 테스트를 해보자.
+
+```java
+package com.ssafy.di2_객체의존성제거;
+
+public class Test {
+	public static void main(String[] args) {
+		// 의존관계역전을 맛 본 것.
+		
+		// 스프링 컨테이너가 이러한 것들을 해준다.
+		Desktop desktop = new Desktop();
+		Programmer p = new Programmer(desktop);
+		
+		p.coding();
+	}
+}
+```
+
+출력 결과는 다음과 같다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/b82fb435-21dc-4694-9263-53d80736db1d" width="250px" />
+
+밴다이어그램으로 보자면, 원래는 프로그래머가 데스크톱을 포함하고 있었다. 그런데 이제는 그렇지 않다. 어딘가 외부에서 만든 데스크톱을 프로그래머에 집어넣어준 것이다.
+
+이러한 것을 <b>의존관계 역전</b>이라고 한다. 스프링은 이렇게 ```new ~~~``` 하는 것들을 전부 모아서 "이거 해줘"라고 등록만 해두면 다 알아서 만들어서 의존성을 주입해준다. 스프링 컨테이너가 이러한 역할을 수행한다.
+
+```new ~~~```를 하지 않고 만들어진 것을 넣어주고, 이렇게 넣어주는 행위를 '<b>의존성 주입</b>'이라고 한다.
+
+<br>
+
+## 타입 의존성 제거
+
+이번에는 타입 의존성 제거에 대해 알아보겠다.
+
+내가 Laptop으로 바꾸고 싶은 상황이다. 우선 Laptop 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.di3_타입의존성제거;
+
+public class Laptop implements Computer {
+	// 필드명 작성
+	// CPU, GPU, RAM, ... 등등
+	
+	// 정보를 반환
+	public String getInfo() {
+		return "랩톱";
+	}
+}
+```
+
+그러면 Programmer 클래스에 가서 타입 명을 다음과 같이 바꿔야 한다.
+
