@@ -197,5 +197,71 @@ public class Laptop implements Computer {
 }
 ```
 
-그러면 Programmer 클래스에 가서 타입 명을 다음과 같이 바꿔야 한다.
+그러면 Programmer 클래스에 대해 다시 생각해보자. 기존의 Programmer 클래스 코드에서 Desktop을 Laptop으로 바꾸기만 하면 되는 것일까?
 
+이렇게 하면 굉장히 번거롭다. 이런 것을 <b>'강한 결합'</b>이라고 한다. Programmer은 Desktop을 쓸 수도 있어야 하고, Laptop을 사용할 수도 있어야 한다. 
+
+그래서 이에 반대 개념인 <b>'느슨한 결합(loose coupling)'</b>이 필요하다. Desktop도 쓸 수 있어야 하고, Laptop도 쓸 수 있어야 한다. 너무 하나의 타입에만 의존성을 가지고 있는 것이 아니라, 다양하게 쓸 수 있어야 한다. 이때 <b>다형성을 이용해야 한다.</b>
+
+인터페이스의 개념을 쓰면 된다. Computer은 웬만하면 다 쓰니까, Computer 인터페이스를 이용해서 그것을 구현하고 있는 Desktop, Laptop을 만들고 사용자는 컴퓨터만 사용하겠다고 하면 그 안에 내용물이 Desktop인지 Laptop인지는 별로 중요하지 않게 되는 것이다.
+
+<u>역할과 구현을 구분하는 것</u>이다. 사용자는 Desktop이나 Laptop에 의존하고 있으면 안 된다.
+
+우선 Computer 인터페이스를 만든다.
+
+```java
+package com.ssafy.di3_타입의존성제거;
+
+public interface Computer {
+	String getInfo();
+}
+```
+
+그리고 수정한 Programmer 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.di3_타입의존성제거;
+
+public class Programmer {
+	private Computer computer;
+	
+	// 객체 생성 의존성 제거
+	public Programmer(Computer computer) {
+		// 직접 생성하는 것이 아닌, 데스크톱을 인자로 받아서 제공하겠다.
+		this.computer = computer;
+	}
+	
+	public void coding() {
+		System.out.println(computer.getInfo()+"으로 개발을 합니다.");
+	}
+}
+```
+
+이제 Programmer에서 인자로 ```Computer computer```를 가져온다.
+
+Test 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.di3_타입의존성제거;
+
+public class Test {
+	public static void main(String[] args) {
+		
+		Desktop desktop = new Desktop();
+		Programmer p = new Programmer(desktop);
+		
+		p.coding();
+		
+		Laptop laptop = new Laptop();
+		Programmer p2 = new Programmer(laptop);
+		
+		p2.coding();
+	}
+}
+```
+
+출력 결과는 다음과 같다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/fe2bd419-0f6d-4d39-9a7b-16fbc35fe304" width="260px">
+
+이렇게 느슨한 결합을 하면 얼마든지 손쉽게 갈아끼울 수 있다는 장점이 있다.
