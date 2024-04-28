@@ -198,6 +198,38 @@ public class Test2 {
 		
 		Programmer p = new Programmer();
 		
+		Computer computer = ComputerFactory.getComputer(sc.next());
+		p.setComputer(computer);
+		
+		p.coding();
+	}
+}
+```
+
+위 코드를 실행시킨 다음, Console에 D를 입력하면 다음과 같이 나온다.
+
+<img width="281" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/ed8d27f4-4aee-4fec-8d8a-d6c323945b9f">
+
+그리고 다시 실행시킨 후 L을 입력하면 다음과 같이 나온다.
+
+<img width="245" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/915e09cc-5a82-47b0-a7d3-01fc2a48aa19">
+
+<br>
+
+그런데 우리가 사실 컴퓨터를 잘 끄지 않으니, 다음과 같이 코드를 추가하여 돌릴 수 있다.
+
+```java
+package com.ssafy.di4_의존성주입;
+
+import java.util.Scanner;
+
+public class Test2 {
+	public static void main(String[] args) {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		Programmer p = new Programmer();
+		
 //		Computer computer = ComputerFactory.getComputer(sc.next());
 //		p.setComputer(computer);
 //		
@@ -207,6 +239,14 @@ public class Test2 {
 			p.setComputer(ComputerFactory.getComputer(sc.next()));
 			p.coding();
 		}
-	}
+	}	
 }
 ```
+
+이제 실행을 시킨 후 D, L, D, L을 차례대로 입력하면 다음과 같이 나온다. 그리고 D, L 외의 것을 입력하면 오류가 발생한다.
+
+<img width="449" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/663f62df-8049-4383-8e01-ffc140700ba9">
+
+내가 지금까지는 컴퓨터가 Off된 상태에서 코드를 바꾸고 실행했었다. 그런데 이제는 컴퓨터가 켜진 상태에서 갈아끼우는 것이다. 서비스를 배포했을 때 어떤 설정에 의해서 그 부품이 알아서 갈아끼워져서 그것에 맞게끔 동작을 한다.
+
+컴퓨터가 꺼져있는 상태에서 코드를 바꾸고 실행한 것이 아니라, 컴퓨터가 켜져 있는 상태에서 부품을 갈아끼운 것이다. 이것이 위의 Test2에서 한 것이다.
