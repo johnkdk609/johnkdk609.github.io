@@ -52,3 +52,7 @@ BeanFactory를 그대로 받아서 만든 ApplicationContext, 그리고 그 Appl
 <br>
 
 Spring Container를 빌드하기 위해서는 총 3가지 방식이 있는데, 이 중에서 첫 번째 방식인 XML 방식을 이용해서 등록해보겠다.
+
+프로젝트에 마우스 우클릭을 하고 Source Folder을 클릭한다. 폴더 명은 "resources"로 한다. 그리고 resources 폴더에 우클릭을 하고 Other에 가서 XML을 검색하여, XML File을 선택하고 Next를 누른 다음, 위치는 resources로, File name은 "applicationContext.xml"로 한다. (관례적으로 하는 이름)
+
+이러한 XML 파일을 쓰기 위해서 기본적으로 채워야 하는 부분들이 있는데, 이를 우리가 다 외울 수는 없다. Spring.io 사이트에 가서, Spring Framework 항목에서 "LEARN"을 클릭한다. 그리고 Reference Doc. 을 클릭하고, "XML"을 검색한다. 그리고 쭉 스크롤을 내리다가 The context Schema 부분 코드를 복사한다. 그리고 applicationContext.xml에 전부 붙여넣기 한다.
