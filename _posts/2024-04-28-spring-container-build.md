@@ -56,3 +56,70 @@ Spring Container를 빌드하기 위해서는 총 3가지 방식이 있는데, �
 프로젝트에 마우스 우클릭을 하고 Source Folder을 클릭한다. 폴더 명은 "resources"로 한다. 그리고 resources 폴더에 우클릭을 하고 Other에 가서 XML을 검색하여, XML File을 선택하고 Next를 누른 다음, 위치는 resources로, File name은 "applicationContext.xml"로 한다. (관례적으로 하는 이름)
 
 이러한 XML 파일을 쓰기 위해서 기본적으로 채워야 하는 부분들이 있는데, 이를 우리가 다 외울 수는 없다. Spring.io 사이트에 가서, Spring Framework 항목에서 "LEARN"을 클릭한다. 그리고 Reference Doc. 을 클릭하고, "XML"을 검색한다. 그리고 쭉 스크롤을 내리다가 The context Schema 부분 코드를 복사한다. 그리고 applicationContext.xml에 전부 붙여넣기 한다.
+
+그리고 설정 파일을 만들어놓은 상태에서 빈으로 등록을 하겠다는 것을 다음과 같이 입력하여 설정한다.
+
+```xml
+<bean class="~~~" id="~~~"></bean>
+```
+
+그래서 만들어진 applicationContext.xml의 코드는 다음과 같다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+		<!-- 풀패키지명 -->
+		<bean class="com.ssafy.di.Desktop" id="desktop"></bean>
+		<bean class="com.ssafy.di.Programmer" id="programmer"></bean>
+</beans>
+```
+
+풀 패키지명을 작성해야 하는데, 여기서는 "com.ssafy.di.Desktop"의 방식으로 풀 패키지명을 입력했다. <u>id는 Bean의 이름</u>이다. 빈의 이름을 내가 등록하지 않으면, 가장 앞글자를 소문자로 바꾼 이름으로 등록이 된다. 이 경우에는 Desktop의 맨 앞글자를 소문자로 바꾼 "desktop"으로 등록이 될 것이다.
+
+<br>
+
+이제 Test 클래스를 만들겠다. Test 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.di;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+
+public class Test {
+	public static void main(String[] args) {
+
+		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+
+		System.out.println("1~~~~");
+		Programmer p = (Programmer) context.getBean("programmer");
+		// 기본 설정은 getBean 할때 생성하는 것이 아닌 컨테이너를 빌드할때 빈들이 생성이 된다.
+		Desktop d = context.getBean("desktop", Desktop.class);
+		p.setComputer(d);
+		
+		System.out.println("2~~~~~");
+		
+		p.coding();
+		
+		
+		Desktop d2 = context.getBean("desktop", Desktop.class);
+		
+		System.out.println(d == d2); // true : 컨테이너는 기본적으로 싱글턴으로 관리를 한다.
+
+	}
+}
+```
+
+우선 ```ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");```에서 괄호에는 경로를 입력해준다. 여기에 "applicationContext.xml"을 입력하면 애초에 resource 폴더는 source 폴더와 동급에 위치해 있기 때문에 바로 접근할 수 있다. 이렇게 함으로써 스프링 컨테이너를 빌드해서 쓸 수 있다. (사실 앞으로는 이렇게 할 일은 없을 것이다. 나중에는 내부적으로 MVC에서 다 해준다.)
+
+```context.getBean("programmer");```는 이전에 등록한 빈의 이름을 작성하는 것이다. 여기에 "programmer"라고 쓸 수 있다. ```.getBean()```의 반환 타입은 Object이므로 Programmer로 형변환 해줘야 한다.
+
+```Desktop d = context.getBean("desktop", Desktop.class);```와 같이 애초에 이것은 Desktop 이라는 설정을 이어서 쓰면 따로 형변환을 하지 않고도 가져옴과 동시에 형변환을 해서 집어넣을 수 있다.
+
+```p.setComputer(d);```를 하고 ```p.coding();```을 하고 실행하면 다음과 같다.
