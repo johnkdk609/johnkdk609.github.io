@@ -123,3 +123,52 @@ public class Test {
 ```Desktop d = context.getBean("desktop", Desktop.class);```와 같이 애초에 이것은 Desktop 이라는 설정을 이어서 쓰면 따로 형변환을 하지 않고도 가져옴과 동시에 형변환을 해서 집어넣을 수 있다.
 
 ```p.setComputer(d);```를 하고 ```p.coding();```을 하고 실행하면 다음과 같다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/8ec18bc2-638d-4803-994d-8288618a9958" width="270px" />
+
+잘 출력된다. 그런데 지금 내가 어디에서도 ```new ~~~```를 하지 않았다. ```new ~~~``` 안 했는데 Desktop이 만들어지고 Programmer이 만들어져서 알아서 조립해서 가져온 것이다.
+
+위에 "1~~~~", "2~~~~~"가 출력되어 있는 것을 보면, 1번 나오고 ```.getBean()``` 했을 때 데스크톱이 생성되고 2번이 찍혀야 할 것 같은데, 출력 결과는 데스크탑이 냅다 생성된 뒤에 1, 2번이 나온다.
+
+즉, 애초에 스프링 컨테이너를 빌드할 때 나한테 등록되어 있는 모든 빈들을 전부 생성해버리고 필요할 때마다 짜 맞추는 것이다. (물론 ```.getBean()```을 할 때 생성되도록 설정을 바꿀 수도 있다.)
+
+그리고 Desktop d2를 만들고, 이전에 만든 d와 d2가 같은지 비교하면 위와 같이 true가 나온다. 이 말인즉 <b>스프링 컨테이너는 기본적으로 객체들을 싱글턴(singleton)으로 관리</b>한다는 것이다.
+
+<br>
+
+## Bean Scope
+
+Bean 정의를 작성하는 것은 Bean 객체를 생성하는 것과는 다르다. Bean 범위(Scope)를 정의해서 객체의 범위를 제어할 수 있다.
+
+다음은 Scope의 표이다.
+
+<table>
+    <tr>
+        <th style="text-align: center;">Scope</th>
+        <th style="text-align: center;">설명</th>
+    </tr>
+    <tr>
+        <td style="text-align: center;">singleton</td>
+        <td>기본값, Spring IoC 컨테이너에 대한 단일 객체 인스턴스</td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">prototype</td>
+        <td>빈을 요청할 때마다 새로운 인스턴스 생성</td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">request</td>
+        <td>HTTP Request 주기로 bean 인스턴스 생성</td>
+    </tr>
+    <tr>
+        <td style="text-align: center;">session</td>
+        <td>HTTP Session 주기로 bean 인스턴스 생성</td>
+    </tr>
+</table>
+
+싱글턴이 기본이다. 
+
+```xml
+<bean class="com.ssafy.di.Programmer" id="programmer" scope="~~~~"></bean>
+```
+
+그런데 위에 scope라는 설정을 통해서 "prototype"을 작성하면 bean을 요청할 때마다 (```.getBean()```을 할 때마다) 새로운 인스턴스를 만들어서 준다. 아무것도 안 쓰면 싱글턴이 기본이고, 만약 ```scope="prototype"```으로 작성해두면 ```.getBean()``` 할 때마다 새로운 것을 주니까 아까 ```d == d2```는 false가 된다. 그리고 request, session scope를 쓸 수도 있는데 사실 쓸 일은 없다.
