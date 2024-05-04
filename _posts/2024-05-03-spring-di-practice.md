@@ -6,6 +6,8 @@ date: 2024-05-03 18:31:00 +0900
 ---
 의존성을 주입하기 위해서는 XML, Annotation, JavaConfig의 방법들을 사용할 수 있다.
 
+## Spring DI - XML
+
 우선 XML을 사용하는 방법을 이어서 알아보자.
 
 의존성을 주입하기 위해서 applicationContext.xml을 활용했었다. 이번에는 Test2를 해보기 위해 applicationContext2.xml을 만들어보겠다.
@@ -129,4 +131,29 @@ public class Programmer {
 }
 ```
 
+위 XML에서 ref에는 내가 정의한 참조할 수 있는 값을 쓸 수 있다. 아니면 value로 해서 직접적으로 값을 쓸 수도 있다.
+
 <br>
+
+## Spring DI - Annotation
+
+다음으로는 어노테이션 방식으로 주입을 해보자. 어노테이션(Annotation) 방식은 빈(Bean)을 생성 및 설정하는 데에 ```@Component```를 쓴다. 
+
+```java
+import org.springframework.stereotype.Component;
+
+@Component
+public class Desktop implements Computer {
+	// 필요한 필드...
+```
+
+앞서 사용하던 예시인 Desktop 클래스 위에 ```@Component```를 넣으면 이전에 XML에서 bean~~ 해서 풀 패키지명을 쓰고 id를 지정했던 것이 알아서 되는 것이다.
+
+생성되는 bean의 이름은 클래스의 첫 글자를 소문자로 바꾼 것이다. 가령, Desktop클래스는 "desktop"으로 빈이 생성된다. 만약에 빈의 이름을 지정하고 싶다면, ```@Component(value="bean-name")```으로 이름을 지정할 수 있다.
+
+스프링은 <b>@Component</b>, <b>@Service</b>, <b>@Controller</b>, <b>@Repository</b> 의 Stereotype Annotation을 제공한다. (@Service, @Controller, @Repository는 결국 @Component 이다.)
+
+각 @Repository, @Service, @Controller는 목적에 맞는 구체적인 사용을 위한 @Component의 확장이다. 목적에 맞게 구체화 하여 사용하면 Spring에서 더 효율적으로 사용하는 것이 가능해진다.
+
+<br>
+
