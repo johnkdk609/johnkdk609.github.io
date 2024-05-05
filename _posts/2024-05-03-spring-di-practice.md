@@ -157,3 +157,106 @@ public class Desktop implements Computer {
 
 <br>
 
+Annotation 방식을 쓴다 하더라도 XML 파일은 있어야 한다. @Component 를 붙인 것을 전부 스캔해서 알아서 빈으로 등록하게 해야 한다.
+
+이제 자바 프로젝트 Spring_01_DI_3_Annotation 을 생성한다. Spring_01_DI_2_XML 의 내용을 복사 붙여넣기 하고, pom.xml 파일에서 groupId를 변경한다. (나머지는 손댈 것이 없다.)
+
+"내가 컴포넌트로 등록한 것을 몽땅 스캔해줘"라는 것이니, resources 폴더 안에 있는 applicationContext.xml 에서 ```<context:component-scan base-package="com.ssafy.di"></context:component-scan>```를 입력한다. 이것은 com.ssafy.di 패키지에 있는 모든 것들을 전부 스캔을 하면서 ```@Component```라는 것이 붙어 있는 것은 모조리 등록을 하게 하는 것이다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<context:component-scan base-package="com.ssafy.di"></context:component-scan>
+	
+</beans>
+```
+
+내가 Programmer 클래스에 위에 ```@Component```을 붙이면 programmer라는 빈이 등록된다. 이때 빈의 이름을 따로 지정하기 위해 ```@Component(value="p")```를 붙였다. 
+
+```java
+@Component(value="p")
+public class Programmer {
+	...
+```
+
+그리고 Desktop 클래스에도 ```@Component```를 붙인다.
+
+이제 Test 클래스에 다음과 같이 입력한다.
+
+```java
+package com.ssafy.di;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+
+public class Test {
+	public static void main(String[] args) {
+
+		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+
+		Programmer p = context.getBean("p", Programmer.class);
+		p.coding();
+			
+	}
+}
+```
+
+아까 "p"라는 이름으로 빈을 등록했으니, 위와 같이 ```context.getBean("p", Programmer.class);```을 하였다. 
+
+그런데 실행을 시키면 무언가 에러가 발생한다.
+
+<img width="451" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/e29cd97e-13e9-4155-93a6-8747189b66c7">
+
+이렇게 "데스크탑이 생성되었습니다."까지는 잘 나오는데, 다음과 같이 NullPointerException이 발생하는 것이다.
+
+<img width="1147" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/568882b8-5120-41de-8dd9-79c02fc91a47">
+
+Programmer 클래스의 coding()에 있는 ```computer.getInfo()```를 하려는데, ```computer```가 null이라서 현재 ```.getInfo()```를 할 수 없는 상황인 것이다. 그런데 데스크탑은 생성되었다. 현재 컴퓨터는 만들어졌고, 인간도 만들었는데 이 두 개가 조립이 안 된 것이다.
+
+이 <b>조립을 하는 방법이 @Autowired 를 붙이는 것이다.</b> @Autowired 는 의존성을 주입할 때 붙이는 것으로, 이 어노테이션을 붙이면 알아서 조립을 할 수 있도록 세팅을 해준다.
+
+Spring Container 내에서 타입 매칭을 시행한다. (컨테이너에 해당하는 타입의 bean이 있다면 매칭)
+
+<br>
+
+@Autowired 가 들어갈 수 있는 위치는 세 가지가 있다.
+
+* <b>생성자</b>
+
+```java
+// 생성자를 이용한 의존성 주입
+// 생성자를 하나만 정의한다면 @Autowired 생략 가능
+@Autowired
+public Programmer(Computer computer) {
+	this.computer = computer;
+}
+```
+
+* <b>Setter</b>
+
+```java
+// setter을 이용한 의존성 주입
+@Autowired
+public void setComputer(@Qualifier("desktop") Computer computer) {
+	this.computer = computer;
+}
+```
+
+* <b>Field</b>
+
+```java
+@Autowired
+@Qualifier("laptop")
+private Computer computer;
+```
+
+(@Qualifier 를 이용하여 같은 타입이 여러 개일 경우, bean을 지정하여 식별 가능하다.)
+
+<br>
+
