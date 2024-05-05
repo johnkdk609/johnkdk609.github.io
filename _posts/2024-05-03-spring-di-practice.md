@@ -260,3 +260,234 @@ private Computer computer;
 
 <br>
 
+### 생성자 주입
+
+우선 생성자 주입부터 해보겠다. Programmer 클래스의 생성자에다가 ```@Autowired```를 붙였다. 
+
+```java
+package com.ssafy.di;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+@Component(value="p")
+public class Programmer {
+
+	private Computer computer;
+
+	public Programmer() {
+	}
+
+	// 생성자 주입
+	@Autowired
+	public Programmer(Computer computer) {
+		this.computer = computer;
+	}
+
+	public void setComputer(Computer computer) {
+		this.computer = computer;
+	}
+
+	public void coding() {
+		System.out.println(computer.getInfo() + "으로 개발을 합니다.");
+	}
+}
+
+```
+
+그리고 다시 Test 클래스를 실행시키니 다음과 같이 정상적으로 작동하였다.
+
+<img width="456" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/6f2538f7-4fa9-4cef-90d0-91c397aa1eca">
+
+현재 Programmer는 Computer을 처리할 수 있게끔 만들어놨는데, Desktop을 만들어놨더니 Computer와 알아서 매칭이 되었고, 이것을 쓸 수 있게 된 것이다.
+
+그런데 앞서 생성자를 하나만 정의하면 @Autowired를 생략할 수 있다고 하였다. 이 말인즉 Programmer 클래스에서 @Autowired를 지우고, 기본 생성자를 지우면 현재 가지고 있는 생성자는 한 개이다. 이 한 개가 마치 내가 주입하는 생성자인 것처럼 작동하는 것이다. 이제 Test를 실행하면 정상적으로 잘 동작한다.
+
+생성자가 한 개였으면 거기에 알아서 @Autowired가 붙는 것과 똑같은 것이다. (하지만 권장하지는 않는다. 한 개든 두 개든 @Autowired를 작성하는 것이 권장된다.)
+
+<br>
+
+### 설정자 주입
+
+이제 설정자 주입을 해보자.
+
+```java
+package com.ssafy.di;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+@Component(value="p")
+public class Programmer {
+//	@Autowired
+//	private final Computer computer;
+	private Computer computer;
+
+	public Programmer() {
+	}
+
+	// 생성자 주입
+//	@Autowired
+	public Programmer(Computer computer) {
+		this.computer = computer;
+	}
+
+	// 설정자 주입
+	@Autowired
+	public void setComputer(Computer computer) {
+		this.computer = computer;
+	}
+
+	public void coding() {
+		System.out.println(computer.getInfo() + "으로 개발을 합니다.");
+	}
+}
+```
+
+위와 같이 설정자 위에 @Autowired를 붙이고 Test를 실행하면 여전히 잘 동작한다. setter를 통해서 주입이 된 것이다.
+
+<br>
+
+### 필드 주입
+
+마지막 방법은 필드에 주입하는 방법이다. 다음과 같이 할 수 있다.
+
+```java
+package com.ssafy.di;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+@Component(value="p")
+public class Programmer {
+	// 필드 주입
+	@Autowired
+	private Computer computer;
+
+	public Programmer() {
+	}
+
+	public void coding() {
+		System.out.println(computer.getInfo() + "으로 개발을 합니다.");
+	}
+}
+```
+
+위와 같이 필드 주입을 하고 Test 클래스를 실행시키면 마찬가지로 잘 동작한다.
+
+그런데 이렇게 필드에 주입하는 것은 웬만하면 사용하는 것을 지양하는 것이 좋다. 쓰기는 아주 쉬우나, 사용하는 것을 지양하는 것이다.
+
+<br>
+
+생성자 주입을 가장 크게 권장하는데, 그 이유는 생성을 할 때부터 바로 집어넣어서 처리를 해야 하는 것들에 주로 생성자 주입을 사용한다. 설정자 주입은 나중에 설정자를 불렀을 때 주입이 되는 것이니 애초에 만들었을 때도 이슈가 없는 것들을 집어넣으려 할 때 설정자 주입을 사용한다.
+
+그런데 이 예시에서 Computer는 무조건 있어야 한다. 생성자 주입이 그래서 이 상황에서는 바람직한 것이다. 이런 상황을 방지하기 위해 ```private final Computer computer```와 같이 final 키워드를 붙여버리기도 한다. 
+
+```java
+package com.ssafy.di;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+@Component(value="p")
+public class Programmer {
+	@Autowired
+	private final Computer computer;
+
+//	public Programmer() {
+//	}
+
+	// 생성자 주입
+	@Autowired
+	public Programmer(Computer computer) {
+		this.computer = computer;
+	}
+
+	// 설정자 주입 
+//	@Autowired
+//	public void setComputer(Computer computer) {
+//		this.computer = computer;
+//	}
+
+	public void coding() {
+		System.out.println(computer.getInfo() + "으로 개발을 합니다.");
+	}
+}
+```
+
+final 키워드가 붙는 순간 기본 생성자는 만들 수 없다. final이 붙는다는 것은 computer이 무조건 필요하다는 뜻인데, 기본 생성자는 이렇게 만들 수가 없다. 
+
+마찬가지로 이렇게 final을 붙이면 설정자 주입을 쓸 수도 없다. 무조건 있어야 하기 때문이다.
+
+<br>
+
+### 타입으로 찾아오기
+
+이번에는 타입으로 찾아오는 것을 알아보겠다. Computer에 Desktop도 등록되어 있고, Laptop도 등록되어 있다. 이 중에 무엇으로 찾아올지 선택하는 것이다.
+
+우선 Laptop 클래스도 @Component 로 등록을 한다. Laptop 클래스를 @Component로 등록하면 컴파일 시에는 아무런 문제가 없다. 그런데 실행을 시키면 에러가 터진다.
+
+<img width="1708" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7d7926f3-869a-452c-9fae-1ab01c0f2ac8">
+
+위와 같이 single matching이 되어야 하는데, 현재 desktop과 laptop 두 개가 있다는 것이다.
+
+이에 대한 해결책으로 Laptop 클래스를 @Component로 등록하지 않는 방법이 있다. 하지만, 또 다른 방법으로는, Programmer 클래스의 설정자 주입에서 @Qualifier를 사용하는 것이다. 다음과 같이 할 수 있다.
+
+```java
+package com.ssafy.di;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+@Component(value="p")
+public class Programmer {
+//	@Autowired
+//	private final Computer computer;
+	private Computer computer;
+
+	public Programmer() {
+	}
+
+	// 생성자 주입
+//	@Autowired
+	public Programmer(Computer computer) {
+		this.computer = computer;
+	}
+
+	// 설정자 주입
+//	@Autowired
+//	public void setComputer(Computer computer) {
+//		this.computer = computer;
+//	}
+	
+	// 설정자 주입 & @Qualifier 사용
+	@Autowired
+	public void setComputer(@Qualifier("laptop") Computer computer) {
+		this.computer = computer;
+	}
+
+	public void coding() {
+		System.out.println(computer.getInfo() + "으로 개발을 합니다.");
+	}
+}
+```
+
+@Qulifier 어노테이션을 이용해, "laptop"으로 등록하겠다고 명시한 것이다.
+
+이제 Test 클래스를 실행 시키면 다음과 같이 출력된다.
+
+<img width="497" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/03dca01a-248a-42a5-b7f7-da2a0be07e3a">
+
+이렇게 @Qualifier을 이용하여 같은 타입이 여러개일 경우 bean을 지정하여 식별할 수 있는 것이다.
+
+<br>
+
+## Spring DI - JavaConfig
+
+이제 마지막 방식인 JavaConfig 방식을 알아보겠다.
+
