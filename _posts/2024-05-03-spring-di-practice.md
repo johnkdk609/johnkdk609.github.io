@@ -491,3 +491,121 @@ public class Programmer {
 
 이제 마지막 방식인 JavaConfig 방식을 알아보겠다.
 
+이제 자바 프로젝트 Spring_01_DI_4_JavaConfig 를 생성한다. (Spring_01_DI_3_Annotation 프로젝트를 복사 붙여넣기 하고 이름을 변경한다.) pom.xml에 가서 groupId, artifactId를 변경한다. 자바 설정 파일에는 더 이상 XML이 필요하지 않다. 그래서 resources라는 폴더를 지운다. 그 다음, 일단 클래스들에 있는 @Component 어노테이션도 전부 지운다. 또 @Autowired, @Qualifier 어노테이션들도 전부 지운다.
+
+이제 com.ssafy.di 패키지에 ApplicationConfig 라는 이름으로 클래스 파일을 하나 만든다. 그리고 @Configuration 어노테이션을 붙인다. 이제부터 이 클래스가 설정 파일이라는 것을 명시하는 것이다. ApplicationConfig 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.di;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ApplicationConfig {
+	
+	@Bean
+	public Desktop desktop() {
+		return new Desktop();
+	}
+	
+	@Bean
+	public Laptop laptop() {
+		return new Laptop();
+	}
+	
+	@Bean
+	public Programmer programmer() {
+		//생성자 주입 , 설정자 주입도 문제없어
+		Programmer p = new Programmer(desktop());
+		return p;
+	}
+}
+```
+
+위 코드에서, Desktop은 등록한 빈이고 빈의 이름은 desktop 이다. 마찬가지로 Laptop 빈의 이름은 laptop 이다. 그리고 이제 ```Programmer(desktop())```의 방식으로 사용할 수 있다. 여기서 생성자 주입을 하든, 설정자 주입을 하든 상관없다. 지금은 생성자 주입이지만, 설정자 주입도 문제 없는 것이다.
+
+Test 클래스를 보자. 이전에는 다음과 같이 GenericXmlApplicationContext를 사용했었다.
+
+```java
+ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+```
+
+그런데 이제는 AnnotationConfigApplicationContext를 사용해야 한다. Test 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.di;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class Test {
+	public static void main(String[] args) {
+
+		ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		
+		Programmer p = context.getBean("programmer", Programmer.class);
+		p.coding();
+			
+		Desktop d1 = context.getBean("desktop", Desktop.class);
+		Desktop d2 = context.getBean("desktop", Desktop.class);
+		
+		System.out.println(d1==d2);
+	
+	}
+}
+```
+
+이름이 굉장히 길다. 위 코드를 실행한 결과는 다음과 같다.
+
+<img width="453" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/076488d7-35b4-45df-bdc6-e67f0fa42150">
+
+잘 출력된다. 또, d1과 d2가 동일하다는 것은 싱글턴(Singleton)으로 관리가 되고 있다는 것을 알 수 있다.
+
+<br>
+
+이제 com.ssafy.di를 복사 붙여넣기 하고 이름을 com.ssafy.di2로 변경한다.
+
+이번에는 ApplicationConfig 클래스에 전과 같이 전부 등록하지 않고, ComponentScan을 할 것이다.
+
+수정한 ApplicationConfig 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.di2;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ComponentScan(basePackages = {"com.ssafy.di2"} )
+public class ApplicationConfig {
+	
+}
+```
+
+basePackages를 com.ssafy.di2로 하여, 알아서 @Component가 있는 클래스들을 읽고 빈을 등록하는 것이다. 이것을 수행하려면 com.ssafy.di2 패키지 안에 있는 Desktop, Programmer 클래스들에 @Component 어노테이션을 붙여놓는다.
+
+Test 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.di2;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class Test {
+	public static void main(String[] args) {
+
+		ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		
+		Programmer p = context.getBean("programmer", Programmer.class);
+		p.coding();
+
+	}
+}
+```
+
+그리고 위 코드의 실행 결과는 다음과 같다.
+
+<img width="449" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/cf08417e-dc31-4b1b-b61d-5adf39f43c2b">
