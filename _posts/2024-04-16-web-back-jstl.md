@@ -36,7 +36,7 @@ JSTL의 기능들로는 다음과 같은 것이 있다.
 
 JSTL을 사용하기 위해서는 jar 파일 혹은 Maven 프로젝트로 변경시켜야 한다.
 
-> Jakarta Standard Tag Library API >> 3.0.0
+> Jakarta Standard Tag Library API >> 3.0.0<br>
 > Jakarta Standard Tag Library Implementation >> 3.0.1
 
 위 두 개를 넣어야 사용할 수 있다. mvnrepository에서 "jstl"이라고 검색하고 가져온다.
