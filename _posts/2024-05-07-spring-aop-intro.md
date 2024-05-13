@@ -111,3 +111,56 @@ Weaving의 경우, 어디에 들어갈 지(Point Cut)을 정해놓고 Join Point
 AOP Proxy의 경우, 그냥 '프록시를 쓴다더라'라고 알면 되겠다.
 
 (이 용어들은 알고 있어야 한다.)
+
+<br>
+
+### Point Cut 표현식
+
+* ```execution([접근제어자], 반환타입 [선언타입] 메서드명(파라미터))```
+
+아래 표에서 '*'는 사용 가능하다는 뜻이다.
+
+<table>
+    <tr>
+        <th>Point Cut</th>
+        <th>Join Point</th>
+    </tr>
+    <tr>
+        <td>execution(* *(..))</td>
+        <td>모든 메서드 실행 시 (모든 파라미터 포함)</td>
+    </tr>
+    <tr>
+        <td>execution(* remove(..))</td>
+        <td>remove 메서드 실행 시</td>
+    </tr>
+    <tr>
+        <td>execution(* set*(..))</td>
+        <td>메서드 명이 set으로 시작하는 모든 메서드 실행 시</td>
+    </tr>
+    <tr>
+        <td>execution(* com.ssafy.aop.*.*(..))</td>
+        <td>com.ssafy.aop 패키지의 모든 메서드 실행 시</td>
+    </tr>
+    <tr>
+        <td>execution(* com.ssafy.aop..*.*(..))</td>
+        <td>com.ssafy.aop 패키지 및 하위 패키지의 모든 메서드 실행 시</td>
+    </tr>
+    <tr>
+        <td>execution(* *(String))</td>
+        <td>파라미터가 String인 메서드 실행 시</td>
+    </tr>
+    <tr>
+        <td>execution(* *())</td>
+        <td>파라미터가 없는 메서드 실행 시</td>
+    </tr>
+    <tr>
+        <td>execution(* *(*))</td>
+        <td>정확히 파라미터가 한 개인 메서드 실행 시(모든 타입 허용)</td>
+    </tr>
+    <tr>
+        <td>execution(* *(String, ..))</td>
+        <td>파라미터가 String으로 시작하는 모든 메서드 실행 시</td>
+    </tr>
+</table>
+
+컴퓨터에서 별표는 '모든'을 뜻한다. 그리고 대괄호는 '옵션'을 뜻한다. 그리고 위 표에서 '..'은 2개를 뜻하는 것이 아닌, 무엇이든 괜찮다는 것이다. (0부터 무한대까지)
