@@ -154,3 +154,69 @@ public static int fibo(int n) {
 그리고 배열을 통해 트리 형태를 쉽게 구현할 수 있다는 특징이 있다. 부모나 자식 노드를 O(1) 연산으로 쉽게 찾을 수 있는 것이다. n의 위치에 있는 노드의 자식은 2 * n 과 (2 * n) + 1 에 위치한다.
 
 완전 이진 트리의 특성에 의해 추가 / 삭제의 위치는 자료의 시작과 끝 인덱스로 쉽게 판단할 수 있다.
+
+<br>
+
+## HashMap
+
+자바의 HashMap은 파이썬의 딕셔너리와 비슷한 것이다. 즉, key-value로 데이터에 접근할 수 있는 강력한 툴인 것이다.
+
+HashMap의 장점은 다음과 같다.
+
+1. 빠른 검색 및 삽입
+2. 유연한 크기 조정
+3. 다양한 데이터 형식 저장 가능
+
+특히 검색, 삽입, 삭제 연산이 빈번한 상황에서 뛰어난 성능을 발휘한다.
+
+삽입은 평균적으로 O(1), 최악의 경우 O(N)
+검색 및 삭제는 평균적으로 O(1), 최악의 경우 O(N)
+
+값을 추가할 때 주의할 점이 있다. HashMap의 경우 저장공간보다 추가적으로 데이터가 들어오면 파이썬의 리스트처럼 공간을 늘리기는 하지만, 한 번에 약 2배로 늘린다. 그래서 이런 과정에서 과부하가 많이 발생한다.
+
+따라서, 저장할 데이터의 개수를 미리 알고 있다면, 마치 배열의 길이를 미리 설정하듯 HashMap의 길이를 미리 설정할 수 있다.
+
+HashMap은 다음과 같이 사용된다.
+
+```java
+import java.util.HashMap;
+
+public class HashMap_Practice {
+
+	public static void main(String[] args) {
+		
+		HashMap<Integer, String> map1 = new HashMap<>();
+		HashMap<Integer, Integer> map2 = new HashMap<>(10); // 길이 미리 설정
+		
+		map1.put(1, "king");
+		map1.put(2, "queen");
+		map1.put(3, "prince");
+		map1.put(4, "princess");
+		System.out.println(map1);
+		System.out.println(map1.get(3));
+		map1.remove(3);
+		System.out.println(map1);
+		map1.put(3, "duke");
+		System.out.println(map1);
+		System.out.println(map1.containsKey(5));
+		System.out.println(map1.containsKey(4));
+		System.out.println(map1.size());
+		map1.clear();
+		System.out.println(map1);
+		System.out.println(map1.size());
+	}
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+<img width="474" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/192409e2-5400-46c3-bf34-bb89488de7f7">
+
+위 코드에서 쓰인 메서드들은 다음과 같다.
+
+* ```put()``` : 생성한 HashMap에 요소를 넣는 것. key-value 쌍으로 넣어야 한다.
+* ```get()``` : 괄호 안에 key 값을 넣어서 값을 찾는 것
+* ```remove()``` : 괄호 안에 key 값을 넣어서 HashMap의 해당 요소를 지운다.
+* ```containsKey()``` : 괄호 안에 key 값을 넣어서 HashMap에 해당 key가 있는지 없는지 boolean 형태로 반환한다.
+* ```clear()``` : 해당 HashMap에 있는 요소들을 전부 지운다.
+* ```size()``` : 해당 HashMap에 있는 요소의 개수는 몇 개인지 카운트해서 반환한다.
