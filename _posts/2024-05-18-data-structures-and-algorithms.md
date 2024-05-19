@@ -117,13 +117,42 @@ public static int fibo(int n) {
 
 자료구조의 크기를 동적으로 조정할 수 있어, 메모리의 효율적인 사용이 가능하다.
 
-<br>
+예시 코드는 다음과 같다.
 
-우선순위 큐(Priority Queue)는 배열을 이용하여 구현할 수도 있고, 리스트를 이용하여 구현할 수도 있다.
+```java
+import java.util.LinkedList;
+import java.util.List;
 
-<u>우선순위 큐를 배열을 이용하여 구현하면, 삽입이나 삭제 연산이 일어날 때 원소의 재배치가 발생</u>한다. 이에 소요되는 시간이나 메모리 낭비가 큰 것이다.
+public class LinkedList_Practice {
+	public static void main(String[] args) {
+		List<String> fruit = new LinkedList<>();
+		fruit.add("apple");
+		fruit.add("banana");
+		fruit.add("orange");
+		System.out.println(fruit);
+		
+		fruit.add(1, "grape");	// 원하는 위치에 삽입 
+		System.out.println(fruit);
+		System.out.println(fruit.size()); 	// 전체 개수 
+		
+		String secondFruit = fruit.get(1);	// 인덱스 값 
+		System.out.println(secondFruit);
+		
+		fruit.remove("apple");	// 값으로 제거 
+		System.out.println(fruit);
+		
+		fruit.remove(2);	// 인덱스로 제거 
+		System.out.println(fruit);
+		
+		fruit.clear();
+		System.out.println(fruit.size());
+	}
+}
+```
 
-반면, <u>우선순위 큐를 리스트를 이용하여 구현하면 삽입/삭제 연산 이후 원소 재배치가 필요 없기에</u> 메모리의 효율적인 사용이 가능하다.
+위 코드의 출력 결과는 다음과 같다.
+
+<img width="427" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/92a659e7-6019-4d18-b039-d035af2a286a">
 
 <br>
 
@@ -171,6 +200,8 @@ HashMap의 장점은 다음과 같다.
 
 삽입은 평균적으로 O(1), 최악의 경우 O(N)
 검색 및 삭제는 평균적으로 O(1), 최악의 경우 O(N)
+
+HashMap은 중복 Key 값을 허용하지 않지만, 중복 Value 값은 허용한다.
 
 값을 추가할 때 주의할 점이 있다. HashMap의 경우 저장공간보다 추가적으로 데이터가 들어오면 파이썬의 리스트처럼 공간을 늘리기는 하지만, 한 번에 약 2배로 늘린다. 그래서 이런 과정에서 과부하가 많이 발생한다.
 
@@ -220,6 +251,141 @@ public class HashMap_Practice {
 * ```containsKey()``` : 괄호 안에 key 값을 넣어서 HashMap에 해당 key가 있는지 없는지 boolean 형태로 반환한다.
 * ```clear()``` : 해당 HashMap에 있는 요소들을 전부 지운다.
 * ```size()``` : 해당 HashMap에 있는 요소의 개수는 몇 개인지 카운트해서 반환한다.
+
+<br>
+
+## HashSet
+
+HashSet은 객체 자체를 데이터로 저장하기 때문에 중복을 허용하지 않는다. (HashMap이 HashSet 보다 빠르다.)
+
+그리고 HashSet에서는 요소의 순서가 보장되지 않는다.
+
+삽입은 평균적으로 O(1), 최악의 경우 O(N)
+검색, 삭제는 평균적으로 O(1), 최악의 경우 O(N)
+
+HashSet을 구현한 예시 코드는 다음과 같다.
+
+```java
+import java.util.HashSet;
+
+public class HashSet_Practice {
+	public static void main(String[] args) {
+		
+		HashSet<String> hashSet = new HashSet<>();
+		hashSet.add("apple");
+		hashSet.add("banana");
+		hashSet.add("orange");
+		hashSet.add("apple");
+		
+		System.out.println(hashSet.size());
+		
+		for (String fruit : hashSet) {
+			System.out.println(fruit);
+		}
+		
+		System.out.println(hashSet.contains("orange"));
+		System.out.println(hashSet.contains("kiwi"));
+		
+		hashSet.remove("orange");
+		System.out.println(hashSet.size());
+		System.out.println(hashSet);
+		hashSet.clear();
+		System.out.println(hashSet);
+	}
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+<img width="277" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/74036280-9ee9-4dce-8422-abd66e4d6fc3">
+
+위 코드에서 사용된 메서드는 다음과 같다.
+
+* ```add()``` : HashSet에 요소 추가
+* ```size()``` : HashSet의 요소의 개수 반환
+* ```contains()``` : 괄호에 값 넣어서 HashSet에 그 값이 존재하는지 검토. boolean 형 반환.
+* ```remove()``` : 괄호에 값 넣어서 HashSet에 해당 값 삭제
+* ```clear()``` : HashSet에 있는 요소들 전부 삭제
+
+<br>
+
+## ArrayList와 Collections.sort()
+
+ArrayList는 Array와 List의 장점을 각각 갖고 있다.
+
+배열의 특성인 index로 식별자 사용이 가능하고, 리스트의 특성대로 크기를 동적으로 사용할 수 있다. 즉, index를 사용할 수 있는 리스트인 것이다.
+
+그런데 성능이 중요한 경우에는 고정 크기의 배열을 사용하는 것이 낫고, 유연성이나 코드의 편의성을 고려할 때에는 ArrayList를 사용하는 것이 좋다. 사실 성능 차이가 작은 경우가 많기 때문에 대부분의 상황에서는 ArrayList를 사용하는 것이 바람직하다.
+
+그리고 Collections.sort()를 이용해 오름차순 정렬을 하거나, Collections.sort(arrayList, Collections.reversOrder())를 하여 내림차순 정렬을 할 수 있다.
+
+예시 코드는 다음과 같다.
+
+```java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class Collections_sort_Practice {
+
+	public static void main(String[] args) {
+		
+		List<Integer> list1 = new ArrayList<>();
+		list1.add(1);
+		list1.add(100);
+		list1.add(10);
+		list1.add(4);
+		list1.add(30);
+		list1.remove(4);	// 인덱스 값을 넣어야 한다. 
+		System.out.println(list1);
+		Collections.sort(list1);	// Collections.sort() 를 활
+		System.out.println(list1);
+		Collections.sort(list1, Collections.reverseOrder());	// 역순 정렬 
+		System.out.println(list1);
+	}
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+<img width="217" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/36da2b05-e2ed-4534-b396-f789773636c3">
+
+위 코드에서는 다형성을 적용하였다. List 인터페이스의 구현체인 ArrayList를 List와 같이 사용한 것이다.
+
+<br>
+
+## ArrayList를 Array로 변환하기
+
+ArrayList에서 얻은 배열리스트를 일반 배열로 변환해야 할 수도 있다.
+
+다음과 같이 수행한다.
+
+```java
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class ArrayList_to_Array {
+	public static void main(String[] args) {
+		
+		List<Integer> arrayList = new ArrayList<>();
+		arrayList.add(1);
+		arrayList.add(2);
+		arrayList.add(3);
+		arrayList.add(100);
+		
+		Integer[] arr = new Integer[arrayList.size()];
+		arr = arrayList.toArray(arr);
+		
+		System.out.println(Arrays.toString(arr));
+		
+	}
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+<img width="195" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/1c9ef77e-ddf1-4a1e-bcbf-d5db2f53622a">
 
 <br>
 
@@ -276,3 +442,127 @@ add() 는 지정된 요소를 큐에 추가하고 성공 여부를 boolean으로
 
 ## Stack
 
+스택은 FILO (First In Last Out) 자료구조이다.
+
+예시 코드는 다음과 같다.
+
+```java
+import java.util.Stack;
+
+public class Stack_Practice {
+	public static void main(String[] args) {
+		
+		Stack<String> stack = new Stack<>();
+		
+		// 문자열 요소 추가
+        stack.push("apple");
+        stack.push("banana");
+        stack.push("orange");
+
+        // 스택의 상태 출력
+        System.out.println("스택의 요소:");
+        System.out.println(stack);
+
+        // 요소 제거 및 출력
+        System.out.println("스택에서 요소를 제거합니다:");
+        while (!stack.isEmpty()) {
+            String removedElement = stack.pop();
+            System.out.println("제거된 요소: " + removedElement);
+        }
+	}
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+<img width="311" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7781300a-3f5f-44e8-9d55-868694935795">
+
+<br>
+
+## PriorityQueue (우선순위 큐)
+
+우선순위 큐(Priority Queue)는 배열을 이용하여 구현할 수도 있고, 리스트를 이용하여 구현할 수도 있다.
+
+<u>우선순위 큐를 배열을 이용하여 구현하면, 삽입이나 삭제 연산이 일어날 때 원소의 재배치가 발생</u>한다. 이에 소요되는 시간이나 메모리 낭비가 큰 것이다.
+
+반면, <u>우선순위 큐를 리스트를 이용하여 구현하면 삽입/삭제 연산 이후 원소 재배치가 필요 없기에</u> 메모리의 효율적인 사용이 가능하다.
+
+내부 요소는 힙으로 구성되어 이진트리 구조로 이루어져 있다. 내부구조가 힙으로 구성되어 있기에 시간 복잡도는 O(N log N)이다. 우선순위를 중요시해야 하는 상황에서 주로 쓰인다.
+
+우선순위 큐를 코드로 구현한 것은 다음과 같다.
+
+```java
+import java.util.PriorityQueue;
+
+public class PriorityQueue_Practice {
+
+	public static void main(String[] args) {
+		
+		PriorityQueue<Integer> pq = new PriorityQueue<>();
+		
+		// 앞에서 추가
+        pq.offer(10);
+        pq.offer(20);
+        pq.offer(15);
+        pq.offer(5);
+        System.out.println("앞에서 추가 후 우선순위 큐의 요소: " + pq);
+
+        // 뒤에서 추가
+        pq.offer(25);
+        pq.offer(30);
+        pq.offer(40);
+        System.out.println("뒤에서 추가 후 우선순위 큐의 요소: " + pq);
+
+        // 앞에서 제거
+        pq.poll();
+        pq.poll();
+        System.out.println("앞에서 제거 후 우선순위 큐의 요소: " + pq);
+
+        // 뒤에서 제거
+        pq.remove(40);
+        pq.remove(30);
+        System.out.println("뒤에서 제거 후 우선순위 큐의 요소: " + pq);
+        
+        System.out.println(pq.isEmpty());
+        System.out.println(!pq.isEmpty());
+	}
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+<img width="630" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/4cbf0d78-757e-4b8b-b924-899519d0f3bc">
+
+<br>
+
+## 이진 탐색 알고리즘 (Binary Search)
+
+```java
+
+public class Array2_02_BinarySearch {
+
+	public static void main(String[] args) {
+		int[] arr = {23, 44, 55, 77, 84, 91};
+		int result = binarySearch(arr, 77);
+		System.out.println(result);
+	}
+	
+	public static int binarySearch(int[] arr, int key) {
+		int left = 0;
+		int right = arr.length - 1;
+		
+		while(left <= right) {
+			int mid = (left + right) / 2;
+			if (key == arr[mid]) {
+				return mid;
+			} else if (key < arr[mid]) {
+				right = mid - 1;
+			} else {
+				left = mid + 1;
+			}
+		}
+		
+		return -1;
+	}
+}
+```
