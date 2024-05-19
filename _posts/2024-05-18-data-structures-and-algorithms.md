@@ -220,3 +220,59 @@ public class HashMap_Practice {
 * ```containsKey()``` : 괄호 안에 key 값을 넣어서 HashMap에 해당 key가 있는지 없는지 boolean 형태로 반환한다.
 * ```clear()``` : 해당 HashMap에 있는 요소들을 전부 지운다.
 * ```size()``` : 해당 HashMap에 있는 요소의 개수는 몇 개인지 카운트해서 반환한다.
+
+<br>
+
+## Queue
+
+Queue는 FIFO(First In First Out) 자료구조이다.
+
+사용 예제를 보면 다음과 같다.
+
+```java
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class Queue_Practice {
+	public static void main(String[] args) {
+		Queue<Integer> queue1 = new LinkedList<>();
+		queue1.offer(1);
+		queue1.offer(2);
+		queue1.offer(3);
+		System.out.println(queue1.peek());
+		System.out.println(queue1.poll());
+		queue1.offer(4);
+		queue1.offer(5);
+		System.out.println(queue1);
+		System.out.println(queue1.size());
+		queue1.poll();
+		queue1.poll();
+		queue1.poll();
+		queue1.poll();
+		System.out.println(queue1);
+		System.out.println(queue1.poll());
+	}
+}
+```
+
+위 코드의 출력 결과는 다음과 같다.
+
+<img width="435" alt="image" src="https://github.com/johnkdk609/pjt-tutorin/assets/88493727/50b442ed-df7a-4c9a-8935-e89ad1d6635e">
+
+위 코드에서 쓰인 메서드들은 다음과 같다.
+
+* ```offer()``` : ```add()```와 마찬가지로 Queue에 추가하는 메서드
+* ```peek()``` : Queue의 첫 번째로 들어간 값 참조 (꺼내는 것 아님)
+* ```size()``` : Queue의 요소의 개수 반환
+* ```poll()``` : Queue에서 맨 앞에 있는 것 하나 빼는 메서드 (반환함)
+
+이때 Queue에서 offer() 과 add() 의 차이는 다음과 같다.
+
+offer() 는 지정된 요소를 큐에 추가하고 성공 여부를 boolean 형태로 반환한다. 만약 큐가 공간 부족으로 요소를 추가하지 못하면 false를 반환한다. 일반적으로 offer()는 큐에 요소를 추가할 때 예외가 발생하지 않는다.
+
+add() 는 지정된 요소를 큐에 추가하고 성공 여부를 boolean으로 반환한다. 만약 큐에 공간이 부족하여 요소를 추가하지 못하는 경우 'IllegalStateException'을 발생시킨다. 따라서 add() 는 요소를 추가할 때 큐의 용량이 부족할 경우 예외를 발생시킬 수 있다.
+
+<br>
+
+## Stack
+
