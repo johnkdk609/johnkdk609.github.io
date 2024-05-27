@@ -37,3 +37,75 @@ around은 앞의 것들을 정의한 후에 around에 몽땅 쓸 수도 있고, 
 * Spring AOP는 기본적으로 표준 JDK dynamic proxy를 사용한다.
 
 * 인터페이스를 구현한 클래스가 아닌 경우 CGLIB 프록시를 사용한다.
+
+<br>
+
+Spring AOP 를 시작하기에 앞서 자바 언어에서 관점 지향 프로그래밍을 할 수 있게끔 하는 표준화된 AOP Framework가 있는데, AspectJ 라는 것이 있다.
+
+AspectJ라는 것은 자바 클래스를 Aspect로 선언하는 스타일이라든지.. 등을 쓸 수 있게끔 도움을 주는 것이다.
+
+AspectJ Weaver, AspectJ Runtime 을 깔아서 쓴다.
+
+이제 Spring_02_AOP_2_XML 프로젝트를 생성한다. 그리고 Maven 추가를 해야 하니 마우스 우클릭 &#62; Configure &#62; Convert to Maven Project 로 바꿀 것이다
+
+이제 pom.xml 파일을 열어서 dependencies에 우선 spring-context를 추가한다. 그리고 앞서 언급한 AspectJ Weaver, AspectJ Runtime 의존성을 추가한다.
+
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>Spring_02_AOP_2</groupId>
+  <artifactId>Spring_02_AOP_2</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <release>17</release>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+  	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-context</artifactId>
+	    <version>6.1.3</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+	<dependency>
+	    <groupId>org.aspectj</groupId>
+	    <artifactId>aspectjweaver</artifactId>
+	    <version>1.9.21</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjrt -->
+	<dependency>
+	    <groupId>org.aspectj</groupId>
+	    <artifactId>aspectjrt</artifactId>
+	    <version>1.9.21</version>
+	</dependency>
+  </dependencies>
+</project>
+```
+
+그리고, 설정파일을 쓰기 위해서 AOP namespace를 좀 추가해줘야 하는데, 이것은 Spring.io 에 가서 'XML Schemas'를 검색하고 쭉 스크롤을 내리면 'The aop Schema'와 'The context Schema'가 있다. 이 두 개를 섞어서 사용할 것이다.
+
+그래서 프로젝트에 source 폴더를 하나 만들겠다. resources라는 이름으로 폴더를 하나 생성한다. 그리고 그 안에 applicationContext.xml 이라는 파일을 생성한다. applicationContext.xml 파일은 다음과 같다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+</beans>
+```
+
+이제 aop라는 것과 context를 사용할 준비가 되었다.
