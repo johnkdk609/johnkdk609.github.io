@@ -109,3 +109,63 @@ AspectJ Weaver, AspectJ Runtime 을 깔아서 쓴다.
 ```
 
 이제 aop라는 것과 context를 사용할 준비가 되었다.
+
+<br>
+
+## Spring AOP 시작하기 - xml
+
+Spring.io &#62; Projects &#62; Spring Framework &#62; Learn &#62; 6.14 Reference Docs &#62; Search 에 "schemas"라고 검색한다. 그러면 XML Schemas 가 보이고 이것을 클릭한다. (이번 이후로 Schemas에 들어올 일은 없다.)
+
+이제 MyAspect를 하나 만들어볼 것이다. 앞서 했던 proxy2 패키지를 복사해서 Spring_02_AOP_2_XML 프로젝트에 붙여넣는다. 그리고 패키지명을 com.ssafy.aop로 변경한다.
+
+이제 PersonProxy는 필요 없어서 지운다. 대신에 MyAspect 클래스를 생성한다. 공통 관심사항들을 모아놓는 곳이 Aspect이다. 자바에서는 POJO 스타일을 쓴다고 했으니 이것도 무언가 상속 받아서 할 필요 없다. 순수한 자바의 형태로 할 것이다.
+
+MyAspect 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.aop;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+
+public class MyAspect {
+	// 메서드 명은 중요한게 아니다. 직관적으로 보여주려고 이러한 이름을 사용함.
+	public void before() {
+		System.out.println("컴퓨터를 부팅한다.");
+	}
+	
+	// 정상 수행 후
+	public void afterReturning(int line) {
+		System.out.println("Git에 Push 한다. : "+line+"개의 줄을....");
+	}
+	// 예외 발생 후
+	public void afterThrowing(Throwable th) {
+		System.out.println("조퇴를 한다.");
+		if(th instanceof OuchException)
+			((OuchException) th).handleException();
+	}
+	
+	// 이후에 
+	public void after() {
+		System.out.println("하루를 마무리 한다.");
+	}
+	
+	/////////////////////////////
+	// aroud
+	
+	public int around(ProceedingJoinPoint pjt) {
+		int line = 0;
+		
+		this.before();
+		try {
+			line = (int)pjt.proceed();
+			this.afterReturning(line);
+		} catch (Throwable e) {
+			this.afterThrowing(e);
+		}finally{
+			this.after();
+		}
+		return line;
+	}
+
+}
+```
