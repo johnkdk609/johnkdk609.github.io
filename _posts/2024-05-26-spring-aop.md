@@ -169,3 +169,67 @@ public class MyAspect {
 
 }
 ```
+
+그리고 Test 클래스의 코드는 다음과 같이 수정한다.
+
+```java
+package com.ssafy.aop;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+
+public class Test {
+	public static void main(String[] args) {
+		
+		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+		
+		
+		Person p = context.getBean("programmer", Person.class);
+		
+		try {
+			p.coding();
+		}catch (Exception e) {
+		}
+	}
+}
+```
+
+그리고 Programmer 클래스의 코드는 다음과 같이 설정한다.
+
+```java
+package com.ssafy.aop;
+
+import java.util.Random;
+
+public class Programmer implements Person {
+	// 필드는 과감히 생략!
+
+	// 프로그래머의 일상
+	public int coding() {
+		System.out.println("열심히 코드를 작성한다."); // 핵심관심사항
+		if (new Random().nextBoolean())
+			throw new OuchException();
+		return (int)(Math.random() * 100) + 1;
+	}
+
+}
+```
+
+int 자료형을 반환해야 하기 때문에, int형으로 parse를 해준다. 그리고 1을 더해서 1 에서 100 사이의 값이 나오게 하였다.
+
+<br>
+
+이제 등록할 것이다.
+
+다시 설정 파일 applicationContext.xml로 넘어간다. 우선 빈 등록을 해야 한다. 클래스 이름 "com.ssafy.aop.Programmer"으로, 그리고 id는 "programmer"로 등록을 하겠다.
+
+또, "com.ssafy.aop.MyAspect"를 클래스로 등록하고 id는 "myAspect"로 등록을 하겠다.
+
+```xml
+<bean class="com.ssafy.aop.Programmer" id="programmer"></bean>
+<bean class="com.ssafy.aop.MyAspect" id="myAspect"></bean>
+```
+
+결국에는 Aspect, Person, Programmer 등이 전부 다 컨테이너에 빈으로 등록이 되어 있어야 자동으로 생성하여 쓸 수 있는 것이다.
+
+그리고 여기서 aop:config를 쓸 것이다. pointcut을 쓸 것이다. pointcut을 적용한 applicationContext.xml의 코드는 다음과 같다.
