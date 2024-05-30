@@ -148,49 +148,7 @@ public class MyAspect {
 	public void after() {
 		System.out.println("하루를 마무리 한다.");
 	}
-	
-	/////////////////////////////
-	// aroud
-	
-	public int around(ProceedingJoinPoint pjt) {
-		int line = 0;
-		
-		this.before();
-		try {
-			line = (int)pjt.proceed();
-			this.afterReturning(line);
-		} catch (Throwable e) {
-			this.afterThrowing(e);
-		}finally{
-			this.after();
-		}
-		return line;
-	}
 
-}
-```
-
-그리고 Test 클래스의 코드는 다음과 같이 수정한다.
-
-```java
-package com.ssafy.aop;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
-
-public class Test {
-	public static void main(String[] args) {
-		
-		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
-		
-		
-		Person p = context.getBean("programmer", Person.class);
-		
-		try {
-			p.coding();
-		}catch (Exception e) {
-		}
-	}
 }
 ```
 
@@ -233,3 +191,150 @@ int 자료형을 반환해야 하기 때문에, int형으로 parse를 해준다.
 결국에는 Aspect, Person, Programmer 등이 전부 다 컨테이너에 빈으로 등록이 되어 있어야 자동으로 생성하여 쓸 수 있는 것이다.
 
 그리고 여기서 aop:config를 쓸 것이다. pointcut을 쓸 것이다. pointcut을 적용한 applicationContext.xml의 코드는 다음과 같다.
+
+aop:config는 aop에 대한 설정들을 쓰는 것인데, aop:aspect 위에 aop:pointcut을 지정했으면 이것은 전역으로 설정을 한 것이고, 만약 aop:aspect 아래에 aop:pointcut을 넣으면 이것은 이번 aspect에서만 쓰는 pointcut을 지정한 것으로 이해하면 된다.
+
+```xml
+<aop:config>
+    <aop:pointcut expression="execution(* *(..))" id="mypt"/>
+    <aop:aspect ref="myAspect">
+        <!-- 메서드 명을 작성하자! -->
+        <aop:before method="before" pointcut-ref="mypt"/>
+        <aop:after-returning method="afterReturning" pointcut-ref="mypt" returning="line"/>
+        <aop:after-throwing method="afterThrowing" pointcut-ref="mypt" throwing="th" />
+        <aop:after method="after" pointcut-ref="mypt"/>
+    </aop:aspect>
+</aop:config>
+```
+
+위 콛그를 보면 aspect은 위에서 설정한 "myAspect"를 가져다 쓰겠다는 것이고, aop:before에는 method 명을 쓴다. 그리고 이 안에서 pointcut을 참조를 할 것인데, "mypt"라는 것을 통해서 모든 메서드에 before라는 것을 실행시키겠다는 것이다.
+
+그리고 after-returning의 메서드명은 "afterReturning"이고, pointcut의 참조값으로는 "mypt", 반환값으로는 "line"을 반환할 것이다.
+
+이렇게 저장을 마무리 하고, 다시 Test로 넘어온다. Test 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.aop;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+
+public class Test {
+	public static void main(String[] args) {
+		
+		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+		
+		Person p = context.getBean("programmer", Person.class);
+		
+		try {
+			p.coding();
+		}catch (Exception e) {
+		}
+	}
+}
+```
+
+Person을 가져올 것인데, 이름은 "programmer"로 가져올 것이고, Person.class로 클래스를 지정하였다. 만약 Programmer.class로 입력하면 예외가 터진다. 인터페이스를 구현한 클래스가 아닌 경우 CGLIB 프록시를 사용한다고 했었는데, 이것 때문에 그런 것이다. 그래서 인터페이스명인 Person.class로 가져왔다.
+
+그리고 try ~ catch 구문을 사용해서 예외를 처리하였다. Test 클래스의 실행 결과는 다음과 같다.
+
+<img width="386" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/bad45ea1-9cc7-43f9-8488-d8f32b8fd58a">
+
+<br>
+
+다음으로 around를 작성해볼 것이다.
+
+MyAspect 클래스의 코드에 다음과 같이 around를 위한 부분을 추가한다.
+
+```java
+package com.ssafy.aop;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+
+public class MyAspect {
+	//메서드 명은 중요한게 아니야! 직관적으로 보여주려고 이러한 이름을 사용함.
+	public void before() {
+		System.out.println("컴퓨터를 부팅한다.");
+	}
+	
+	//정상 수행 후
+	public void afterReturning(int line) {
+		System.out.println("Git에 Push 한다. : "+line+"개의 줄을....");
+	}
+	//예외 발생 후
+	public void afterThrowing(Throwable th) {
+		System.out.println("조퇴를 한다.");
+		if(th instanceof OuchException)
+			((OuchException) th).handleException();
+	}
+	
+	//이후에 
+	public void after() {
+		System.out.println("하루를 마무리 한다.");
+	}
+	
+	/////////////////////////////
+	//aroud
+	
+	public int around(ProceedingJoinPoint pjt) {
+		int line = 0;
+		
+		this.before();
+		try {
+			line = (int)pjt.proceed();
+			this.afterReturning(line);
+		} catch (Throwable e) {
+			this.afterThrowing(e);
+		}finally{
+			this.after();
+		}
+		return line;
+	}
+	
+}
+```
+
+이제 applicationContext.xml의 코드를 수정해야 한다. 수정된 applicationContext.xml의 코드는 다음과 같다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<bean class="com.ssafy.aop.Programmer" id="programmer"></bean>
+	<bean class="com.ssafy.aop.MyAspect" id="myAspect"></bean>
+
+<!-- 
+	<aop:config>
+		<aop:pointcut expression="execution(* *(..))" id="mypt"/>
+		<aop:aspect ref="myAspect">
+			<aop:before method="before" pointcut-ref="mypt"/>
+			<aop:after-returning method="afterReturning" pointcut-ref="mypt" returning="line"/>
+			<aop:after-throwing method="afterThrowing" pointcut-ref="mypt" throwing="th" />
+			<aop:after method="after" pointcut-ref="mypt"/>
+		</aop:aspect>
+	</aop:config> -->
+	<aop:config>	
+		<aop:pointcut expression="execution(* *(..))" id="mypt"/>
+		<aop:aspect ref="myAspect">
+			<aop:around method="around" pointcut-ref="mypt"/>
+		</aop:aspect>
+	</aop:config>
+
+</beans>
+```
+
+이제는 그냥 "myAspect" 에다가 aop:around를 쓸 것인데 메서드명은 "around"이다 라고 하겠다. 이것 또한 pointcut-ref를 "mypt"로 해서 바로 쓰면 된다.
+
+이 상태에서 Test를 실행하면 동일하게 동작한다. 달라진 게 없다. 단지 사용 방법이 조금 달라진 것이다.
+
+<img width="392" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/58551788-97db-4744-8e00-013e240a6f0e">
+
+<br>
