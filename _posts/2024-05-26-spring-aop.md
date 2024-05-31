@@ -338,3 +338,108 @@ public class MyAspect {
 <img width="392" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/58551788-97db-4744-8e00-013e240a6f0e">
 
 <br>
+
+## Spring AOP 시작하기 - Annotation
+
+이제 어노테이션 방식으로 AOP를 사용하는 것을 알아보겠다. 우선 앞서 사용한 Spring_02_AOP_2_XML을 복사 붙여넣기 하고 이름을 Spring_02_AOP_3_Annotation으로 명명한다.
+
+이것을 하기 위해서는 @Aspect를 써야 한다.
+
+```xml
+<aop:aspectj-autoproxy/>
+```
+
+위와 같은 설정이 들어가야 한다. applicationContext.xml로 들어가서 다음과 같이 수정한다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- XML 기반 구성으로 @AspectJ를 지원 활성화 하려면 작성해야함. -->
+	<aop:aspectj-autoproxy/>
+	<context:component-scan base-package="com.ssafy.aop"></context:component-scan>
+
+</beans>
+```
+
+(만약 xml 파일에서 계속 빨간 줄이 뜬다면, Window &#62; Preferences 에 들어가서 'Download Aritfact Javadoc'을 체크한다. 그러면 없어질 수 있다. 빨간 줄이 거슬려서 하는 것이지 빨간 줄이 있다고 문제가 있는 것은 아니다.)
+
+이제 MyAspect 부분만 조금 고치면 된다. 이제 MyAspect를 컴포넌트로 등록해야 한다.
+
+```java
+package com.ssafy.aop;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
+
+@Component
+@Aspect
+public class MyAspect {
+	
+	@Pointcut("execution(* com.ssafy.aop.*.coding())")
+	public void mypt() {}
+	
+	
+//	@Before("mypt()")
+	public void before() {
+		System.out.println("컴퓨터를 부팅한다.");
+	}
+	
+//	@AfterReturning(value = "mypt()", returning = "line")
+	public void afterReturning(int line) {
+		System.out.println("Git에 Push 한다. : "+line+"개의 줄을....");
+	}
+	
+//	@AfterThrowing(value = "mypt()", throwing = "th")
+	public void afterThrowing(Throwable th) {
+		System.out.println("조퇴를 한다.");
+		if(th instanceof OuchException)
+			((OuchException) th).handleException();
+	}
+	
+//	@After("mypt()")
+	public void after() {
+		System.out.println("하루를 마무리 한다.");
+	}
+	
+	/////////////////////////////
+	//aroud
+	@Around("mypt()")
+	public int around(ProceedingJoinPoint pjt) {
+		int line = 0;
+		
+		this.before();
+		try {
+			line = (int)pjt.proceed();
+			this.afterReturning(line);
+		} catch (Throwable e) {
+			this.afterThrowing(e);
+		}finally{
+			this.after();
+		}
+		return line;
+	}
+	
+}
+```
+
+수정된 위 코드를 보면, ```@Component```를 붙여서 빈 등록을 하고, ```@Aspect```를 붙여서 동작을 시켰다.
+
+Pointcut을 써야 하기 때문에 ```@Pointcut("execution(* com.ssafy.aop.*.coding())")```와 같이 입력하였다. 이것은 com.ssafy.aop 패키지 안에 있는 모든 클래스가 가지고 있는 인자가 하나도 없는 coding() 메서드가 동작할 때 이러한 것들을 적용하겠다는 것이다.
+
+```java
+@Pointcut("execution(* com.ssafy.aop.*.coding())")
+public void mypt() {}
+```
+
+는 Pointcut을 "mypt"로 등록한 것이다. 이전에 XML 방식에서 살펴봤던 방식과 정확히 동일하게 동작하는 것이다. "mypt"라는 이름으로 꺼내쓸 수 있게 한 것이다.
