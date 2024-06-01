@@ -443,3 +443,9 @@ public void mypt() {}
 ```
 
 는 Pointcut을 "mypt"로 등록한 것이다. 이전에 XML 방식에서 살펴봤던 방식과 정확히 동일하게 동작하는 것이다. "mypt"라는 이름으로 꺼내쓸 수 있게 한 것이다.
+
+그리고 before로 동작을 하게 하고 싶은 것에는 ```@Before("mypt()")```와 같이 입력하면 된다. Pointcut을 "mypt"로 한 것이다. 또, afterReturning에는 ```@AfterReturning(value = "mypt()", returning = "line")```을 붙여서 반환 타입으로 line이 들어올 것이라 할 수 있다. afterThrowing에는 ```@AfterThrowing(value = "mypt()", throwing = "th")```와 같이 입력한다. after에는 ```@After("mypt()")```를 입력한다. 이렇게 저장하고 Test 클래스를 수행하면 문제가 없다.
+
+만약에 MyAspect에 가서 바로 아까 붙인 어노테이션들에 전부 주석처리를 하고, around에만 ```@Around("mypt()")```를 붙이면 마찬가지로 잘 수행된다.
+
+Around를 쓸지 말지는 선택이다.
