@@ -53,7 +53,25 @@ HTTP 통신은 되도록이면 연결을 끊어버리고 상태를 저장하지 
 
 User Controller, Board Controller 의 방식으로 User와 관련되어 있는 컨트롤러, Board와 관련되어 있는 컨트롤러를 쪼개는 것이다. 이런 식으로 기능별로 컨트롤러를 쪼개고, 그것에 따라 매핑할 수 있는 주소 같은 것들이 다 달라지는 것이다.
 
-그리고 CRUD 작업들을 진행하기에 앞서서, 직접 내부적으로 메서드를 작성하지 않을 것이다.
+그리고 CRUD 작업들을 진행하기에 앞서서, 직접 내부적으로 메서드를 작성하지 않을 것이다. 대신 따로 <u>비즈니스 로직</u>을 처리하는 곳, <u>DB 관련 로직</u>을 처리하는 곳의 두 가지를 합쳐서 Manager의 역할을 하는 곳을 둘 것이다. 비즈니스 로직을 처리하는 곳은 <b>Service</b>이고, DB 관련 로직을 처리하는 곳은 Repository로 <b>DAO</b>라고 부른다.
+
+이 경우에는 UserService, BoardService 그리고 UserDao, BoardDao 이렇게 두는 것이다.
+
+그래서 어떤 요청이 들어왔을 때, '이번에는 User Controller로 처리를 할지, Board Controller로 처리를 할지' 결정을 해줘야 하는 것이다. 얼핏 보면 이 방식은 Front Controller 패턴이 아닌 것 같아 보인다. User Controller에 주소가 써 있고, Board Controller에도 주소가 써 있기 때문이다.
+
+그래서 Spring에서는 맨 앞에 수문장을 하나 둔다. 이것이 바로 <b>Dispatcher Servlet</b> 이다. Dispatcher Servlet이 클라이언트와 서버 사이에서 버티고 있다가, 분석을 하는 것이다. 가령 '이 요청은 User Controller에게 주면 되겠다' 하면 User Controller에게 던진다. 반대로 '이 요청 Board Controller에게 주면 되겠다' 하면 Board Controller에게 던진다.
+
+그래서 <u>Spring MVC에서 서블릿은 딱 한 개이다. 이 한 개가 바로 Dispatcher Servlet</u> 이다.
+
+<br>
+
+Controller, Service, Repository 와 같은 것들은 전부 Spring을 쓰니까 '빈 등록'을 해야 한다. 물론 직접 등록할 수도 있기는 하지만, 예전에 @Component라는 어노테이션을 배울 때 @Controller, @Service, @Repository 라는 어노테이션도 있다는 것을 배웠다. 이 어노테이션은 결국 내부적으로 @Component인데, 조금 더 명확하게 구분하고 (살짝 부가 기능이 있기는 하다) @Component 대신에 박는 어노테이션인 것이다.
+
+이러한 것들을 package-scan만 쭉 해버리면 알아서 빈으로 등록해서 스프링 컨테이너가 다 관리를 해주는 것이다.
+
+User Controller라는 것은 User Service를 가지고 있어야 한다. 그래야 컨트롤러에서 어떤 요청이 왔을 때 '이거 Service로 던져야겠다' 할 수 있는 것이다. Board Controller는 Board Service를 가지고 있어야 한다. 그러면 <b>User Controller가 User Service라는 객체가 필요하다는 점에서 DI(Dependency Injection) 개념이 필요해진다.</b> User Controller가 User Service를 의존하고 있기 때문에 의존성 주입을 해줘야 하는 것이다.
+
+그래서  ```@Autowired```를 붙여 넣으면 스프링이 알아서 User Service를 User Controller에 톡 넣어주고, Board Service를 알아서 Board Controller에 톡 넣어준다. 우리가 다이렉트로 컨트롤러에서 리포지토리로 갈 일은 없다. <b>무조건 Repository로 가는 것은 Service를 통해서 호출하게 되어 있다.</b> 그래서 User Service도 내부적으로 User Repository를 가지고 있고, Board Service도 내부적으로 Board Repository를 가지고 있어야 한다. 이 또한 의존성 주입을 IoC Container가 알아서 해준다.
 
 
 <br>
