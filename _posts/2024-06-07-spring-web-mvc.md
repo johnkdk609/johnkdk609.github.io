@@ -83,4 +83,25 @@ DispatcherServlet은 이제 사용자가 어떤 요청을 보냈는데, 어떤 �
 
 DispatcherServlet이라고 하는 것은 설정 파일이 필요하다. 이전에는 설정 파일로 applicationContext.xml 라는 파일을 한 개 만들었다. 그런데 DispatcherServlet에는 설정 파일이 두 개 필요하다.
 
+1. <b>Servlet WebApplicationContext</b> - Controllers, ViewResolver, HandlerMapping
+2. <b>Root WebApplicationContext</b> - Services, Repositories
+
 이름은 관례적으로 servletContext.xml, rootContext.xml 로 짓는다. servletContext.xml 에는 어떤 것들을 빈으로 관리를 하고 있을까? Controllers, ViewResolver, HandlerMapping을 servletContext에서 빈으로 관리한다. rootContext에서는 Services, Repositories 등을 관리한다.
+
+Web과 직접적으로 관련이 있는 것은 Servlet WebApplicationContext에서 관리를 하고, Web과 직접적인 관련이 없는 것은 Root WebApplicationContext에서 관리를 한다.
+
+즉, Services, Repositories라는 것들은 Web과 직접적인 연관이 있는 것은 아니다. 그냥 Controller에 의해서 로직을 처리하기 위해 호출이 되는 것들이다. 필요하다면 데이터베이스에 접근까지 하는 것이다.
+
+반면 Controllers, ViewResolver, HandlerMapping은 Web과 직접적인 관련이 있다.
+
+이렇게 구분하는 이유는, <u>명확하게 역할을 부여하고 나눔으로써 분업을 할 수 있게 하는 것</u>이다.
+
+<br>
+
+## Spring Web MVC 구성하기
+
+* Dynamic Web PJT 생성 (web.xml 체크)
+* maven 프로젝트로 변경
+* Spring Web MVC 추가
+
+그래서 Web MVC를 하기 위해서는 'Spring Web MVC'를 만들어야 한다.
