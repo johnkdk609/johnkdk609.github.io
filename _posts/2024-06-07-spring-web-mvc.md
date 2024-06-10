@@ -105,3 +105,92 @@ Web과 직접적으로 관련이 있는 것은 Servlet WebApplicationContext에�
 * Spring Web MVC 추가
 
 그래서 Web MVC를 하기 위해서는 'Spring Web MVC'를 만들어야 한다.
+
+<br>
+
+오랜만에 Dynamic Web Project를 만들 것이다. Spring_03_WebMVC 라는 이름으로 Dynamic Web Project를 하나 생성한다.
+
+maven 프로젝트로 변경하고, Spring Web MVC 를 추가해야 한다. 버전은 6.1.3 으로 하겠다.
+
+pom.xml 의 코드는 다음과 같다.
+
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>Spring_03_WebMVC</groupId>
+  <artifactId>Spring_03_WebMVC</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <release>17</release>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.3</version>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+	<dependency>
+    	<groupId>org.springframework</groupId>
+    	<artifactId>spring-webmvc</artifactId>
+    	<version>6.1.3</version>
+	</dependency>
+  </dependencies>
+</project>
+```
+
+web.xml 도 만들었기 때문에 구조는 다음과 같이 나온다.
+
+<img width="288" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/aac9a433-5305-403e-b683-2bd59b36ae0c">
+
+<br>
+
+이제 DispatcherServlet 을 등록해야 한다. DispatcherServlet은 누가 만들었냐 하면, Spring이 만든 것이다. 우리가 Servlet을 등록하는 방법은 크게 2 가지가 있었는데, 첫 번째 방식은 web.xml에 직접 등록하는 방식이고, 두 번째 방식은 ```@WebServlet``` 어노테이션을 이용하는 방식이다. 그런데 내가 만든 서블릿은 web.xml을 통해서 등록할 수 있었다. ```@WebServlet``` 어노테이션을 이용해서도 내가 만든 서블릿을 등록할 수 있었다. 
+
+내가 만든 것이 아닌, 남(Spring)이 만든 서블릿은 web.xml로 등록할 수 있다. 그런데 어노테이션을 이용해서는 등록할 수 없다. 내가 짠 코드가 아니기 때문에 그 코드에 가서 어노테이션을 붙일 수 없다.
+
+그러니까 DispatcherServlet은 남이 만든 것이고, 그것을 등록하기 위해서는 web.xml 을 통해서 등록을 해야 한다.
+
+web.xml 을 통해 등록한 코드는 다음과 같다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://jakarta.ee/xml/ns/jakartaee" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd" id="WebApp_ID" version="6.0">
+  <display-name>Spring_03_WebMVC</display-name>
+  
+  <servlet>
+  	<servlet-name>springDispatcherServlet</servlet-name>
+  	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+  	<init-param>
+  		<param-name>contextConfigLocation</param-name>
+  		<param-value>/WEB-INF/servlet-context.xml</param-value>
+  	</init-param>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>springDispatcherServlet</servlet-name>
+  	<url-pattern>/</url-pattern>
+  </servlet-mapping>
+  
+  
+  <listener>
+  	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+  <context-param>
+  	<param-name>contextConfigLocation</param-name>
+  	<param-value>/WEB-INF/root-context.xml</param-value>
+  </context-param>
+  
+</web-app>
+```
+
+굉장히 복잡하다.
