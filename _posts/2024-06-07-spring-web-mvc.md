@@ -194,3 +194,17 @@ web.xml 을 통해 등록한 코드는 다음과 같다.
 ```
 
 굉장히 복잡하다.
+
+우선 Servlet을 등록하기 위해서는 ```<servlet></servlet>``` 태그를 연다. (이후에는 프로젝트를 이렇게 만들 일이 없다. 한 번 연습해보는 것이다.)
+
+여기에 servlet-name, servlet-class 두 가지를 쓸 수 있다. servlet-name으로는 내 마음대로 "springDispatcherServlet"으로 명명하였다. 그리고 이것이 어디서 왔는지 명시하기 위해 servlet-class를 입력한다. 자동완성이 안 되므로, "org.springframework.web.servlet.DispatcherServlet"을 입력한다. 정확히 어디에 위치해 있는지 보려면, Project Explorer에 Spring_03_WebMVC 에서 Maven Dependencies &#62; spring-webmvc-6.1.3.jar &#62; org.springframework.web.servlet &#62; DispatcherServlet 으로 되어 있다. 이 DispatcherServlet에 마우스 우클릭을 하고 'Copy Qualified Name'을 클릭하면 경로를 따올 수 있다.
+
+<img width="640" alt="image" src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/eea60481-5481-4f1e-b853-7d32f38879b4">
+
+그런데 이렇게 일일이 찾기 복잡하다. 다른 방법으로는, 우선 Java Resources 폴더에 마우스 우클릭 &#62; New &#62; Class 를 클릭한 다음, 임시로 Test 클래스를 생성한다. 그리고 코드에 DispatcherServlet이라고 입력하면 알아서 위에 경로를 import 해준다. 이것을 복사해서 xml에 입력할 수 있다. (이 방식이 제일 편하게 가져올 수 있는 방법이다.)
+
+다시 web.xml 로 돌아와서, 위의 과정까지 했으면 Servlet 등록을 한 것이다. 이제 servlet-mapping을 해야 한다.
+
+servlet-mapping에는 servlet-name과 url-pattern 이 두 개가 들어게가 되어 있다. servlet-name에는 아까 임의로 명명한 "springDispatcherServlet"을 입력하고, url-pattern에는 "/"를 입력한다. 이렇게 "/"를 입력하는 것은 약속 같은 것이다. 이렇게 작성하면 <b>사용자가 보는 모든 요청은 일단 다 DispatcherServlet을 거치게 되어 있다는 뜻</b>이다.
+
+추가적인 설정을 더 해줘야 한다. 우선 ```<load-on-startup>1</load-on-startup>```은 설정 같은 것인데, 이 값이 작을수록 우선순위가 높다고 보면 된다. 값이 1이면 해당 Servlet은 웹 어플리케이션이 시작하는 시점에 즉시 초기화되고 load 된다는 뜻이다.
