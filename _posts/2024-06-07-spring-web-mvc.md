@@ -208,3 +208,28 @@ web.xml 을 통해 등록한 코드는 다음과 같다.
 servlet-mapping에는 servlet-name과 url-pattern 이 두 개가 들어게가 되어 있다. servlet-name에는 아까 임의로 명명한 "springDispatcherServlet"을 입력하고, url-pattern에는 "/"를 입력한다. 이렇게 "/"를 입력하는 것은 약속 같은 것이다. 이렇게 작성하면 <b>사용자가 보는 모든 요청은 일단 다 DispatcherServlet을 거치게 되어 있다는 뜻</b>이다.
 
 추가적인 설정을 더 해줘야 한다. 우선 ```<load-on-startup>1</load-on-startup>```은 설정 같은 것인데, 이 값이 작을수록 우선순위가 높다고 보면 된다. 값이 1이면 해당 Servlet은 웹 어플리케이션이 시작하는 시점에 즉시 초기화되고 load 된다는 뜻이다.
+
+<br>
+
+그리고 아까 DispatcherServlet을 할 때 두 개의 설정 파일이 필요하다고 했었다.
+
+1. servlet-context.xml 파일
+2. root-context.xml 파일
+
+지금은 WEB-INF 밑에 마우스 우클릭 &#62; New &#62; Other 에 가서 xml 파일을 하나 만들 것이고, 이름을 servlet-context.xml 로 생성한다. 그리고 그것을 하나 더 복사해서 root-context.xml 파일을 생성한다.
+
+원래는, 옛날 방식을 보면 이 두 개가 경로가 살짝 다르다. 그런데 지금 연습을 하기 위해서 똑같은 경로에다가 두 개를 만든 것이다. root-context.xml 과 servlet-context.xml 두 개 모두 설정 파일로 이전에 사용했던 Spring_02_AOP_2_XML 프로젝트의 resources/applicationContext.xml 을 복사해서 가져온다. aop와 관련한 것들은 필요하지 않으니 다 지운다.
+
+web.xml로 돌아와서 이제 init-param에 param-name은 "contextConfigLocation" 으로 한다. 그리고 param-value로는 "/WEB-INF/servlet-context.xml"로 입력한다. 
+
+그리고 load-on-startup에는 1을 입력한다. 
+
+root-context.xml 에 설정을 넣을 것이다. listener이라는 것이 있고, context-param 이라고 하는 것 두 개를 추가를 해줘야 한다. listener은 무언가 이벤트가 발생했을 때 듣고 있는 청취자이다. 그러니까 위 코드에서 listener-class에 써 있는 것은 Context가 로드가 되었을 때 context-param에다가 이러한 설정을 넣어서 보내겠다는 것이다.
+
+listener에는 우선 listener-class를 넣어서 ContextLoaderListener의 전체 경로를 넣을 것이다. 마찬가지로 임시 Test 파일에 가서 ContextLoaderListener를 입력하고 import 하면 full path를 쉽게 알 수 있다.
+
+그리고 밑에 context-param에는 context의 설정을 넣을 것이다. context에 설정을 넣을 것인데, param-name은 아까와 동일하게 "ContextConfigLocation"으로, param-value는 "/WEB-INF/root-context.xml"로 입력한다. ContextLoaderListener이 로드 될 때 이러한 설정과, DispatcherServlet이 실행할 때의 설정들을 이용해서 완성을 하는 것이다. 이제 web.xml은 다 작성이 되었다.
+
+<br>
+
+이제 servlet-context.xml 를 조금 더 완성을 해야 한다.
