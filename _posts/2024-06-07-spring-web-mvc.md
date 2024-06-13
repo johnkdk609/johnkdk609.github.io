@@ -233,3 +233,11 @@ listener에는 우선 listener-class를 넣어서 ContextLoaderListener의 전�
 <br>
 
 이제 servlet-context.xml 를 조금 더 완성을 해야 한다.
+
+DispatcherServlet은 어떤 요청이 들어오면 HandlerMapping을 통해서 갔다오고, 갔다온 것을 토대로 컨트롤러에 갔다가, 그것을 토대로 ViewResolver에 간다.
+
+이러한 웹과 관련된 설정들은 servlet-context.xml 에 등록을 한다.
+
+HandlerMapping이라는 객체는 DefaultAnnotationHandlerMapping을 사용하기 때문에 별도의 등록 없이 사용이 가능하다. (Spring 3.0 부터) 그러면 우리는 ViewResolver만 등록해주면 된다. (물론 컨트롤러도 등록을 해야 하는데, 컨트롤러는 그냥 컴포넌트 스캔을 쓸 것이고, ```@Controller``` 어노테이션을 집어넣으면 된다.)
+
+그런데 InternalResourceViewResolver은 내가 직접 만드는 것이 아니라 등록을 해야 한다.
