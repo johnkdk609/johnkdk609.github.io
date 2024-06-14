@@ -241,3 +241,47 @@ DispatcherServlet은 어떤 요청이 들어오면 HandlerMapping을 통해서 �
 HandlerMapping이라는 객체는 DefaultAnnotationHandlerMapping을 사용하기 때문에 별도의 등록 없이 사용이 가능하다. (Spring 3.0 부터) 그러면 우리는 ViewResolver만 등록해주면 된다. (물론 컨트롤러도 등록을 해야 하는데, 컨트롤러는 그냥 컴포넌트 스캔을 쓸 것이고, ```@Controller``` 어노테이션을 집어넣으면 된다.)
 
 그런데 InternalResourceViewResolver은 내가 직접 만드는 것이 아니라 등록을 해야 한다.
+
+<br>
+
+servlet-context.xml 파일로 와서, 핸들러 매핑은 기본으로 사용하는 게 있어서 내가 굳이 등록하지 않아도 OK 이다. 그런데 ViewResolver은 기본으로 사용하는 게 없기 때문에 내가 직접 등록을 해야 한다.
+
+InternalResourceViewResolver를 가져오기 위해 또 임의의 Test 클래스에서 입력하고 full path를 복사한다. 그리고 servlet-context.xml 에서 ```<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">```로 입력한다.
+
+그리고 앞에 "/WEB-INF/"인 접두어를 붙이고 뒤에는 ".jsp"인 접미어를 붙인다고 했었다.
+
+빈으로 등록할 때 property를 통해서 ```<property name="prefix" value="/WEB-INF/view/"></property>```로 입력하고, ```<property name="suffix" value=".jsp"><property>```의 방식으로 입력한다. ".jsp" 확장자를 무조건 붙일 것이라는 것이다.
+
+servlet-context.xml 의 코드는 다음과 같다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+		<!-- Web과 관련된 설정 -->
+		
+		<!-- 핸들러매핑은 기본으로 사용하는게 있어서 내가 굳이 등록하지 않았도 OK -->
+		
+		<!-- 뷰리졸버는 내가 직접 등록을 해주어야 해 -->
+		<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			<property name="prefix" value="/WEB-INF/view/"></property>
+			<property name="suffix" value=".jsp"></property>
+		</bean>
+		
+		<context:component-scan base-package="com.ssafy.mvc.controller"></context:component-scan>
+		
+</beans>
+```
+
+property라는 것이 있다면 이것은 즉 setter이 있다는 것이다. "org.springframework.web.servlet.view.InternalResourceViewResolver"를 클릭하고 들어가보면 내부적으로 setPrefix, setSuffix 라는 메서드가 있다. 그렇기 때문에 property를 통해서 접근할 수 있는 것이다. (다 이미 학습한 내용이다.)
+
+<br>
+
+여기까지 했으면 이제 "hello"를 찍어볼 준비가 다 되었다.
