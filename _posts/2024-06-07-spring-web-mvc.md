@@ -275,8 +275,6 @@ servlet-context.xml 의 코드는 다음과 같다.
 			<property name="suffix" value=".jsp"></property>
 		</bean>
 		
-		<context:component-scan base-package="com.ssafy.mvc.controller"></context:component-scan>
-		
 </beans>
 ```
 
@@ -285,3 +283,76 @@ property라는 것이 있다면 이것은 즉 setter이 있다는 것이다. "or
 <br>
 
 여기까지 했으면 이제 "hello"를 찍어볼 준비가 다 되었다.
+
+코드로 넘어와서, WEB-INF 폴더에 마우스 우클릭을 하고 "view"라는 폴더를 하나 만든다. ("/WEB-INF/view/"로 다 접근을 하기로 했기 때문)
+
+여기에 index.jsp 라는 파일을 하나 만든다. index.jsp 의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Spring MVC</title>
+</head>
+<body>
+	<h2>Hello Spring MVC</h2>
+</body>
+</html>
+```
+
+일단 여기까지 와야 하니까 컨트롤러를 하나 만들어줘야 한다. Package는 "com.ssafy.mvc.controller"로 한다. 그리고 Name은 "MyController"로 한다.
+
+기존에는 여기에 무언가 붙였겠지만, 스프링은 POJO 스타일을 추구하니 여기에 무엇을 안 붙인다. 그냥 위에 ```@Controller``` 어노테이션만 붙인다. MyController의 코드는 다음과 같다.
+
+```java
+package com.ssafy.mvc.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class MyController {
+	@RequestMapping("/")
+	public String index() {
+		return "index";
+	}
+	
+}
+```
+
+여기서 컨트롤러를 등록을 해줘야 쓸 수 있다. 다시 servlet-context.xml 로 돌아와서 ```<context:component-scan base-package="com.ssafy.mvc.controller"></context:component-scan>```를 붙여준다. 그러면 최종적인 servlet-context.xml 의 코드는 다음과 같다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+		<!-- Web과 관련된 설정 -->
+		
+		<!-- 핸들러매핑은 기본으로 사용하는게 있어서 내가 굳이 등록하지 않았도 OK -->
+		
+		<!-- 뷰리졸버는 내가 직접 등록을 해주어야 해 -->
+		<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			<property name="prefix" value="/WEB-INF/view/"></property>
+			<property name="suffix" value=".jsp"></property>
+		</bean>
+		
+		<context:component-scan base-package="com.ssafy.mvc.controller"></context:component-scan>
+		
+</beans>
+```
+
+<br>
+
+이제 드디어 실행이다. Project Explorer에 있는 Spring_03_WebMVC에 마우스 우클릭을 하고, Run on Server를 클릭한 다음, Tomcat을 결정하고 Next를 클릭하고 Finish를 누른다. 그러면 context-root 까지 실행해서 다음과 같은 index 페이지가 뜬다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/4fcb638c-236a-4e37-afc7-db8a49c18ae0" width="480px">
