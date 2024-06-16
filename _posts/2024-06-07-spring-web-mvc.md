@@ -356,3 +356,89 @@ public class MyController {
 이제 드디어 실행이다. Project Explorer에 있는 Spring_03_WebMVC에 마우스 우클릭을 하고, Run on Server를 클릭한 다음, Tomcat을 결정하고 Next를 클릭하고 Finish를 누른다. 그러면 context-root 까지 실행해서 다음과 같은 index 페이지가 뜬다.
 
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/4fcb638c-236a-4e37-afc7-db8a49c18ae0" width="480px">
+
+<br>
+
+결국 지금까지 한 것은 전부 다 설정이다. 설정 파일 만들고, DispatcherServlet 등록하고, ViewResolver 등록하고, Component 등록하고, Controller 등록하는 등... 설정만 한 것이다. 그래서 설정이 반이다.
+
+스프링이 진입장벽이 좀 있다고 하는 것이, 이러한 설정들이 엄청 많기 때문이다.
+
+그래서 순수하게 스프링을 통해서 기술만 좀 익히겠다고 한다면 바로 Spring Boot 로 가면 되기는 한다. 하지만 여기까지 왔는데 스프링 부트만 배우고 가는 것은 맞지 않는다. 그래서 이러한 스텝을 하나씩 밟아보면서 하는 것이다.
+
+<br>
+
+## Spring Web MVC 실습
+
+RequestMapping이라는 것을 아까 살펴봤었다. RequestMapping의 특징은 다음과 같다.
+
+* URL을 클래스 또는 특정 핸들러(메서드)에 매핑
+* 메서드 Annotation은 요청 방식(GET, POST) 등으로 범위를 좁혀 준다.
+
+<br>
+
+다시 코드로 넘어가보자. view 폴더 아래에 home.jsp 파일을 하나 생성한다. home.jsp 의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Spring MVC</title>
+</head>
+<body>
+	<h2>${msg}</h2>
+</body>
+</html>
+```
+
+EL 표현식으로 ```${msg}```를 입력하였다. jsp가 접근할 수 있는 영역에 "msg"라고 하는 것이 있으면 가져오는 것이다.
+
+이제 MyController에 가서, 다음과 같이 코드를 추가한다.
+
+```java
+package com.ssafy.mvc.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class MyController {
+	@RequestMapping("/")
+	public String index() {
+		return "index";
+	}
+	
+	@RequestMapping(value="home", method = RequestMethod.GET)
+	public ModelAndView homeHandle1() {
+		ModelAndView mav = new ModelAndView();
+		//데이터를 실어서 보내보자. (키/벨류)
+		mav.addObject("msg", "Welcome to Spring (GET)");
+		
+		//view 이름을 결정해야해 //포워딩 한것과 같음
+		mav.setViewName("home");
+		return mav;
+	}
+	@RequestMapping(value="home", method = RequestMethod.POST)
+	public ModelAndView homeHandle2() {
+		ModelAndView mav = new ModelAndView();
+		//데이터를 실어서 보내보자. (키/벨류)
+		mav.addObject("msg", "Welcome to Spring (POST)");
+		
+		//view 이름을 결정해야해 //포워딩 한것과 같음
+		mav.setViewName("home");
+		return mav;
+	}
+		
+}
+```
+
+위 코드에서 ModelAndView 객체를 반환하기로 했다. 그래서 ```ModelAndView mav = new ModelAndView();```의 방식으로 입력하였다. ModelAndView는 바구니와 이름을 저장할 수 있는 객체이다. 여기에 키-밸류 방식으로 데이터를 실어서 보내보겠다.
+
+```mav.addObject()```를 하여 속성 이름은 "msg"로, 객체로는 "Welcome to Spring (GET)"을 입력한다. (GET 방식으로 보냈다는 것을 쓰겠다.)
+
+이렇게 ModelAndView를 이용해서 데이터를 실었고, 이제는 view의 이름을 결정해야 한다. 그래서 ```mav.setViewName("home");```로 이름을 결정한다. 이렇게 넘기면 포워딩(forwarding)을 한 것과 똑같다. 그리고 mav를 리턴한다.
+
