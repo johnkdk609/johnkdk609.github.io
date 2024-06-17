@@ -442,3 +442,46 @@ public class MyController {
 
 이렇게 ModelAndView를 이용해서 데이터를 실었고, 이제는 view의 이름을 결정해야 한다. 그래서 ```mav.setViewName("home");```로 이름을 결정한다. 이렇게 넘기면 포워딩(forwarding)을 한 것과 똑같다. 그리고 mav를 리턴한다.
 
+내가 지금 ModelAndView라는 바구니를 준비했고, 메세지를 담았으며 "home"이라는 곳으로 가면 되고, 그리고 mav를 반환한다고 해 놨다. 그러면 ViewResolver가 "home"이란 이름을 가지고 앞에는 "/WEB-INF/"를 붙이고 뒤에는 ".jsp"를 붙여서 사용자에게 보내주는 것이다. 여기에 있는 homeHandle1() 위에 ```@RequestMapping("home")```이라고 어노테이션을 보내면 요청이 이렇게 올 것이다.
+
+다시 브라우저에 가서 뒤에 URL 뒤에 "home"을 붙이면 다음과 같은 화면이 나타난다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/f48f0c10-4f36-49cb-a33a-5c3b98b4fbbd" width="480px">
+
+<br>
+
+그런데 이렇게 RequestMapping만 쓰면 이것이 GET 방식이든 POST 방식이든 전부 다 처리를 해버린다. 그래서 조금 더 명확하게 하기 위해서 ```@RequestMapping(value="home", method = RequestMethod.GET)```로 명시를 할 것이다.
+
+그리고 이 homeHandle1()을 복사 붙여넣기 하여 homeHandle2()를 만들고, 이번에는 POST 방식으로 설정을 해둔다.
+
+주소에 직접 써서 보내는 것은 GET 방식이다. POST 방식은 form 태그를 통해서 action="home", 그리고 method="POST"로 하면 된다.
+
+index.jsp의 코드에 다음과 같이 form 태그를 추가한다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Spring MVC</title>
+</head>
+<body>
+	<h2>Hello Spring MVC</h2>
+	
+	<form action="home" method="POST">
+		<button>등록</button>
+	</form>
+</body>
+</html>
+```
+
+그리고 Run on Server을 한 다음, "등록" 버튼을 클릭하면 다음과 같이 화면에 출력된다.
+
+<image src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/e446d923-0cb6-4ab5-8059-2e3830a3bef5" width="480px">
+
+그러면 POST 방식으로 된다. (POST로 보낼 수 있는 방법은 지금으로써는 이게 유일하다.)
+
+<br>
+
