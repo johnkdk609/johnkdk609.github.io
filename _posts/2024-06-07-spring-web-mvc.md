@@ -485,3 +485,62 @@ index.jsp의 코드에 다음과 같이 form 태그를 추가한다.
 
 <br>
 
+### Controller Parameter
+
+<table>
+    <tr>
+        <th>파라미터 타입</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>HttpServletRequest<br>HttpServletResponse<br>HttpSession</td>
+        <td>Servlet API를 사용할 수 있다</td>
+    </tr>
+    <tr>
+        <td>Locale</td>
+        <td>요청 클라이언트의 Locale 정보를 포함</td>
+    </tr>
+    <tr>
+        <td>InputStream, Reader<br>OutputStream, Writer</td>
+        <td>요청으로부터 직접 데이터를 읽어오거나, 응답을 직접 생성하기 위해서 사용</td>
+    </tr>
+    <tr>
+        <td>Map, Model, ModelMap</td>
+        <td>View 데이터를 전달하기 위해서 사용</td>
+    </tr>
+    <tr>
+        <td>RedirectAttributes</td>
+        <td>리디렉션(쿼리 문자열에 추가) 시 사용할 속성 지정</td>
+    </tr>
+    <tr>
+        <td>Errors, BindingResult</td>
+        <td>에러와 데이터 바인딩 결과에 접근하기 위해서 사용</td>
+    </tr>
+    <tr>
+        <td>@PathVariable</td>
+        <td>URI 템플릿 변수에 대한 액세스</td>
+    </tr>
+    <tr>
+        <td>@RequestParam</td>
+        <td>multipart 파일을 포함하여 요청 파라미터에 액세스</td>
+    </tr>
+    <tr>
+        <td>@RequestHeader</td>
+        <td>요청 헤더에 액세스</td>
+    </tr>
+    <tr>
+        <td>@CookieValue</td>
+        <td>쿠키에 대한 액세스</td>
+    </tr>
+    <tr>
+        <td>@RequestAttribute<br>@SessionAttribute</td>
+        <td>모든 세션 요청에 대한 액세스<br>요청 속성에 액세스</td>
+    </tr>
+    <tr>
+        <td>@ModelAttribute</td>
+        <td>모델의 속성에 액세스</td>
+    </tr>
+</table>
+
+Controller Parameter에는 위와 같이 파라미터 타입들을 쓰기만 하면 알아서 넣어 준다. 내가 Request를 쓰고 싶으면 Controller Parameter 안에다가 HttpServletRequest라고 하는 파라미터를 작성만 하면 "아 너 이거 필요하구나" 하고 알아서 의존성 주입해서 넘겨주는 것이다.
+
