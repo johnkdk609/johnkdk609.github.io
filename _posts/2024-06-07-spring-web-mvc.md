@@ -588,3 +588,85 @@ Controller Parameter에는 위와 같이 파라미터 타입들을 쓰기만 하
 <br>
 
 이제 본격적으로 실습을 진행해보자.
+
+com.ssafy.mvc.controller 패키지 안에 ControllerParameter 클래스를 생성한다. ControllerParameter 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.mvc.controller;
+
+import java.util.Map;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+@Controller
+public class ControllerParameter {
+	
+	@GetMapping("/test1") // 요청 경로
+	public String test1() { // 메서드명은 지금은 중요치 않다.
+		
+		// 반환 타입이 String이라는 뜻은 해당 값이 ViewName이다.
+		return "test1"; // WEB-INF/view/test1.jsp
+	}
+	
+	
+	// 데이터를 실어서 보내고 싶은데, ModelAndView로 하긴 싫다.
+	@GetMapping("/test2-1")
+	public String test2_1(Model model) {
+		model.addAttribute("msg", "데이터야");
+		return "test2";
+	}
+	
+	// 데이터를 실어서 보내고 싶은데, ModelAndView로 하긴 싫다.
+	@GetMapping("/test2-2")
+	public String test2_2(Map<String, Object> model) {
+		model.put("msg", "데이터야2");
+		return "test2";
+	}
+	
+	
+//	// 파라미터로 값을 가져오고 싶다.
+//	@GetMapping("/test3")
+//	public String test3(Model model, HttpServletRequest request) {
+//		String id = request.getParameter("id");
+//		
+//		model.addAttribute("id", id);
+//		return "test3";
+//	}
+	// 파라미터로 값을 가져오고 싶다.
+	@GetMapping("/test3")
+	public String test3(Model model, @RequestParam("myid") String id, @RequestParam(value="pw", defaultValue = "1234") String pw) {
+		model.addAttribute("id", id);
+		model.addAttribute("pw", pw);
+		return "test3";
+	}
+		
+}
+```
+
+우선 위에 ```@Controller```를 입력하여 컨트롤러로 등록을 한다. 이전에 했던 MyController 클래스를 생각해봤을 때, GET 방식으로 가려면 ```@RequestMapping(value="home", method = RequestMethod.GET)```, POST 방식으로 가려면 ```@RequestMapping(value="home", method = RequestMethod.POST)``` 의 방식으로 해야 했다. 이렇게 하면 생각보다 불편하다.
+
+그래서 위와 같이 ```@GetMapping("/test1")```와 같이 입력한다. 그러면 "/test1" 이라는 GET 요청은 전부 여기로 들어오는 것이다. (굉장히 편해졌다.) 그리고 "test1"을 리턴한다.
+
+WEB-INF/view 안에 test1.jsp를 생성한다. 그리고 test1.jsp의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Spring MVC</title>
+</head>
+<body>
+	<h2>ControllerParameter Test1</h2>
+</body>
+</html>
+```
+
