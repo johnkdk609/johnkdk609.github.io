@@ -544,3 +544,47 @@ index.jsp의 코드에 다음과 같이 form 태그를 추가한다.
 
 Controller Parameter에는 위와 같이 파라미터 타입들을 쓰기만 하면 알아서 넣어 준다. 내가 Request를 쓰고 싶으면 Controller Parameter 안에다가 HttpServletRequest라고 하는 파라미터를 작성만 하면 "아 너 이거 필요하구나" 하고 알아서 의존성 주입해서 넘겨주는 것이다.
 
+또 그 안에 @PathVariable, @RequestParam, @RequestHeader 등등이 있다.
+
+<br>
+
+### Controller Return Type
+
+<table>
+    <tr>
+        <th>파라미터 타입</th>
+        <th>설명</th>
+    </tr>
+    <tr>
+        <td>@ResponseBody</td>
+        <td>HttpMessageConverter 구현을 통해 변환되어 응답한다.</td>
+    </tr>
+    <tr>
+        <td>HttpHeaders</td>
+        <td>헤더가 있고 body가 없는 response를 반환</td>
+    </tr>
+    <tr>
+        <td>String</td>
+        <td>뷰 이름 반환 (ViewResolver 선언과 함께 사용)</td>
+    </tr>
+    <tr>
+        <td>View</td>
+        <td>렌더링 하는데 사용할 View 인스턴스</td>
+    </tr>
+    <tr>
+        <td>Map, Model</td>
+        <td>명시적으로 모델을 작성하지 않는 경우 사용</td>
+    </tr>
+    <tr>
+        <td>ModelAndView</td>
+        <td>사용할 view와 속성을 포함하는 객체</td>
+    </tr>
+    <tr>
+        <td>void</td>
+        <td>method에 ServletResponse, HttpServletResponse 인자가 있는 경우, 모든 요청이 처리된 것으로 간주, 그렇지 않으면 요청 URI를 view name으로 처리</td>
+    </tr>
+</table>
+
+<br>
+
+이제 본격적으로 실습을 진행해보자.
