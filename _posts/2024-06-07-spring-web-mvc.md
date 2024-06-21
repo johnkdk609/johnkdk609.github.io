@@ -670,3 +670,42 @@ WEB-INF/view 안에 test1.jsp를 생성한다. 그리고 test1.jsp의 코드는 
 </html>
 ```
 
+이제 실행을 시킨 다음, 주소를 "http://localhost:8080/Spring_03_WebMVC/test1"로 해서 들어가면 다음과 같이 출력된다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3c319b42-79fe-4b5c-869c-786242bebd6a" width="500px" />
+
+<br>
+
+test1에서 지금 반환 타입은 String이다. 그리고 ```return "test1";```라고 해뒀다. 이때 반환 타입이 String이라는 뜻은 해당 값이 ViewName이라는 것이다. 그러니까 내가 String을 반환하면 ViewName으로 알아서 지정이 되는 것이다. 내부적으로 ViewResolver이 잡아다가 "/WEB-INF/view/test1.jsp"로 바꿔서 실행을 해버리는 것이다.
+
+그리고 어노테이션 ```@GetMapping("/test1")```에 있는 "/test1"은 요청 경로이다. (메서드명은 지금은 중요하지 않다.)
+
+<br>
+
+이번에는 ```@GetMapping("/test2_1")```을 입력한다. 메서드명도 동일하게 "test2_1"로 한다. 그리고 "test2"를 리턴한다. 지금 이 상황은 위와 동일한 것이다.
+
+test2.jsp를 하나 생성한다. test2.jsp의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Spring MVC</title>
+</head>
+<body>
+	<h2>ControllerParameter Test2</h2>
+	<div>
+		${msg}
+	</div>
+</body>
+</html>
+```
+
+그런데 데이터를 실어서 보내고 싶은데 ModelAndView를 반환하기는 싫은 상황이다. 그러면 바구니가 필요한 상황이다.
+
+이전에 봤던 Controller Parameter에서 파라미터 타입들을 쭉 보면, Map, Model, ModelMap이 바구니인 것을 알 수 있다. View 데이터를 전달하기 위해서 사용하는 것들이다.
+
+그래서 ```public String test2_1(Model model) {```로 하여 바구니를 가져온 것이다. 그냥 알아서 객체를 만들어서 넣어준다. (스프링 컨테이너가 이것을 다 해준다.)
