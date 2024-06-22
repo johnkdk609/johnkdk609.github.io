@@ -672,7 +672,7 @@ WEB-INF/view 안에 test1.jsp를 생성한다. 그리고 test1.jsp의 코드는 
 
 이제 실행을 시킨 다음, 주소를 "http://localhost:8080/Spring_03_WebMVC/test1"로 해서 들어가면 다음과 같이 출력된다.
 
-<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3c319b42-79fe-4b5c-869c-786242bebd6a" width="500px" />
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/3c319b42-79fe-4b5c-869c-786242bebd6a" width="480px" />
 
 <br>
 
@@ -709,3 +709,52 @@ test2.jsp를 하나 생성한다. test2.jsp의 코드는 다음과 같다.
 이전에 봤던 Controller Parameter에서 파라미터 타입들을 쭉 보면, Map, Model, ModelMap이 바구니인 것을 알 수 있다. View 데이터를 전달하기 위해서 사용하는 것들이다.
 
 그래서 ```public String test2_1(Model model) {```로 하여 바구니를 가져온 것이다. 그냥 알아서 객체를 만들어서 넣어준다. (스프링 컨테이너가 이것을 다 해준다.)
+
+```model.addAttribute("msg", "데이터야");```를 입력한다. "msg"라는 이름으로 데이터를 실어서 보내는 것이다.
+
+이제 다시 Run on Server을 하고, 웹 브라우저에서 "http://localhost:8080/Spring_03_WebMVC/test2-1"로 들어가면 다음과 같이 출력된다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/e4c4fc29-21df-4360-8587-9168e91d8378" width="480px" />
+
+<br>
+
+이렇게 Model을 쓸 수도 있었고, Map을 쓸 수도 있었다. test2_2를 만들고 다음과 같이 입력한다. ```public String test2_2(Map<String, Object> model) {``` Map은 이 경우에는 String, Object의 형태로 받을 것이다.
+
+그리고 다시 Run on Server을 하고, ""를 웹 브라우저에 입력하고 들어가면 다음과 같이 화면에 출력된다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/19b0328e-1bba-403e-89f4-8366e64824ee" width="480px" />
+
+결국에는 Model, Map 둘 다 쓸 수 있다. (둘이 같아 보이지만, 각각의 용도가 있기는 하다.)
+
+<br>
+
+이번에는 파라미터로 값을 가져오고 싶다. 이번에는 ```@GetMapping("/test3")```이다. 메서드명은 test3 로 한다. 파라미터 안에 ```Model model```을 넣는다.
+
+test3.jsp 파일을 생성한다. 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Spring MVC</title>
+</head>
+<body>
+	<h2>ControllerParameter Test3</h2>
+	<div>
+		id : ${id} <br>
+		pw : ${pw} <br>
+	</div>
+</body>
+</html>
+```
+
+이번에는 id와 pw를 넘겨받는다. 이렇게 했으면 id, pw가 있어서 찾아서 던지겠다는 것이다.
+
+<br>
+
+다시 ControllerParameter로 와서, id와 pw를 집어넣어주고 출력을 해볼 것이다. 웹 브라우저에 "http://localhost:8080/Spring_03_WebMVC/test3?id=ssafy&pw=1234" 와 같이 입력하여 요청을 보낼 것이다.
+
+그래서 ```HttpServletRequest request```를 통해서, ```String id = request.getParameter("id");```를 통해서 id를 받아오고 이것을 ```model.addAttribute("id", id);```로 하여 model에 담는다.
