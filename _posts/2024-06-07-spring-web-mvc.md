@@ -758,3 +758,11 @@ test3.jsp 파일을 생성한다. 코드는 다음과 같다.
 다시 ControllerParameter로 와서, id와 pw를 집어넣어주고 출력을 해볼 것이다. 웹 브라우저에 "http://localhost:8080/Spring_03_WebMVC/test3?id=ssafy&pw=1234" 와 같이 입력하여 요청을 보낼 것이다.
 
 그래서 ```HttpServletRequest request```를 통해서, ```String id = request.getParameter("id");```를 통해서 id를 받아오고 이것을 ```model.addAttribute("id", id);```로 하여 model에 담는다.
+
+그런데 사실 이렇게 가져오는 것은 좀 옛날 방식이다. request를 쓰지 않고도 가져올 수 있어야 한다.
+
+<br>
+
+내가 ```@RequestParam(value="pw", defaultValue = "1234")```와 같이 입력하여 pw의 기본값을 설정할 수 있다. 내가 pw 값을 안 넘겨도 알아서 pw의 값을 "1234"로 할 수 있는 것이다.
+
+또, ```@RequestParam("myid") String id```에서처럼, String id 와 "myid"가 서로 동일하지 않아도 된다. 그러면 넘겨받는 키 값을 "myid"로 해서 접근해야 한다.
