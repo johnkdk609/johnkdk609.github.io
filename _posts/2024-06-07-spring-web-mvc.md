@@ -766,3 +766,68 @@ test3.jsp 파일을 생성한다. 코드는 다음과 같다.
 내가 ```@RequestParam(value="pw", defaultValue = "1234")```와 같이 입력하여 pw의 기본값을 설정할 수 있다. 내가 pw 값을 안 넘겨도 알아서 pw의 값을 "1234"로 할 수 있는 것이다.
 
 또, ```@RequestParam("myid") String id```에서처럼, String id 와 "myid"가 서로 동일하지 않아도 된다. 그러면 넘겨받는 키 값을 "myid"로 해서 접근해야 한다.
+
+<br>
+
+그리고 마지막으로, regist.jsp를 하나 만들겠다. regist.jsp의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Spring MVC</title>
+</head>
+<body>
+	<form action="regist" method="POST">
+		<input type="text" name="id">
+		<input type="password" name="pw">
+		<button>제출</button>
+	</form>
+</body>
+</html>
+```
+
+form 태그를 하나 직접 만들기 위해, action은 regist로 보내고, method는 POST로 보낸다. 
+
+그리고 새로운 컨트롤러 UserController를 하나 만들겠다. UserController의 코드는 다음과 같다.
+
+```java
+package com.ssafy.mvc.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ssafy.mvc.model.dto.User;
+
+@Controller
+public class UserController {
+
+	@GetMapping("/regist")
+	public String registform() {
+		return "regist";
+	}
+
+//	@PostMapping("/regist")
+//	public String regist(@RequestParam("id") String id, @RequestParam("pw") String pw) {
+//		// 요기서 하는게 아니라 서비스를 호출
+//		User user = new User(id, pw);
+//
+//		System.out.println(user);
+//		return "result";
+//	}
+	@PostMapping("/regist")
+	public String regist(@ModelAttribute User user) {
+		// 요기서 하는게 아니라 서비스를 호출
+		System.out.println(user);
+		return "result";
+	}
+}
+```
+
+```@PostMapping("/regist")```를 입력하여, "/regist" 요청이 왔을 때 "result"를 리턴하게 한다. 그리고 ```public String regist(@RequestParam("id") String id, @RequestParam("pw") String pw) {```를 입력하여 @RequestParam의 id 값으로 String id 가 왔고, @RequestParam에는 pw로 String pw 가 왔다.
