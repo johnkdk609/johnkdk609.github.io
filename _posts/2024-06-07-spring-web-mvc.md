@@ -815,7 +815,7 @@ public class UserController {
 
 //	@PostMapping("/regist")
 //	public String regist(@RequestParam("id") String id, @RequestParam("pw") String pw) {
-//		// 요기서 하는게 아니라 서비스를 호출
+//		// 여기서 하는게 아니라 서비스를 호출
 //		User user = new User(id, pw);
 //
 //		System.out.println(user);
@@ -823,7 +823,7 @@ public class UserController {
 //	}
 	@PostMapping("/regist")
 	public String regist(@ModelAttribute User user) {
-		// 요기서 하는게 아니라 서비스를 호출
+		// 여기서 하는게 아니라 서비스를 호출
 		System.out.println(user);
 		return "result";
 	}
@@ -831,3 +831,46 @@ public class UserController {
 ```
 
 ```@PostMapping("/regist")```를 입력하여, "/regist" 요청이 왔을 때 "result"를 리턴하게 한다. 그리고 ```public String regist(@RequestParam("id") String id, @RequestParam("pw") String pw) {```를 입력하여 @RequestParam의 id 값으로 String id 가 왔고, @RequestParam에는 pw로 String pw 가 왔다.
+
+<br>
+
+그리고 com.ssafy.mvc.model.dto 패키지를 하나 만들고, 그 아래에 User.java 를 생성한다. User 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.mvc.model.dto;
+
+public class User {
+	private String id;
+	private String pw;
+
+	public User() {}
+
+	public User(String id, String pw) {
+		this.id = id;
+		this.pw = pw;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getPw() {
+		return pw;
+	}
+
+	public void setPw(String pw) {
+		this.pw = pw;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", pw=" + pw + "]";
+	}
+}
+```
+
+이렇게 User을 담을 수 있는 것을 만들어 놓고, UserController에서 ```User user = new User(id, pw);```와 같이 입력한 다음 ```System.out.println(user);```로 한 번 찍어본다. (result로 넘기거나 하는 것은 하지 않겠다.) 여기서 하는 게 아니라 서비스를 호출하겠다는 것이다.
