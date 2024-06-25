@@ -874,3 +874,25 @@ public class User {
 ```
 
 이렇게 User을 담을 수 있는 것을 만들어 놓고, UserController에서 ```User user = new User(id, pw);```와 같이 입력한 다음 ```System.out.println(user);```로 한 번 찍어본다. (result로 넘기거나 하는 것은 하지 않겠다.) 여기서 하는 게 아니라 서비스를 호출하겠다는 것이다.
+
+<br>
+
+그리고 ```@GetMapping("/regist)```를 하나 만들겠다. 위 코드와 같이 registform()을 하나 생성한다. 그리고 Run on Server을 하고 "http://localhost:8080/Spring_03_WebMVC/regist"로 들어가면 다음과 같이 나온다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/45d5b61b-23c2-4401-83ec-b7c8eb810bd8" width="460px" />
+
+그리고 여기에 id는 "ssafy", pw는 "1234"를 입력하고 제출하면 잘 나온다. (그런데 현재 result를 안 만들었기 때문에 404가 뜰 것이다.)
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/4354f2fe-187f-499b-94bd-dad6ace3c40d" width="800px">
+
+결과는 잘 입력된 것이다.
+
+<br>
+
+그런데 이렇게 하지 말고, ```@ModelAttribute User user```를 regist() 괄호 안에 쓰면 알아서 User가 만들어진다. 윗 코드를 주석 처리하고, ```@ModelAttribute User user```로 대체한 아래 코드를 사용한다.
+
+다시 Run on Server을 하고, "http://localhost:8080/Spring_03_WebMVC/regist"로 들어간 다음, id는 "admin", pw는 "admin"으로 입력하면 다음과 같이 콘솔창에 잘 출력된다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/500bbb61-8f77-433b-acd6-0aa4a7e33872" width="790px">
+
+이런 식으로 하면 훨씬 더 편해진다. @ModelAttribute 를 사용하면 알아서 잘 세팅하는 것이다.
