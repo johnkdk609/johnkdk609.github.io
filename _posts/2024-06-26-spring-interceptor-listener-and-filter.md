@@ -41,3 +41,55 @@ STS에서 "Spring_04_Listener_Filter"라는 이름으로 Dynamic Web Project를 
 Servlet context events 와 관련된 것을 처리하려면 위 두개를 체크하면 되고, HTTP session events와 관련된 것을 처리하려면 그와 관련된 것들을 체크하면 되며, Servlet request events와 관련된 것을 처리하려면 또 그와 관련된 것들을 체크하면 된다. (직접 작성해도 된다.) 이 경우에는 맨 위의 Lifecycle을 하나 체크하고 Next를 클릭한다. 그리고 "Inherited abstract methods"에 체크된 것을 유지한 채 Finish를 클릭한다.
 
 그러면 추상 메서드들이 작성되어 있는 MyListener1 이 생성된다.
+
+<br>
+
+지금 기본은 web.xml에 다음과 같이 입력되어 동작하고 있다. 
+
+```xml
+<listener>
+    <listener-class>com.ssafy.mvc.listener.MyListener1</listener-class>
+</listener>
+```
+
+web.xml이 기본이었다가 그 이후에는 Annotation 방식이 기본이 되었다. 그러다가 다시 web.xml이 기본으로 바뀌었다. 이제 따로 등록하지 않아도 생성만 하면 알아서 web.xml에 등록을 해버린다.
+
+그런데 이번에는 Annotation 방식을 사용해보기로 했으니, 일단 지우겠다.
+
+<br>
+
+결국 MyListener1 도 클래스이다. 클래스에 ```implements ServletContextListener``` 를 한 것이다. 이것은 스프링에서 썼던 POJO(Plain Old Java Object) 방식이 아니다. 일반 클래스에 ~ 한 기능을 구현해야 한다는 것을 집어넣은 것이니 POJO 방식은 아니다.
+
+MyListener1 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.mvc.listener;
+
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
+
+@WebListener
+public class MyListener1 implements ServletContextListener {
+
+    public void contextInitialized(ServletContextEvent sce)  { 
+    	System.out.println("웹어플리케이션 시작될때 호출1");
+    }
+
+    public void contextDestroyed(ServletContextEvent sce)  { 
+    	System.out.println("웹어플리케이션 종료될때 호출1");
+    }
+	
+}
+```
+
+```@WebListener```라는 어노테이션을 이용하면 동작을 한다. ```@WebServlet``` 어노테이션을 쓸 때에는 매핑된 경로를 옆에 작성했었다. 그런데 ```@WebListener``` 어노테이션에서는 그런 것을 따로 쓰라는 말이 없다. 왜냐하면 이것 자체대로 ServletContext가 처리되었을 때 그것에 대한 이벤트를 청취하겠다는 것이 있으니까 Listener를 만들어서 등록만 하면 이러한 이벤트가 발생했을 때 알아서 동작을 해버리는 것이다. 이미 매핑되어 있는 것을 정의를 할 것이니 만들어져 있는 것이다. 기본 생성자는 필요 없으니까 지워버리겠다.
+
+contextInitialized는 딱 봐도 초기화와 관련된 것이다. 그래서 "웹어플리케이션 시작될 때 호출1"을 출력하겠다. contextDestroyed에서는 "웹어플리케이션 종료될때 호출1"을 출력해보겠다.
+
+이제 실행을 해보겠다. 화면을 볼 필요는 없으니, Window &#62; Web Browser &#62; 0 Internal Web Browser 로 변경을 해두겠다. (콘솔창에 조금 더 집중을 해볼 것이니까) Run on Server을 한다. 그리고 Console 을 클릭한다.
+
+그러면 콘솔창에 "웹어플리케이션 시작될때 호출1"이라는 것이 나타난다. 만약 내용을 약간이라도 수정하고 저장하면 리-로딩 되어 "웹어플리케이션 종료될때 호출1"이 출력되고 다시 "웹어플리케이션 시작될때 호출1"이 출력된다.
+
+<br>
+
