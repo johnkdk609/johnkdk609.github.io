@@ -93,3 +93,91 @@ contextInitialized는 딱 봐도 초기화와 관련된 것이다. 그래서 "�
 
 <br>
 
+이번에는 MyListener2 클래스를 생성하겠다. web.xml에 등록하는 방식을 사용해볼 것이다. Create Listener로 생성하면 자동으로 web.xml에 다음과 같은 코드가 생성된다.
+
+```xml
+<listener>
+    <listener-class>com.ssafy.mvc.listener.MyListener2</listener-class>
+</listener>
+```
+
+MyListener2의 코드는 일단 다음과 같이 작성한다.
+
+```java
+package com.ssafy.mvc.listener;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+
+public class MyListener2 implements ServletContextListener {
+
+	public void contextInitialized(ServletContextEvent sce) {
+		System.out.println("웹어플리케이션 시작될때 호출2 ");
+
+	}
+
+	public void contextDestroyed(ServletContextEvent sce) {
+		System.out.println("웹어플리케이션 종료될때 호출2");
+		
+	}
+
+}
+```
+
+그리고 다시 web.xml로 돌아가보자. web.xml에 추가적인 설정을 할 수 있다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://jakarta.ee/xml/ns/jakartaee" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd" id="WebApp_ID" version="6.0">
+  <display-name>Spring_04_Listener_Filter</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+  </welcome-file-list>
+  <listener>
+    <listener-class>com.ssafy.mvc.listener.MyListener2</listener-class>
+  </listener>
+  <context-param>
+    <param-name>welcome</param-name>
+    <param-value>Hello SSAFY Listener</param-value>
+  </context-param>
+</web-app>
+```
+
+여기에 내가 context-param을 설정할 수 있다. 이렇게 하면 web.xml 자체가 context가 될 때 context-param으로 "welcome"이라는 이름으로 param-value를 집어넣었다.
+
+그러면 다시 MyListener2로 돌아와서 이렇게 설정한 것을 꺼내고 싶을 수 있다. ServletContext에 "welcome"이라는 이름으로 무언가를 하나 넣어놓은 상황이다. 
+
+그러면 ServletContext라는 설정 파일을 가져와야 한다. 이름은 context로 하겠다. 수정한 MyListener2는 다음과 같다.
+
+```java
+package com.ssafy.mvc.listener;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+
+public class MyListener2 implements ServletContextListener {
+
+	public void contextInitialized(ServletContextEvent sce) {
+		System.out.println("웹어플리케이션 시작될때 호출2");		
+
+		ServletContext context = sce.getServletContext();
+		System.out.println("welcome : " + context.getInitParameter("welcome"));
+	}
+
+	public void contextDestroyed(ServletContextEvent sce) {
+		System.out.println("웹어플리케이션 종료될때 호출2");
+		
+	}
+
+}
+```
+
+ServletContextEvent 객체가 넘어오는데, 이 객체는 ServletContext에 걸려있는 이벤트이니까 getServletContext() 로 설정들을 가져올 수 있다. 그리고 System.out.println으로 출력을 한다. 여러 메서드들 중에서 지금은 ```getInitParameter()```을 가져와보겠다. 그리고 괄호 안에 "welcome"을 쓴다. web.xml에 "welcome"으로 context-param을 설정해뒀기 때문이다.
+
