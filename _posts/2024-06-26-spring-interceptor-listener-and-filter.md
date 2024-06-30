@@ -181,3 +181,37 @@ public class MyListener2 implements ServletContextListener {
 
 ServletContextEvent 객체가 넘어오는데, 이 객체는 ServletContext에 걸려있는 이벤트이니까 getServletContext() 로 설정들을 가져올 수 있다. 그리고 System.out.println으로 출력을 한다. 여러 메서드들 중에서 지금은 ```getInitParameter()```을 가져와보겠다. 그리고 괄호 안에 "welcome"을 쓴다. web.xml에 "welcome"으로 context-param을 설정해뒀기 때문이다.
 
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/9f346c04-918c-42a3-bb23-27534dfedf6a" width="800px" />
+
+<br>
+
+이번에는 web.xml에 다음과 같은 코드를 추가한다.
+
+```xml
+<listener>
+    <listener-class>com.ssafy.mvc.listener.MyListener1</listener-class>
+</listener>
+```
+
+그리고 MyListener1 클래스의 어노테이션 ```@WebListener```을 주석 처리한다. 그리고 다시 Run on Server을 하면 다음과 같이 출력된다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7ad4aeff-6999-4117-9c2e-fa3cc2f85b8f" width="800px" />
+
+<br>
+
+이번에는 1번이 호출되고, 2번이 호출된다. 등록이 된 순서에 따라 동작을 하는데, 혼용을 했을 때에는 살짝 꼬일 수 있다. 그래서 한 가지 방식으로 통일하는 것이 좋다. 그것과 별개로, 여러 개를 등록할 때 편하게 사용하기 위해 어떠한 방식으로 등록하든 Listener1, Listener2 등이 독립적으로 존재해야 한다.
+
+<br>
+
+이제 Listener는 끝났다. root-context가 Listener를 통해서 설정 파일들을 넣어줬고, 로드 하면서 처리 되었다는 것을 Listener로 이해하면 되겠다.
+
+<br>
+
+## Filter
+
+이제 Filter에 대해 알아보자. Filter의 설명은 다음과 같다.
+
+* 요청과 응답 데이터를 필터링하여 제어, 변경하는 역할
+* 사용자의 요청이 Servlet에 전달되어지기 전에 Filter를 거침
+* Servlet으로부터 응답이 사용자에게 전달되어지기 전에 Filter를 거침
+* FilterChain을 통해 연쇄적으로 동작 가능
