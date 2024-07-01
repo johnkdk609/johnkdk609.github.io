@@ -215,3 +215,47 @@ ServletContextEvent 객체가 넘어오는데, 이 객체는 ServletContext에 �
 * 사용자의 요청이 Servlet에 전달되어지기 전에 Filter를 거침
 * Servlet으로부터 응답이 사용자에게 전달되어지기 전에 Filter를 거침
 * FilterChain을 통해 연쇄적으로 동작 가능
+
+내 요청이 서버로 가는 도중에 Filter들을 거치기도 하지만, 응답이 내게 오기 전에 Filter들을 거치기도 한다. Filter라는 것을 통해 요청과 응답에 추가적인 처리를 할 수 있는 것이다.
+
+그리고 Filter들을 여러 개 나열하는 것을 FilterChain이라고 한다. "OK, 다음 필터로", "OK 다음 필터로.."를 반복적으로 할 수 있는 것이다. 
+
+이 Filter은 web.xml에 등록해서 사용할 것이다. 만약 어노테이션 방식으로 하고 순서를 조절하려면, ```@Order```라는 어노테이션을 추가적으로 사용해야 한다.
+
+Filter은 독립적으로 존재할 필요 없다. 이어서 해야 하니까.
+
+<br>
+
+이제 실습을 해보겠다. Spring_04_Listener_Filter 프로젝트에서 src/main/java에 마우스 우클릭을 하고 Create Filter을 클릭한다. 패키지는 com.ssafy.mvc.filter로 하고, 이름은 MyFilter로 한 다음 Next를 클릭한다. 그러면 아까 Listener와는 달리 Initialization parameters, Filter mappings 가 보인다. '경로'가 들어가는 것이다.
+
+'경로'가 들어간다는 것은 무엇일까? "내가 어떤 요청이 들어왔을 때 그 요청에다만 Filter를 걸 수 있다"는 것이다. 내가 특정한 요청에 따라 필터를 걸고 안 걸고를 URL 패턴을 통해서 쓸 수 있다. 이제 Next를 클릭하고, Finish를 클릭한다.
+
+기본 방식은 web.xml이라고 했으니, web.xml에 들어가보면 다음과 같이 코드가 추가되어 있을 것이다.
+
+```xml
+<filter>
+    <display-name>MyFilter</display-name>
+    <filter-name>MyFilter</filter-name>
+    <filter-class>com.ssafy.mvc.filter.MyFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>MyFilter</filter-name>
+    <url-pattern>/MyFilter</url-pattern>
+</filter-mapping>
+```
+
+딱 봐도 Servlet 등록하는 것과 똑같이 생겼다. 그러면 여기에서 "/MyFilter"라고 하는 경로로 왔을 때가 아니라, 모든 경로로 처리하기 위해서 다음과 같이 수정한다.
+
+```xml
+<filter>
+    <display-name>MyFilter</display-name>
+    <filter-name>MyFilter</filter-name>
+    <filter-class>com.ssafy.mvc.filter.MyFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>MyFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
+DispatcherServlet에서 모든 요청을 처리할 때에는 그냥 "/"만 했는데, Filter에서는 "/*"로 입력하는 것은 그냥 약속이다.
