@@ -259,3 +259,41 @@ Filter은 독립적으로 존재할 필요 없다. 이어서 해야 하니까.
 ```
 
 DispatcherServlet에서 모든 요청을 처리할 때에는 그냥 "/"만 했는데, Filter에서는 "/*"로 입력하는 것은 그냥 약속이다.
+
+<br>
+
+### Filter 사용
+
+Filter을 사용할 때에는 필터 초기화, 필터 종료, 그리고 doFilter 등이 있다.
+
+Filter가 초기화될 때 init-param 태그에 param-name이 "encoding", param-value로 "utf-8"이 들어간다. 이 말은 web.xml에서 Filter를 등록하는데 init-param을 할 수 있다는 것이다. init-param을 했는데 param-name으로 "encoding"을 집어넣고, param-value로 "UTF-8"을 쓸 수 있다는 것이다. 
+
+원래는 UTF-8이 아니었는데 Filter를 통해서, 모든 것을 다 바꾸기 위해서 "UTF-8"이라는 필터를 살짝 중간에 끼워 넣고 통과되는 모든 인코딩 방식을 "UTF-8"로 바꾸었다. 그런데 이제는 UTF-8이 기본 방식이 되었다. 그래서 이렇게 UTF-8이라는 필터를 안 걸어도 찍어보면 UTF-8이라고 뜰 것이다. 그러니까 눈으로 좀 확인을 하기 위해 임시로 UTF-16을 필터로 넣어보겠다.
+
+수정한 web.xml의 코드는 다음과 같다.
+
+```xml
+<filter>
+    <display-name>MyFilter</display-name>
+    <filter-name>MyFilter</filter-name>
+    <filter-class>com.ssafy.mvc.filter.MyFilter</filter-class>
+    <init-param>
+        <param-name>encoding</param-name>
+        <param-value>UTF-16</param-value>
+    </init-param>
+</filter>
+<filter-mapping>
+    <filter-name>MyFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
+아무튼 기본은 UTF-8이고, 설정하지 않으면 자동으로 UTF-8이 된다.
+
+<br>
+
+다시 MyFilter 클래스를 보자. 기본 생성된 템플릿에서 destroy(), doFilter(), init() 을 제외하고는 전부 깔끔하게 지운다.
+
+우선 init()은 필터를 초기화하는 과정이다. 그리고 destroy()는 필터가 종료될 때의 과정이다. 마지막으로 doFilter()는 필터 동작 과정이다.
+
+그러면 왜 doFilter()에 reqeust, response가 둘 다 존재하는 것일까?
