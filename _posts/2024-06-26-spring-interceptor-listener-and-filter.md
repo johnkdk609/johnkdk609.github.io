@@ -292,8 +292,58 @@ Filter가 초기화될 때 init-param 태그에 param-name이 "encoding", param-
 
 <br>
 
-다시 MyFilter 클래스를 보자. 기본 생성된 템플릿에서 destroy(), doFilter(), init() 을 제외하고는 전부 깔끔하게 지운다.
+다시 MyFilter 클래스를 보자. MyFilter 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.mvc.filter;
+
+import java.io.IOException;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpFilter;
+
+public class MyFilter extends HttpFilter implements Filter {
+    public FilterConfig filterConfig;
+	// 필터 초기화 하는 과정
+	public void init(FilterConfig fConfig) throws ServletException {
+		this.filterConfig = fConfig;
+	}
+	
+	// 필터 종료될 때
+	public void destroy() {
+	}
+	
+	// 필터 동작과정
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		///////////////////////////////////////// 서버에 가기전 필요한 코드 작성
+		System.out.println("서블릿 전1");
+		// 다음 필터로 전달!!!!
+		// 다음 필터가 없으면 서블릿으로 간다!
+		String encoding = this.filterConfig.getInitParameter("encoding");
+		request.setCharacterEncoding(encoding);
+		chain.doFilter(request, response); 
+		///////////////////////////////////////// 사용자에게 가기전 필요한 코드 작성
+		System.out.println("서블릿 후1");
+	}
+
+
+}
+```
+
+기본 생성된 템플릿에서 destroy(), doFilter(), init() 을 제외하고는 전부 깔끔하게 지운다.
 
 우선 init()은 필터를 초기화하는 과정이다. 그리고 destroy()는 필터가 종료될 때의 과정이다. 마지막으로 doFilter()는 필터 동작 과정이다.
 
-그러면 왜 doFilter()에 reqeust, response가 둘 다 존재하는 것일까?
+그러면 왜 doFilter()에 reqeust, response가 둘 다 존재하는 것일까? Filter라는 것은 클라이언트와 서버가 있을 때, 클라이언트에서 서버로 갈 때에만 Filter가 적용되는 것이 아니고, 반대로 서버에서 클라이언트로 나올 때에도 Filter가 쓰인다고 했었다. 그래서 이 Filter 안에서 request와 response를 다 다룰 수 있어야 하는 것이다.
+
+그리고 FilterChain이라는 것이 들어오는데, '다음 필터로'인 것이다. 그런데 만약 다음 필터가 없으면 서블릿으로 간다.
+
+즉, ```chain.doFilter(request, response);```는 무조건 있어야 하는 것이다. 이것은 '다음 필터로 전달'이라는 뜻인데, 다음 필터가 없으면 서블릿으로 간다. 그래서 이것을 가시적으로 확인하기 위해 "서블릿 전1", "서블릿 후1"을 출력해볼 것이다.
+
+그러면 위 코드에서, 지금 필터의 설정들이 ```FilterConfig fConfig```에 들어올 것이다. 그러면 이전에 등록한 인코딩이 fConfig에 들어가 있을 것이다. 그런데 현재 코드에는 fConfig가 따로 없다. request에는 있다. 그래서 여기에 ```request.setCharacterEncoding("UTF-16");```을 입력하여 바꿀 것이다. 그런데 이렇게 설정을 직접적으로 명시하는 것은 좋지 않다. (한 곳에 모아놓고 처리하는 것이 좋다.) 그래서 ```public FilterConfig filterConfig;```를 입력하여 필드로 선언한다. 그리고 ```this.filterConfig = fConfig;```를 입력한다. init 메서드가 가장 먼저 동작을 할 것이니, 여기에 들어왔을 때 이 설정같은 것들이 내가 가지고 있는 변수에 집어넣으면서 초기화를 할 수 있는 것이다. 이렇게 하여 doFilter에서는 그것들을 쓸 수 있게 된다. 그리고 ```String encoding = this.filterConfig.getInitParameter("encoding");```를 입력하고, ```request.setCharacterEncoding(encoding);```로 수정한다. 그러고 나서 request, response를 달고 ```chain.doFilter()```을 한다.
+
