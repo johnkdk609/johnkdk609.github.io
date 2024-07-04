@@ -347,3 +347,29 @@ public class MyFilter extends HttpFilter implements Filter {
 
 그러면 위 코드에서, 지금 필터의 설정들이 ```FilterConfig fConfig```에 들어올 것이다. 그러면 이전에 등록한 인코딩이 fConfig에 들어가 있을 것이다. 그런데 현재 코드에는 fConfig가 따로 없다. request에는 있다. 그래서 여기에 ```request.setCharacterEncoding("UTF-16");```을 입력하여 바꿀 것이다. 그런데 이렇게 설정을 직접적으로 명시하는 것은 좋지 않다. (한 곳에 모아놓고 처리하는 것이 좋다.) 그래서 ```public FilterConfig filterConfig;```를 입력하여 필드로 선언한다. 그리고 ```this.filterConfig = fConfig;```를 입력한다. init 메서드가 가장 먼저 동작을 할 것이니, 여기에 들어왔을 때 이 설정같은 것들이 내가 가지고 있는 변수에 집어넣으면서 초기화를 할 수 있는 것이다. 이렇게 하여 doFilter에서는 그것들을 쓸 수 있게 된다. 그리고 ```String encoding = this.filterConfig.getInitParameter("encoding");```를 입력하고, ```request.setCharacterEncoding(encoding);```로 수정한다. 그러고 나서 request, response를 달고 ```chain.doFilter()```을 한다.
 
+그러면 이것을 눈으로 확인하기 위해서, 서블릿을 하나 만들 것이다. Create Servlet으로 들어가서 package명은 com.ssafy.servlet으로 하고, 클래스 이름은 MyServlet으로 하겠다. 그러고 나서 주석으로 달린 것들은 전부 지우고, doGet 메서드만 남긴다.
+
+MyServlet 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.servlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+public class MyServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println(request.getCharacterEncoding());
+	}
+}
+```
+
+여기에서 ```System.out.println(request.getCharacterEncoding());```을 입력하여 request가 가지고 있는 CharacterEncoding을 get 하여 찍어본다. 그래서 UTF-16이 나오면 필터가 정상적으로 동작을 하고 있는 것을 알 수 있다.
+
+Run on Server을 하면 다음과 같이 출력된다.
+
