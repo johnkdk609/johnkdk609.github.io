@@ -331,7 +331,6 @@ public class MyFilter extends HttpFilter implements Filter {
 		System.out.println("서블릿 후1");
 	}
 
-
 }
 ```
 
@@ -372,4 +371,12 @@ public class MyServlet extends HttpServlet {
 여기에서 ```System.out.println(request.getCharacterEncoding());```을 입력하여 request가 가지고 있는 CharacterEncoding을 get 하여 찍어본다. 그래서 UTF-16이 나오면 필터가 정상적으로 동작을 하고 있는 것을 알 수 있다.
 
 Run on Server을 하면 다음과 같이 출력된다.
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/7aee38fc-59cf-4058-828f-c72339dde26f" width="600px" />
+
+그런데 "UTF-16"라는 것이 콘솔에 뜨지 않는다. 안 나오는 이유는 무엇일까? "서블릿 전1", "서블릿 후1"를 보니까 필터는 간 것 같다. 정답은 서블릿으로 안 간 것이다.
+
+서블릿을 등록했을 때, web.xml을 보면 경로를 "/MyServlet"으로 해서 요청이 왔을 때에만 서블릿이 동작을 하게 해놨다. 그래서 이것은 안 뜨는 게 맞는 것이다.
+
+주소 뒷부분에 "/MyServlet"을 붙여야 콘솔에 다음과 같이 "UTF-16"이 나타난다.
 
