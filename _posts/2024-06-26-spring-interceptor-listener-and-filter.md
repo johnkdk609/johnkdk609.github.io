@@ -380,3 +380,6 @@ Run on Server을 하면 다음과 같이 출력된다.
 
 주소 뒷부분에 "/MyServlet"을 붙여야 콘솔에 다음과 같이 "UTF-16"이 나타난다.
 
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/cc6b1c81-76a1-4fdb-8d07-0717325948ff" width="500px" />
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/276d0dba-1736-48d2-84f2-ab86e41ccf8e" width="600px" />
