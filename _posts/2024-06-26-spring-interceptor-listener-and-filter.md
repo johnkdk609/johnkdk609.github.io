@@ -383,3 +383,61 @@ Run on Server을 하면 다음과 같이 출력된다.
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/cc6b1c81-76a1-4fdb-8d07-0717325948ff" width="500px" />
 
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/276d0dba-1736-48d2-84f2-ab86e41ccf8e" width="600px" />
+
+<br>
+
+그리고 Filter 사용의 순서를 지정해보고 싶다면 다음과 같이 하면 된다.
+
+우선 MyFilter2를 생성한다. MyFilter2의 코드는 다음과 같다.
+
+```java
+package com.ssafy.mvc.filter;
+
+import java.io.IOException;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpFilter;
+
+public class MyFilter2 extends HttpFilter implements Filter {
+	// 필터 초기화 하는 과정
+	public void init(FilterConfig fConfig) throws ServletException {
+	}
+	
+	// 필터 종료될 때
+	public void destroy() {
+	}
+	
+	// 필터 동작과정
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		/////////////////////////////////////////서버에 가기 전 필요한 코드 작성
+		System.out.println("서블릿 전2");
+		chain.doFilter(request, response); 
+		/////////////////////////////////////////사용자에게 가기 전 필요한 코드 작성
+		System.out.println("서블릿 후2");
+	}
+
+}
+```
+
+그리고 web.xml에는 다음과 같은 코드를 추가한다.
+
+```xml
+<filter>
+    <filter-name>MyFilter2</filter-name>
+    <filter-class>com.ssafy.mvc.filter.MyFilter2</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>MyFilter2</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
+그러고 다시 한 번 실행을 시키보겠다. 이 MyServlet까지 바로 요청을 보내보고 싶다면 MyServlet에 마우스 우클릭을 하고 Run on Server을 해도 된다. (그런데 이렇게 하는 방법은 권장하지 않는다. 그냥 테스트 용도로만 쓰겠다.)
+
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/366dd98f-4241-4f5d-aa75-d30827787122" width="600px" />
+
