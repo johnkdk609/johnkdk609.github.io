@@ -441,3 +441,29 @@ public class MyFilter2 extends HttpFilter implements Filter {
 
 <img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/366dd98f-4241-4f5d-aa75-d30827787122" width="600px" />
 
+등록한 대로, "서블릿 전1", "서블릿 전2", "UTF-16", "서블릿 후2", "서블릿 후1" 순으로 출력된다.
+
+클라이언트, 서버가 있을 때, 둘 사이에 필터 두 개(MyFilter, MyFilter2)를 두었다. 그래서 요청을 날렸을 대, 쭉 가면서 doFilter 이전에 "서블릿 전1"이 찍히고 doFilter가 동작한 다음, MyFilter2의 doFilter 이전에 "서블릿 전2"가 찍히고 doFilter이 동작했다. 그리고 나서 더 이상 Filter가 없으니 온전한 서블릿으로 들어갔고, 거기서 "UTF-16"을 출력했다. 그리고 다시 클라이언트로 돌아오면서 순서대로 "서블릿 후2", "서블릿 후1"가 찍혔다.
+
+<br>
+
+등록을 하기 위해서는 매핑 순서가 굉장히 중요하다. 
+
+```xml
+<filter-mapping>
+    <filter-name>MyFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>MyFilter2</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
+만약 위 코드에서 매핑 순서가 바뀌면, 출력되는 것도 2-1-1-2 순으로 출력될 것이다. 이렇게 순서를 조절할 수 있다.
+
+그리고 doFilter는 필수적으로 작성해야 하는 부분이다.
+
+<br>
+
+이제는 클라이언트와 서버 사이에 필터, 디스패처서블릿이 추가된 그림으로 MVC 요청 흐름 설명을 할 수 있어야 한다.
