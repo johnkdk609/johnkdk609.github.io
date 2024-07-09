@@ -35,3 +35,44 @@ Interceptor의 특징은 다음과 같다.
 <br>
 
 그러면 요청을 하나씩 뜯어 보겠다.
+
+### preHandle
+
+```java
+@Override
+public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+        throws Exception {
+```
+
+* Controller(핸들러) 실행 이전에 호출
+* true를 반환하면 계속 진행한다.
+* false를 반환하면 요청을 종료한다.
+
+preHandle의 반환값이 boolean 형이기 때문에, true or false를 반환한다. 이때 false를 반환하면 그 즉시 요청을 종료하는데, 바로 종료하는 게 아니라 어딘가로 페이지를 돌려버리는(이동시켜버리는) 것이다. Ex&#41; 로그인이 필요한 서비스였다면 로그인 페이지로 돌리는 것이다.
+
+그래서 인자로는 request, response가 들어오고, handler라고 하는 '지금 내가 어디 컨트롤러로 가야 하는지 알 수 있는' 객체도 들어온다.
+
+<br>
+
+### postHandle
+
+```java
+@Override
+public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+        ModelAndView modelAndView) throws Exception {
+```
+
+* Controller(핸들러) 실행 후 호출
+* 정상 실행 후 추가 기능 구현 시 사용
+* Controller에서 예외 발생 시 해당 메서드는 실행되지 않음
+
+request, response가 있고, 어떤 핸들러로 메서드를 실행시키기 위해 handler가 인자로 있다. 그런데 추가로 modelAndView가 인자로 들어왔다. 디패서에서 컨트롤러를 찍고, 필요하다면 무언가를 처리하고 다시 돌아올 때 ModelAndView를 담아서 가져온다. 담아왔던 view이름을 가지고 ViewResolver에게 "이거 view 어디 있나요?" 하고 물어보는 것이다.
+
+postHandle이라는 것은 컨트롤러를 찍고 온 것이기 때문에 ModelAndView 객체를 쓸 수 있다. 만들어져 있으니까. preHandle은 없다.
+
+정상적으로 실행했을 때 추가 기능이 필요하다면 이렇게 구현할 수 있다.
+
+만약 Controller에서 예외가 터졌으면, 정상적으로 요청의 흐름이 가지 않았다는 것이니 해당 메서드는 실행되지 않는다. 그러니까 postHandle은 예외 없이 정상적으로 실행이 되었을 때 실행이 되는 것이다.
+
+<br>
+
