@@ -66,7 +66,7 @@ public void postHandle(HttpServletRequest request, HttpServletResponse response,
 * 정상 실행 후 추가 기능 구현 시 사용
 * Controller에서 예외 발생 시 해당 메서드는 실행되지 않음
 
-request, response가 있고, 어떤 핸들러로 메서드를 실행시키기 위해 handler가 인자로 있다. 그런데 추가로 modelAndView가 인자로 들어왔다. 디패서에서 컨트롤러를 찍고, 필요하다면 무언가를 처리하고 다시 돌아올 때 ModelAndView를 담아서 가져온다. 담아왔던 view이름을 가지고 ViewResolver에게 "이거 view 어디 있나요?" 하고 물어보는 것이다.
+request, response가 있고, 어떤 핸들러로 메서드를 실행시키기 위해 handler가 인자로 있다. 그런데 추가로 modelAndView가 인자로 들어왔다. DispatcherServlet 에서 컨트롤러를 찍고, 필요하다면 무언가를 처리하고 다시 돌아올 때 ModelAndView를 담아서 가져온다. 담아왔던 view이름을 가지고 ViewResolver에게 "이거 view 어디 있나요?" 하고 물어보는 것이다.
 
 postHandle이라는 것은 컨트롤러를 찍고 온 것이기 때문에 ModelAndView 객체를 쓸 수 있다. 만들어져 있으니까. preHandle은 없다.
 
@@ -75,4 +75,30 @@ postHandle이라는 것은 컨트롤러를 찍고 온 것이기 때문에 ModelA
 만약 Controller에서 예외가 터졌으면, 정상적으로 요청의 흐름이 가지 않았다는 것이니 해당 메서드는 실행되지 않는다. 그러니까 postHandle은 예외 없이 정상적으로 실행이 되었을 때 실행이 되는 것이다.
 
 <br>
+
+### afterCompletion
+
+```java
+@Override
+public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception e)
+        throws Exception {
+```
+
+* 뷰가 클라이언트에게 응답을 전송한 뒤 실행
+* Controller 에서 예외 발생 시, 네 번째 파라미터로 전달이 된다. (기본은 null)
+* 따라서 Controller에서 발생한 예외 혹은 실행 시간 같은 것들을 기록하는 등 후처리 시 주로 사용.
+
+모든 게 끝나고 나서 실행되는 메서드이다. request, response가 모두 OK이니까 (사용자에게 다 줘버리고 난 후이니까) ModelAndView는 없다. 그래도 어떤 handler에서 왔는지는 알려준다. 그리고 마지막으로 Exception 객체가 네 번째 파라미터로 있다.
+
+만약 예외가 발생하지 않으면 이 Exception 파라미터는 null 이다. 예외가 만약 터졌다면 이제는 어떤 예외 객체를 가지고 있는 것이다.
+
+postHandle은 예외가 터졌을 때 정상적으로 실행되지 않지만, afterCompletion은 무조건 실행이 된다. 그래서 Controller에서 발생한 예외 혹은 실행 시간 같은 것들을 기록하는 등 후처리 시 주로 사용되는 것이다.
+
+그런데 우리가 코드를 짜면서 실제로는 preHandle만 주로 쓰게 될 것이다. postHandle, afterCompletion을 생각보다 쓸 일이 없다. 쓸 곳이 없다. 서비스를 가지고 실행 시간 등을 기록할 것이 아니기 때문이다. 하지만 알고 있어야 한다.
+
+<br>
+
+### Interceptor 흐름
+
+그래서 Interceptor의 흐름을 도식화하면 다음과 같다.
 
