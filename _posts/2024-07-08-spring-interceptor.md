@@ -102,3 +102,36 @@ postHandle은 예외가 터졌을 때 정상적으로 실행되지 않지만, af
 
 그래서 Interceptor의 흐름을 도식화하면 다음과 같다.
 
+<img src="https://github.com/johnkdk609/johnkdk609.github.io/assets/88493727/d821493c-7338-47f6-90d9-798f77ba1026" width="550px" />
+
+DispatcherServlet에서 요청이 들어왔을 때, 제일 먼저 컨트롤러로 가기 전에 preHandle라는 (인터페이스를 구현한) 인터셉터가 먼저 메서드를 실행한다. 그리고 여기서 true 혹은 false 를 반환한다. false이면 Controller로 가지 않는다. true인 경우에만 DispatcherServlet에서 Controller로 진행을 한다.
+
+진행을 하고 무언가 응답을 받았다. 만약 이 상황이 정상적으로 동작 하였다면 postHandle을 실행한다. 그런데 만약 Controller에서 DispatcherServlet으로 가는 진행 상황이 정상적으로 동작하지 않고 예외가 터지면 postHandle을 실행하지 않는다.
+
+그리고, (위에 다 모르겠고) 사용자가 View 까지 전달된 이후에 정상적으로 실행이 되었다면 afterCompletion이 OK이다. 이때 네 번째 인자의 Exception은 null 이다. 무언가 예외가 터졌더라도 afterCompletion은 처리가 된다. 이때 네 번째 인자인 Exception은 null이 아니다.
+
+<br>
+
+### Interceptor 등록 (Servlet-context.xml)
+
+* &#60;interceptors&#62; 태그 안에 &#60;interceptor&#62; 태그로 등록 가능
+* 매핑할 URL을 지정할 수 있고, 제외할 URL 또한 지정할 수 있음.
+
+```xml
+<interceptors>
+    <interceptor>
+        <mapping path="/*"/>
+        <beans: bean class="com.ssafy.mvc.interceptor.AInterceptor"/>
+    </interceptor>
+</interceptors>
+```
+
+이제 Interceptor를 등록해야 하는데, Interceptor은 web과 관련이 있을까 없을까? 관련이 있다. 왜냐하면 요청이 오면서 그 요청을 가로채서 무언가 처리를 하는 것이기 때문이다.
+
+그러면 MVC에서, DispatcherServlet에서는 설정 파일을 두 개 가지고 한다고 했다. servlet-context.xml 과 root-context.xml 중 Interceptor은 web과 관련돼 있으니 Servlet-context.xml에 등록해야 한다.
+
+매핑할 URL을 지정하고, 제외할 URL을 지정할 수 있다. 어떠한 요청이 왔을 때에만 이 Interceptor가 동작하게 할 수 있고, 모든 요청을 다 처리할 것인데 이러이러한 것은 처리해 주라고 제외를 할 수 있다.
+
+스프링에서 사용하는 PathPattern은 <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/pattern/PathPattern.html" alt="Spring PathPattern">해당 링크</a>를 참고하면 된다.
+
+<br>
