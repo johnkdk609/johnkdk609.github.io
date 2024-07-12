@@ -135,3 +135,105 @@ DispatcherServlet에서 요청이 들어왔을 때, 제일 먼저 컨트롤러�
 스프링에서 사용하는 PathPattern은 <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/pattern/PathPattern.html" alt="Spring PathPattern">해당 링크</a>를 참고하면 된다.
 
 <br>
+
+### Interceptor 체이닝
+
+* 여러 개의 인터셉터를 동시에 등록할 수 있음.
+* 작성 순서에 따라 동작
+
+```xml
+<interceptors>
+    <interceptor>
+        <mapping path="/*"/>
+        <beans:bean class="com.ssafy.mvc.interceptor.AInterceptor"/>
+    </interceptor>
+    <interceptor>
+        <mapping path="/*"/>
+        <beans:bean class="com.ssafy.mvc.interceptor.BInterceptor"/>
+    </interceptor>
+    <interceptor>
+        <mapping path="/*"/>
+        <beans:bean class="com.ssafy.mvc.interceptor.CInterceptor"/>
+    </interceptor>
+</interceptors>
+```
+
+인터셉터도 체이닝을 해서 쓸 수 있다. InterceptorA, InterceptorB, InterceptorC, ... 와 같은 방식으로 등록해 사용할 수 있는 것이다.
+
+<br>
+
+이제 실습을 해보겠다. 깃에서 Spring_Legacy_Template을 import 해주겠다. 그리고 이름을 "Spring_04_Interceptor"로 변경한다.
+
+pom.xml에 가서 &#60;groudId&#62;, &#60;artifactId&#62;도 "Spring_04_Interceptor"로 변경한다.
+
+그리고 src/main/webapp/WEB-INF/spring/appServlet 폴더 안에 servlet-context.xml 이 있다. 
+
+<img src="https://github.com/user-attachments/assets/55e91696-d79b-4bd3-af88-0ef0f5c5c563" width="320px"/>
+
+이것은 옛날에 Spring 을 이용해서 MVC 프로젝트를 만들면 다 이런 식으로 만들었기 때문에, 나중에 현업에 가서 이런 것을 볼 확률이 높다. SpringBoot를 사용한다면 전혀 다른 구조로 배우겠지만, 지금은 옛날 방식으로 진행을 해볼 것이다.
+
+위 그림을 보면 servlet-context.xml 이라는 설정 파일이 있고, 바깥에 root-context.xml 설정 파일이 있다.
+
+이런 설정 파일들은 여러 개 만들 수 있다. 그런데 굳이 만들지는 않는다.
+
+<br>
+
+그리고 views 폴더 안에 화면들이 저장될 것이고, src/main/java 안에 컨트롤러들이 처리될 것이다.
+
+servlet-context.xml 파일을 보면 다음과 같다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan base-package="com.ssafy.mvc.controller, com.ssafy.mvc.interceptor" />
+	
+	<!-- <interceptors>
+		<interceptor>
+			<mapping path="/*"/>
+			<beans:bean class="com.ssafy.mvc.interceptor.AInterceptor"/>
+		</interceptor>
+		<interceptor>
+			<mapping path="/*"/>
+			<beans:bean class="com.ssafy.mvc.interceptor.BInterceptor"/>
+		</interceptor>
+		<interceptor>
+			<mapping path="/*"/>
+			<beans:bean class="com.ssafy.mvc.interceptor.CInterceptor"/>
+		</interceptor>
+	</interceptors>
+	 -->
+	
+	<interceptors>
+		<interceptor>
+			<mapping path="/*"/>
+			<exclude-mapping path="/login"/>
+			<exclude-mapping path="/"/>
+			<beans:ref bean="loginInterceptor"/>
+		</interceptor>	
+	</interceptors>
+	
+</beans:beans>
+```
+
+위 코드를 간단히 보자. "annotation-driven"을 넣어줘야 수월하게 사용할 수 있다. 그리고 AOP를 쓰려면 무언가 하나 추가해야 한다. 그리고 ```<resources mapping="/resources/**" location="/resources/" />```가 없으면 모든 경로를 서블릿이 처리해버린다. webapp 안에 resources 폴더를 나중에 하나 만들고, 요청이 앞에 "/resources"가 붙어있으면 webapp/resources 에서 찾아줄 것이다. 여기에는 CSS, image 등이 다 저장될 것이다. 이 부분은 추후에 FileUpload를 하면서 다뤄볼 것이다.
