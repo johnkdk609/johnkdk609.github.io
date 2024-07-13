@@ -206,34 +206,50 @@ servlet-context.xml 파일을 보면 다음과 같다.
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<context:component-scan base-package="com.ssafy.mvc.controller, com.ssafy.mvc.interceptor" />
-	
-	<!-- <interceptors>
-		<interceptor>
-			<mapping path="/*"/>
-			<beans:bean class="com.ssafy.mvc.interceptor.AInterceptor"/>
-		</interceptor>
-		<interceptor>
-			<mapping path="/*"/>
-			<beans:bean class="com.ssafy.mvc.interceptor.BInterceptor"/>
-		</interceptor>
-		<interceptor>
-			<mapping path="/*"/>
-			<beans:bean class="com.ssafy.mvc.interceptor.CInterceptor"/>
-		</interceptor>
-	</interceptors>
-	 -->
-	
-	<interceptors>
-		<interceptor>
-			<mapping path="/*"/>
-			<exclude-mapping path="/login"/>
-			<exclude-mapping path="/"/>
-			<beans:ref bean="loginInterceptor"/>
-		</interceptor>	
-	</interceptors>
+	<context:component-scan base-package="com.ssafy.mvc.controller" />
+
 	
 </beans:beans>
 ```
 
-위 코드를 간단히 보자. "annotation-driven"을 넣어줘야 수월하게 사용할 수 있다. 그리고 AOP를 쓰려면 무언가 하나 추가해야 한다. 그리고 ```<resources mapping="/resources/**" location="/resources/" />```가 없으면 모든 경로를 서블릿이 처리해버린다. webapp 안에 resources 폴더를 나중에 하나 만들고, 요청이 앞에 "/resources"가 붙어있으면 webapp/resources 에서 찾아줄 것이다. 여기에는 CSS, image 등이 다 저장될 것이다. 이 부분은 추후에 FileUpload를 하면서 다뤄볼 것이다.
+위 코드를 간단히 보자. "annotation-driven"을 넣어줘야 수월하게 사용할 수 있다. 그리고 AOP를 쓰려면 무언가 하나 추가해야 한다. 그리고 ```<resources mapping="/resources/**" location="/resources/" />```가 없으면 모든 경로를 서블릿이 처리해버린다. webapp 안에 resources 폴더를 나중에 하나 만들고, 요청이 앞에 "/resources"가 붙어있으면 webapp/resources 에서 찾아줄 것이다. 여기에는 CSS, image 등이 다 저장될 것이다. 이 부분은 추후에 FileUpload를 하면서 다뤄볼 것이다. 그리고 ViewResolver 등록하고, component-scan으로 컨트롤러가 등록되어 있다.
+
+이제 Spring_04_Interceptor 을 Run on Server로 실행시키면 화면에 "Hello Legacy"라고 뜬다.
+
+HelloController.java 를 보면 GetMapping으로 "/" 요청이 왔을 때 index로 튕기게 했다.
+
+```java
+package com.ssafy.mvc.controller;
+
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class HelloController {
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
+}
+```
+
+index.jsp의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>Hello Legacy</h2>
+</body>
+</html>
+```
+
+여기까지는 문제 없다. 
+
+<br>
+
