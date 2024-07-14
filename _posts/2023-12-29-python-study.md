@@ -704,6 +704,30 @@ interest = ['삼성전자', 'LG전자', 'Naver', 'SK하이닉스', '미래에셋
 print(" ".join(interest))
 ```
 
+join 메서드를 응용하여 다양하게 출력할 수 있다.
+
+```python
+interest = ['삼성전자', 'LG전자', 'Naver', 'SK하이닉스', '미래에셋대우']
+print("/".join(interest))
+```
+
+```
+삼성전자/LG전자/Naver/SK하이닉스/미래에셋대우
+```
+
+```python
+interest = ['삼성전자', 'LG전자', 'Naver', 'SK하이닉스', '미래에셋대우']
+print("\n".join(interest))
+```
+
+```
+삼성전자
+LG전자
+Naver
+SK하이닉스
+미래에셋대우
+```
+
 ### bin() 함수
 
 파이썬의 bin() 함수를 이용하면 이진수를 쉽게 구할 수 있다.
