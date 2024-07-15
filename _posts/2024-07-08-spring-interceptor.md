@@ -253,3 +253,51 @@ index.jsp의 코드는 다음과 같다.
 
 <br>
 
+이제 HelloController의 이름을 MainController로 변경한다. 그리고 com.ssafy.mvc.interceptor 패키지를 생성하고 그 안에 AInterceptor 클래스를 생성한다.
+
+인터셉터는 HandlerInterceptor를 구현한 것이어야 한다. AInterceptor 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.mvc.interceptor;
+
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+// 인터셉터는 HandlerInterceptor 구현한 것!
+public class AInterceptor implements HandlerInterceptor {
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+		// boolean 형태의 반환타입 true 진행 / false 종료
+		System.out.println("A : preHandle");
+		return true;
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+			ModelAndView modelAndView) throws Exception {
+		// 정상 수행 후 실행, 예외 발생시 미실행
+		System.out.println("A : postHandle");
+	}
+
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception {
+		// View가 전달된 후 실행 (무조건) 예외 미 발생시 객체는 null 로 초기화
+		System.out.println("A : afterCompletion");
+	}
+}
+```
+
+<kbd>Ctrl + Space</kbd>를 누르면 preHandle(), postHandle(), afterCompletion() 등을 쓸 수 있다고 나와있다. 
+
+그러면 자동완성을 이용해서 preHandle(), postHandle(), afterCompletion() 을 가져온다.
+
+우선 preHandle() 은 boolean 형태의 반환타입을 가지고 있었다. 그래서 true면 진행, false면 종료를 한다. 그런데 연습이니까 그냥 무조건 true라고 하고 A 인터셉터에서 preHandle()이 동작했다는 것을 출력할 것이다.
+
+그리고 postHandle()을 보면 request, response, handler, ModelAndView 가 파라미터로 있었다. 마찬가지로 postHandle() 에도 "A : postHandle"을 출력한다. postHandle의 경우 정상적으로 수행 후 실행되고, 예외가 발생하면 미 실행된다.
+
+afterCompletion() 에서도 "A : afterCompletion"을 출력한다. afterCompletion의 경우 사용자에게 View까지 전달된 후 실행된다. 무조건 실행되는 것이고, 예외 미 발생 시 객체는 null로 초기화 된다.
