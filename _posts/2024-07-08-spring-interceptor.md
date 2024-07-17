@@ -301,3 +301,58 @@ public class AInterceptor implements HandlerInterceptor {
 그리고 postHandle()을 보면 request, response, handler, ModelAndView 가 파라미터로 있었다. 마찬가지로 postHandle() 에도 "A : postHandle"을 출력한다. postHandle의 경우 정상적으로 수행 후 실행되고, 예외가 발생하면 미 실행된다.
 
 afterCompletion() 에서도 "A : afterCompletion"을 출력한다. afterCompletion의 경우 사용자에게 View까지 전달된 후 실행된다. 무조건 실행되는 것이고, 예외 미 발생 시 객체는 null로 초기화 된다.
+
+<br>
+
+이제 servlet-context.xml 을 보겠다. 여기에 작성을 해야 하는데, AInterceptor을 빈으로 등록해야 할까? 빈으로 등록하는 방법에는 여러 가지가 있다. 이번에는 직접 등록을 하겠다. 등록하는 코드는 다음과 같다.
+
+```xml
+<interceptors>
+    <interceptor>
+        <mapping path="/*"/>
+        <beans:bean class="com.ssafy.mvc.interceptor.AInterceptor"/>
+    </interceptor>
+</interceptors>
+```
+
+bean의 클래스를 "com.ssafy.mvc.interceptor.AInterceptor"로 등록했다. 그리고 mapping을 할 것인데 모든 경로에 매핑을 하였다. mapping을 먼저 쓰면 빨간 줄이 없어진다.
+
+<br>
+
+이제 Run on Server을 하면 다음과 같이 출력된다.
+
+<img src="https://github.com/user-attachments/assets/f5f82a90-26d7-4b1e-816d-298daf175361" width="700px" />
+
+잘 출력되었다.
+
+<br>
+
+이제 BInterceptor, CInterceptor 클래스를 생성한다. (앞서 만든 AInterceptor를 복사 붙여넣기 하고, 안의 내용만 수정한다.)
+
+그리고 servlet-context.xml에 다음과 같이 전부 등록한다.
+
+```xml
+<interceptors>
+    <interceptor>
+        <mapping path="/*"/>
+        <beans:bean class="com.ssafy.mvc.interceptor.AInterceptor"/>
+    </interceptor>
+    <interceptor>
+        <mapping path="/*"/>
+        <beans:bean class="com.ssafy.mvc.interceptor.BInterceptor"/>
+    </interceptor>
+    <interceptor>
+        <mapping path="/*"/>
+        <beans:bean class="com.ssafy.mvc.interceptor.CInterceptor"/>
+    </interceptor>
+</interceptors>
+```
+
+이제 다시 Run on Server을 하겠다. 그러면 다음과 같이 출력된다.
+
+<img src="https://github.com/user-attachments/assets/1edfb17a-7c58-4c85-b468-36764ad996cb" width="700px" />
+
+ABC-CBA-CBA 순으로 나왔다. 우선 ABC 순으로 등록했으니 이건 오케이이다. 그리고 튀어나올 때에는 CBA로 나오는 것도 이해가 된다. 그러고 나서 CBA로 동작하는 것이다.
+
+<br>
+
