@@ -356,3 +356,97 @@ ABC-CBA-CBA 순으로 나왔다. 우선 ABC 순으로 등록했으니 이건 오
 
 <br>
 
+## Login Interceptor 실습
+
+이제 로그인 인터셉터를 만들어보겠다.
+
+우선 로그인 페이지를 하나 만들어야 한다. src/main/webapp/WEB-INF/views 폴더 안에 login.jsp를 생성한다. login.jsp 의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+</head>
+<body>
+	<h2>로그인 페이지</h2>
+	
+	<form action="login" method="POST">
+		<input type="text" name="id"> <br>
+		<input type="password" name="password"> <br>
+		<button>로그인</button>
+	</form>
+	
+</body>
+</html>
+```
+
+예전에는 로그인이라는 기능이 그냥 메인 페이지 한쪽 구석에 있었다. 그런데 어느 시점부터 '로그인 페이지로 가기'로 해서 로그인 페이지로 바뀌어 버렸다. 이제 보안, 트렌드 때문에 형식이 바뀐 것이다.
+
+"login"이라는 요청을 보낼 것인데 method는 "POST"로 할 것이다. 그리고 type은 "text"이고 name은 "id", type은 "password"이고 name은 "password"로 위와 같이 만들었다. 그리고 로그인 버튼을 만들었다.
+
+<br>
+
+이번에는 index.jsp를 수정해보겠다. index.jsp의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>인터셉터</h2>
+	<c:choose>
+		<c:when test="${empty id}">
+			<div><a href="login">로그인 페이지</a></div>
+		</c:when>
+		<c:otherwise>
+			<div>${id} 님 반갑습니다. <a href="logout">로그아웃</a></div>
+		</c:otherwise>
+	</c:choose>
+	
+	<div>
+		<a href="regist">게시글 등록페이지</a>
+	</div>
+</body>
+</html>
+```
+
+로그인을 했다면 "OO님, 반갑습니다. 로그아웃 하실래요?"와 같은 것이 있고, 만약 로그인을 안 했으면 "로그인 할래요?"와 같은 것이 있을 수 있다.
+
+원래 같았으면 자바 코드로 if 를 사용했을텐데, 이제는 JSTL을 활용해보겠다. 우선 위에 ```<%@ taglib prefix="c" uri="jakarta.tags.core" %>```를 입력한다.
+
+c:if를 두 번 쓰든지, c:choose를 쓸 수 있다. 그래서 EL 표현방식으로, id가 empty라면 a 태그를 이용해서 로그인 페이지로 가게 하였다.
+
+그게 아니라면 c:otherwise (즉, else)를 이용해서 "{id}님 반갑습니다"가 출력되게 하는 것이다. 그리고 로그아웃 버튼을 만들었다.
+
+<br>
+
+그리고 regist.jsp를 생성한다. regist.jsp의 코드는 다음과 같다.
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>게시글 등록페이지</h2>
+	<!-- 내용은 생략 -->
+</body>
+</html>
+```
+
+<br>
+
