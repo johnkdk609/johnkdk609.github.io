@@ -450,3 +450,77 @@ c:if를 두 번 쓰든지, c:choose를 쓸 수 있다. 그래서 EL 표현방식
 
 <br>
 
+위의 내용은 스프링은 전혀 없이 JSTL 까지의 내용이니까 어려움이 없다.
+
+이제 여기서 "login"을 누르면 갈 수 있는 것을 만들어야 한다. Run on Server을 하여 켰을 때, '로그인 페이지'를 누르면 http://localhost:8080/mvc/ 에서 http://localhost:8080/mvc/login 으로 'login'이 붙는다. 마지막 슬래시(/)에 'login'이 붙는 것이다.
+
+<img src="https://github.com/user-attachments/assets/9184aff1-cb32-46c1-b238-0a0840b509db" width="300px" />
+
+<br>
+
+이제 MainController로 와서 이것을 처리해줘야 한다. MainController의 코드는 다음과 같다.
+
+```java
+package com.ssafy.mvc.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
+@Controller
+public class MainController {
+	@GetMapping("/")
+	public String index() {
+		return "index";
+	}
+
+	@GetMapping("/login")
+	public String loginForm() {
+		return "login";
+	}
+
+	@PostMapping("/login")
+	public String login(HttpSession session, @RequestParam("id") String id, @RequestParam("password") String password) {
+//		HttpSession session = request.getSession();
+		//UserService라는것을 만들어서 호출 한다. 
+		if(id.equals("ssafy") && password.equals("1234")) {
+			//로그인 성공!
+			session.setAttribute("id", id);
+//			return "index"; //포워딩
+			return "redirect:/";
+		}
+		//아니라면 다시 로그인페이지로 ㄱㄱ
+		return "redirect:/login";
+	}
+	
+	
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+//		session.removeAttribute("id"); id 지우기
+		session.invalidate();
+		
+		return "redirect:/";
+	}
+	
+	@GetMapping("/regist")
+	public String registForm() {
+		return "regist";
+	}
+	
+}
+```
+
+우선 ```@GetMapping("/login")```을 입력하여 'login'이라는 요청이 왔을 때 loginForm()으로 "login" 페이지에 가도록 하였다. 그래서 WEB-INF/views/login.jsp 에 가게 하는 것이다.
+
+Run on Server을 한 상태에서 '로그인 페이지'를 클릭하면 이제 다음과 같이 화면에 나타난다.
+
+<img src="https://github.com/user-attachments/assets/90934ded-bf31-4bd1-a954-0c8cd5726c6a" width="300px" />
+
+<br>
+
+그럼 여기에다가 "ssafy", "1234"를 누르고 '로그인'을 클릭하면 현재 POST를 지원하지 않는다며 405 에러가 화면에 나타난다.
+
