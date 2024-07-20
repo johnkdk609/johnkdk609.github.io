@@ -486,14 +486,14 @@ public class MainController {
 	@PostMapping("/login")
 	public String login(HttpSession session, @RequestParam("id") String id, @RequestParam("password") String password) {
 //		HttpSession session = request.getSession();
-		//UserService라는것을 만들어서 호출 한다. 
+		// UserService라는것을 만들어서 호출 한다. 
 		if(id.equals("ssafy") && password.equals("1234")) {
-			//로그인 성공!
+			// 로그인 성공!
 			session.setAttribute("id", id);
-//			return "index"; //포워딩
+//			return "index"; // 포워딩
 			return "redirect:/";
 		}
-		//아니라면 다시 로그인페이지로 ㄱㄱ
+		// 아니라면 다시 로그인페이지로 간다.
 		return "redirect:/login";
 	}
 	
@@ -523,4 +523,26 @@ Run on Server을 한 상태에서 '로그인 페이지'를 클릭하면 이제 �
 <br>
 
 그럼 여기에다가 "ssafy", "1234"를 누르고 '로그인'을 클릭하면 현재 POST를 지원하지 않는다며 405 에러가 화면에 나타난다.
+
+이것은 '그러한 요청을 처리할 수 있는 매핑은 있는데 방식이 잘못되었다'는 의미이다. login.jsp 에서 "login"이라는 요청을 보낼 것이고 그게 "POST" 라고 해서 DispatcherServlet이, HandlerMapping이 봤더니 "/login"이 있는데 이게 @GetMapping 이다. 그러니까 POST를 처리할 수 없다는 차원에서 405 에러 - '허용되지 않는 메소드'라고 뜨는 것이다. (결국에는 이것도 404이다. 400대 에러는 우리의 잘못이다.)
+
+그래서 위와 같이 ```@PostMapping("/login")```을 입력하여 코드를 추가한다. 그런데 만약 인자 설정을 ```login(String id, String password)```으로 해놓으면 아이디와 패스워드를 잘 쓸 수 있다. 여기 있는 id 와 login.jsp의 ```name="id"```의 "id"가 일치하면 잘 가져오라고 설정을 해놓았기 때문이다. 이 설정은 pom.xml에 다음과 같이 있다.
+
+```xml
+<compilerArgs>
+    <arg>-parameters</arg>
+</compilerArgs>
+```
+
+그런데 이러한 방식은 권장되지 않는다. 명확하게 써줘야 좋다.
+
+그래서 ```login(@RequestParam("id") String id, @RequestParam("password") String password)``` 의 방식으로 수정한다. 이렇게 입력받은 것을 통해서 실제로는 UserService를 만들어서 호출한다. 
+
+그런데 이것이 지금 없다. 그러므로 ```if (id.equals("ssafy") && password.equals("1234")) {```를 입력하여 이렇게 아이디, 패스워드를 입력하면 통과를 시키는 것이다. (차라리 이렇게 쓸 것이면 "ssafy"를 먼저 쓰는 것이 나을 수도 있다. id 를 안 넘겨줬을 때 id 가 null 이 되니까 'null은 equals가 없어' 하면서 에러가 터져 버리는 것이다. 그런데 사실 이렇게는 앞으로 짜지 않을 것이니 굳이 고칠 필요는 없다. 그래도 선후 관계에 대해서 생각은 해봐야 한다.)
+
+일단 이 관문을 통과하면 로그인 성공이다. 로그인을 성공했으면 그것을 session 에 저장했다. 지금까지는 session 을 가져오기 위해서 HttpServletRequest를 사용했다. 만약 인자에 ```HttpServletRequest request```를 추가하면 다음 줄에 ```HttpSession session = request.getSession();```을 추가해서 가져와야 했다. 그런데 굳이 이런 식으로 하지 않아도 된다. 이렇게 가져오는 게 아니라, HttpSession으로 가져오는 것이다.
+
+그래서 ```login(HttpSession session, @RequestParam("id") String id, @RequestParam("password") String password) {```로 코드를 수정한다. 그리고 아래에 ```session.setAttribute("id", id);```를 추가한다. 이때 앞의 "id"는 index.jsp의 "id"이다. 그리고 뒤의 id 는 위에 ```@RequestParam("id") String id``` 에서 넘겨받은 String id 이다. 그러면 ```@RequestParam("id")```의 "id"는 무엇일까? 이것은 login.jsp 페이지에서 넘겨받은 ```<input type="text" name="id">```에서의 "id" 이다. (굳이 다른 이름으로 쓰일 필요가 없어서 id 로 전부 다 써놨는데, 이렇게 썼을 때 구분을 잘 못하는 이슈가 있으니 명확히 구분할 수 있어야 한다.)
+
+<br>
 
