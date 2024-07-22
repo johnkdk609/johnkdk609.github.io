@@ -64,6 +64,8 @@ menu:
     url:               /java/
   - title:             Spring & Spring Boot
     url:               /spring-springboot/
+  - title:             Python
+    url:               /python/
   - title:             Git
     url:               /git/
 

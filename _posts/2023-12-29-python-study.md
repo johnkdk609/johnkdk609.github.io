@@ -2,6 +2,7 @@
 layout: post
 title: 파이썬 공부하면서 정리한 것들
 description: 왕초보를 위한 Python - 쉽게 풀어쓴 기초 문법과 실습
+categories: Python
 date: 2023-12-29 23:26:00 +0900
 ---
 파이썬을 공부하면서 정리할 만한 것들을 입력했다.
