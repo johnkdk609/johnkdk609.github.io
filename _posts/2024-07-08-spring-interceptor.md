@@ -546,3 +546,14 @@ Run on Server을 한 상태에서 '로그인 페이지'를 클릭하면 이제 �
 
 <br>
 
+그리고 ```return "index";``` 를 입력한다. 이것은 포워딩(forwarding)이다. request와 response 영역을 그대로 가지고 보내는 것이다. 이때 index 페이지에서 비밀번호가 담겨있으니 꺼내 쓸 수 있다. 이것을 없애려면 리다이렉트(redirect) 방식으로 보내야 한다.
+
+스프링에서 redirect는 다음과 같이 사용한다. ```return "redirect:/";``` 이때 ```redirect:index```와 같은 방식으로 기입하지 않는다. 여기에 index를 쓰지 않은 이유는, 현재 "index"라는 요청이 들어왔을 때 그것을 처리할 수 있는 매핑이 없기 때문이다. 그래서 그냥 "/"를 보내면 @GetMapping("/") 이 동작을 하면서 index 페이지로 간다.
+
+그리고 그게 아니라면 ```return "redirect:/login";```을 입력하여 다시 로그인 페이지로 가게 하였다.
+
+<br>
+
+다시 Run on Server 을 하고, id에 "ssafy", pw에 "1234"를 입력한다. 그러면 다음과 같은 화면이 나타난다.
+
+<img src="https://github.com/user-attachments/assets/7f076334-d040-480d-a4d9-d5298d31ba55" width="320px" />
