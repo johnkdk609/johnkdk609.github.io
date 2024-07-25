@@ -189,4 +189,4 @@ result = my_function()  # 올바른 함수 호출
 
 <br>
 
-위와 같은 원인과 해결 방법을 통해 'TypeError: 'list' object is not callable' 에러를 방지할 수 있다.
+위와 같은 원인과 해결 방법을 통해 'TypeError: 'list' object is not callable' 에러를 방지할 수 있다. 
