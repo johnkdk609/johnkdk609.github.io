@@ -557,3 +557,45 @@ Run on Server을 한 상태에서 '로그인 페이지'를 클릭하면 이제 �
 다시 Run on Server 을 하고, id에 "ssafy", pw에 "1234"를 입력한다. 그러면 다음과 같은 화면이 나타난다.
 
 <img src="https://github.com/user-attachments/assets/7f076334-d040-480d-a4d9-d5298d31ba55" width="320px" />
+
+<br>
+
+그리고 "logout" 이라는 요청도 바로 처리해보겠다.
+
+```@GetMapping("/logout")``` 이라는 요청이 왔다고 했을 때, 여기에는 HttpSession만 있으면 될 것 같고, 일단 ```session.removeAttribute("id");``` 의 방식으로 id라는 속성을 지우거나, ```session.invalidate();``` 로 지울 수도 있다. 그리고 ```return "redirect:/";```를 한다.
+
+로그인 페이지를 클릭하고 이상한 것을 쓰면 다시 로그인 페이지로 튕긴다. 그리고 로그인을 한 다음 '로그아웃'을 하면 로그인이 잘 되었다.
+
+<br>
+
+그런데 아직 인터셉터를 사용하지 않았다. com.ssafy.mvc.interceptor 패키지에 LoginInterceptor 클래스를 생성한다. LoginInterceptor 클래스의 코드는 다음과 같다.
+
+```java
+package com.ssafy.mvc.interceptor;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@Component
+public class LoginInterceptor implements HandlerInterceptor {
+	
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+		
+		HttpSession session = request.getSession();
+		
+		if(session.getAttribute("id") == null) {
+			response.sendRedirect("login");
+			return false;
+		}
+		
+		return true;
+	}
+}
+```
+
