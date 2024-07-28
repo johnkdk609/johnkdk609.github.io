@@ -589,7 +589,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 		
 		HttpSession session = request.getSession();
 		
-		if(session.getAttribute("id") == null) {
+		if (session.getAttribute("id") == null) {
 			response.sendRedirect("login");
 			return false;
 		}
@@ -598,4 +598,10 @@ public class LoginInterceptor implements HandlerInterceptor {
 	}
 }
 ```
+
+우선 HandlerInterceptor를 implements 하게 한다. 그리고 여기에서는 preHandle() 정도만 쓰면 된다. 
+
+preHandle, 어떤 요청이 나갔을 때, 세션을 뒤져서 id가 있는지 없는지 확인해야 한다. 그 id가 실제 유저인지는 중요하지 않다. 그 id가 있으니까 세션에 저장을 했을 것이고, 우리가 그것을 쓰는 것이다.
+
+```HttpSession session = request.getSession();```을 하여 가져온다. 그리고 ```session.getAttribute("id")``` 를 하여 id를 가져왔는데 그게 만약에 null 이면 로그인을 하지 않았다는 것이다. 그러면 다시 "login" 페이지로 redirect 하고, return false로 종료시킨다.
 
