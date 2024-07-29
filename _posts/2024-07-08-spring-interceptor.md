@@ -603,5 +603,25 @@ public class LoginInterceptor implements HandlerInterceptor {
 
 preHandle, 어떤 요청이 나갔을 때, 세션을 뒤져서 id가 있는지 없는지 확인해야 한다. 그 id가 실제 유저인지는 중요하지 않다. 그 id가 있으니까 세션에 저장을 했을 것이고, 우리가 그것을 쓰는 것이다.
 
-```HttpSession session = request.getSession();```을 하여 가져온다. 그리고 ```session.getAttribute("id")``` 를 하여 id를 가져왔는데 그게 만약에 null 이면 로그인을 하지 않았다는 것이다. 그러면 다시 "login" 페이지로 redirect 하고, return false로 종료시킨다.
+```HttpSession session = request.getSession();```을 하여 가져온다. 그리고 ```session.getAttribute("id")``` 를 하여 id를 가져왔는데 그게 만약에 null 이면 로그인을 하지 않았다는 것이다. 그러면 다시 "login" 페이지로 redirect 하고, return false로 해당 요청은 종료시킨다.
 
+<br>
+
+servlet-context.xml 로 와서 일단 이전에 했던 AInterceptor, BInterceptor, CInterceptor은 주석 처리를 한다.
+
+여기에서 등록을 해야 하니까, ```<context:component-scan base-package="com.ssafy.mvc.controller, com.ssafy.mvc.interceptor" />``` 와 같이 "com.ssafy.mvc.interceptor"를 추가한다. 해당 패키지도 내가 컴포넌트 스캔을 하겠다는 것이다.
+
+그리고 아래에 다음과 같이 interceptor을 등록한다.
+
+```xml
+<interceptors>
+    <interceptor>
+        <mapping path="/*"/>
+        <exclude-mapping path="/login"/>
+        <exclude-mapping path="/"/>
+        <beans:ref bean="loginInterceptor"/>
+    </interceptor>
+</interceptors>
+```
+
+reference로는 "loginInterceptor"로 쓴다. 이렇게 명명이 된 이유는, 내가 따로 LoginInterceptor.java에서 ```@Component```을 등록했는데 이름을 명시하지 않아서 앞글자만 소문자로 바뀐 것이다.
