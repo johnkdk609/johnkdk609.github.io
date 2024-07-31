@@ -197,4 +197,10 @@ sys.setrecursionlimit(10000)
 
 이는 백준 사이트가 리소스를 아끼려는 명목으로 setrecursionlimit()을 1000 정도로 낮춰놨기 때문에 따로 설정을 하는 것이다.
 
-위처럼 ```sys.setrecursionlimit(10000)``` 정도로 맞춰두면 재귀를 활용한 DFS 문제를 잘 통과시킬 수 있을 것이다. (10000보다 큰 수를 한다고 좋은 건 아니다. 아예 통과를 못 할 수도 있기 때문. 일반적으로 10000을 넣는다.)
+위 코드를 입력하지 않고 답안을 제출하면 다음과 같은 오류 메세지가 뜬다.
+
+<img src="https://github.com/user-attachments/assets/d0742c88-eb10-44d9-a3b2-b4ba8bcb4159" width="380px" />
+
+'RecursionError'이 발생한 것이다.
+
+그래서 이를 해결하기 위해 위처럼 ```sys.setrecursionlimit(10000)``` 정도로 맞춰두면 재귀를 활용한 DFS 문제를 잘 통과시킬 수 있을 것이다. (10000보다 큰 수를 한다고 좋은 건 아니다. 아예 통과를 못 할 수도 있기 때문. 가령 ```sys.setrecursionlimit(1000000)```으로 설정하면 메모리 초과가 발생한다. 일반적으로 10000을 넣는다.)
