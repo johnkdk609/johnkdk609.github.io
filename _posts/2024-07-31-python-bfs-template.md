@@ -17,6 +17,14 @@ from collections import deque
 queue = deque()
 ```
 
+이렇게 생성한 queue의 경우, 요소를 빼려면 다음과 같이 하면 된다.
+
+```python
+queue.popleft()
+```
+
+이렇게 deque 라이브러리를 사용하면 그냥 리스트를 사용하여 큐(queue)를 구현한 것보다 빠르다.
+
 <br>
 
 그런데 경우에 따라서는 deque 라이브러리를 사용하지 못할 수도 있다. (코딩테스트 주최 측에서 해당 라이브러리를 금지시켜둔 경우 등..)
