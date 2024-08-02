@@ -5,7 +5,7 @@ categories: Algorithm
 description: 백준 1012. 유기농 배추
 date: 2024-07-30 21:02:00 +0900
 ---
-깊이 우선 탐색 (DFS, Depth-First Search)를 파이썬으로 구현할 때에는 두 가지 방법을 사용할 수 있다.
+깊이 우선 탐색 (DFS, Depth-First Search)을 파이썬으로 구현할 때에는 두 가지 방법을 사용할 수 있다.
 
 1. <b>스택(Stack)</b>을 활용하여 구현
 2. <b>재귀(Recursion)</b>를 활용하여 구현
