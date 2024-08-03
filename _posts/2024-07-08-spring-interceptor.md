@@ -506,11 +506,6 @@ public class MainController {
 		return "redirect:/";
 	}
 	
-	@GetMapping("/regist")
-	public String registForm() {
-		return "regist";
-	}
-	
 }
 ```
 
@@ -625,3 +620,30 @@ servlet-context.xml 로 와서 일단 이전에 했던 AInterceptor, BIntercepto
 ```
 
 reference로는 "loginInterceptor"로 쓴다. 이렇게 명명이 된 이유는, 내가 따로 LoginInterceptor.java에서 ```@Component```을 등록했는데 이름을 명시하지 않아서 앞글자만 소문자로 바뀐 것이다.
+
+<br>
+
+이제 실행을 해보겠다. main까지 들어온 것은 오케이이다. 이때 '게시글 등록페이지'를 클릭하면 아직 들어갈 수 없다. 아직 regist로 가는 것을 만들지 않았다.
+
+<img src="https://github.com/user-attachments/assets/e5a320f3-3c7a-47a3-9753-a9452f6e2595" width="300px">
+
+MainController 클래스에 가서 다음과 같은 코드를 추가한다.
+
+```java
+@GetMapping("/regist")
+public String registForm() {
+    return "regist";
+}
+```
+
+이제 로그인이 안 된 상태에서 '게시글 등록페이지'를 클릭하면 다시 로그인 페이지로 가면서 안 가진다. 왜냐하면 로그인을 하지 않았으니까 튕긴 것이다.
+
+아이디에 "ssafy"를 입력하고, 비밀번호에 "1234"를 클릭하고 로그인을 한 다음, '게시글 등록페이지'를 클릭하면 잘 들어가진다. 요청이 세션을 확인해서 "오케이 아이디, 비밀번호가 있네" 하면 통과이고, 아니면 돌아가게 하는 것이다.
+
+이런 것을 잘 확인하면 우리의 사이트가 점점 더 안전해진다.
+
+<br>
+
+## Interceptor 요청 흐름 정리
+
+웹 요청의 흐름은 전부 다 떼어 버리고, 비슷한 것들만 쭉 가져와봤다.
