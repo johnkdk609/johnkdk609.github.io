@@ -14,11 +14,11 @@ date: 2024-08-08 19:31:00 +0900
 
 <br>
 
-이는 <u>'list' 가 변경 가능한(mutable) 객체이기 때문</u>이다. Python의 'set'은 내부적으로 요소들의 해시 값을 사용하여 중복을 제거하고, 요소의 순서와 상관없이 빠르게 검색할 수 있게 설계되어 있다.
+이는 <u>list 가 변경 가능한(mutable) 객체이기 때문</u>이다. Python의 set은 내부적으로 요소들의 해시 값을 사용하여 중복을 제거하고, 요소의 순서와 상관없이 빠르게 검색할 수 있게 설계되어 있다.
 
-그러나 'list'는 mutable 객체로, 그 값이 변경될 수 있다. 해시(hash) 값은 객체의 상태에 의존하는데, list와 같은 mutable 객체는 상태가 변할 수 있기 때문에 해시 값이 변할 수 있다.
+그러나 list는 mutable 객체로, 그 값이 변경될 수 있다. 해시(hash) 값은 객체의 상태에 의존하는데, list와 같은 mutable 객체는 상태가 변할 수 있기 때문에 해시 값이 변할 수 있다.
 
-이런 이유로 Python에서는 list와 같이 mutable한 객체는 'set'의 요소로 사용할 수 없다.
+이런 이유로 Python에서는 list와 같이 mutable한 객체는 set의 요소로 사용할 수 없다.
 
 <br>
 
@@ -41,9 +41,9 @@ aset.add(alst)  # 오류 발생
 
 ## 해결 방법
 
-'set'에 담고 싶은 데이터가 list 형태라면, 변경 불가능한 객체(immutable object)로 변환할 수 있다. 
+set에 담고 싶은 데이터가 list 형태라면, 변경 불가능한 객체(immutable object)로 변환할 수 있다. 
 
-예를 들어 <b>'tuple'은 immutable하기 때문에 'set'의 요소로 사용할 수 있다.</b>
+예를 들어 <b>tuple은 immutable하기 때문에 set의 요소로 사용할 수 있다.</b>
 
 <br>
 
@@ -62,4 +62,4 @@ print(aset)
 
 <img src="https://github.com/user-attachments/assets/4746f751-c27e-419a-b4ab-4d8f1789f984" width="550px">
 
-성공적으로 되었다. 이렇게 'tuple'로 변환한 후에는 'set'에 담을 수 있다.
+성공적으로 되었다. 이렇게 tuple로 변환한 후에는 set에 담을 수 있다.
