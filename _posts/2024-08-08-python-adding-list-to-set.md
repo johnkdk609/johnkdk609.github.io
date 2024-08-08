@@ -39,6 +39,8 @@ aset.add(alst)  # 오류 발생
 
 'TypeError: unhashable type: 'list'' 오류가 발생한다.
 
+<br>
+
 ## 해결 방법
 
 set에 담고 싶은 데이터가 list 형태라면, 변경 불가능한 객체(immutable object)로 변환할 수 있다. 
