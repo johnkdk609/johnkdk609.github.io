@@ -79,6 +79,50 @@ print(*nums_sort, sep='\n')
 
 <br>
 
+그런데 병합 정렬을 구현할 때, 위와 같이 ```.pop(0)``` 의 방식을 사용하면 시간이 매우 오래 걸릴 수 있다. 경우에 따라서는 시간 초과가 발생할 수도 있다.
+
+이때 코드를 약간 수정해 인덱스로 접근하는 방식을 사용하면 시간을 획기적으로 줄일 수 있다.
+
+인덱스를 사용한 코드는 다음과 같다.
+
+```python
+def mergesort(lst):     # 병합 정렬
+    global cnt
+    if len(lst) <= 1:        # 종료 조건
+        return lst
+ 
+    m = len(lst) // 2       
+    left = mergesort(lst[:m])
+    right = mergesort(lst[m:])
+    if left[-1] > right[-1]:
+        cnt += 1
+ 
+    alst = []
+    l = r = 0   # .pop(0) 의 방법을 사용했을 때 계속 시간 초과가 발생했다. 이렇게 인덱스로 접근하는 것이 훨씬 더 빠르다.
+    while l < len(left) and r < len(right):
+        if left[l] < right[r]:
+            alst.append(left[l])
+            l += 1
+        else:
+            alst.append(right[r])
+            r += 1
+ 
+    return alst + left[l:] + right[r:]  # alst 그리고 left의 남아있는 것, right의 남아있는 것을 합친다. 이때 left와 right 중 하나는 비어있는 리스트이다.
+ 
+ 
+T = int(input())
+for tc in range(1, T + 1):
+    N = int(input())
+    A = list(map(int, input().split()))
+ 
+    cnt = 0
+ 
+    Asort = mergesort(A)
+    print(f'#{tc} {Asort[N // 2]} {cnt}')
+```
+
+<br>
+
 ## 퀵 정렬과 병합 정렬 비교
 
 퀵 정렬은 시간 복잡도가 평균적으로 O(N log N) 이다. 그런데 최악의 경우 O(N ^ 2) 가 된다.
