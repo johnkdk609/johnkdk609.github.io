@@ -25,4 +25,4 @@ for _ in range(N):
         heapq.heappush(hq, x)
 ```
 
-우선 heapq 라이브러리를 임포트 한다.
+우선 heapq 라이브러리를 임포트 한다. 그리고 hq 리스트를 생성한다. 그리고 힙에 추가를 해야 할 경우 ```heap.heappush(hq, x)``` 의 방식으로 넣는 것이다.
