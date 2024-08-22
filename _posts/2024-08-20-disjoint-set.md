@@ -81,3 +81,40 @@ for i in range(1, v + 1):
 
 유니온-파인드에서는 '<b>경로 압축(Path Compression)</b>' 이라는 것이 이뤄진다. 이러한 경로 압축은 'skewed tree' 를 방지하기 위해 진행된다.
 
+다음 그림을 보자.
+
+<img width="420" alt="skewed tree" src="https://github.com/user-attachments/assets/81bbadf2-8b8a-4206-9e8f-70c67091e70b">
+
+이렇게 마치 꼬챙이에 끼워진 듯한 느낌으로, 일렬로 되어 있는 트리를 'skewed tree'라고 한다.
+
+이런 skewed tree 에서는 1, 2, 3, 4, 5 노드의 루트 노드가 1 노드이다. 끝에 있는 5의 경우 루트 노드를 찾기 위해 4-3-2-1 의 순으로 탐색을 해야 한다.
+
+이렇게 되면 루트 노드를 찾는 데에 시간이 많이 걸리게 된다. 이때 경로 압축을 진행하면 시간을 크게 단축시킬 수 있다.
+
+<br>
+
+<img width="350" alt="compressed tree" src="https://github.com/user-attachments/assets/bb872adc-63b5-4c45-ab05-8013fa0e6f23">
+
+위 그림은 경로 압축(Path Compression)을 수행한 트리이다. 2, 3, 4, 5 노드가 모두 바로 부모 노드로 루트 노드를 가리키고 있다.
+
+이렇게 되면 2, 3, 4, 5 노드에서 한 깊이(depth)만 가면 루트 노드를 찾을 수 있으므로, 시간을 크게 개선할 수 있다.
+
+<br>
+
+위 코드에서 경로 압축을 진행하는 부분은 다음과 같다.
+
+```python
+def find_parent(parent, x):
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+```
+
+경로 압축은 find 함수를 재귀적으로 호출한 뒤에 부모 테이블 값을 갱신하는 기법이다.
+
+각 노드에 대하여 find 함수를 호출한 이후에, 해당 노드의 루트 노드가 바로 부모 노드가 된다.
+
+<br>
+
+## 서로소 집합을 활용한 사이클 판별
+
