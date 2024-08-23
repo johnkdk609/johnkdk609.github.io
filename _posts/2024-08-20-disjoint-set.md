@@ -2,6 +2,7 @@
 layout: post
 title: 서로소 집합 알고리즘
 categories: Algorithm
+description: 나동빈, 2021, [이것이 취업을 위한 코딩 테스트다 with 파이썬], 한빛미디어
 date: 2024-08-20 23:54:00 +0900
 ---
 서로소 집합(Disjoint Set)이란 공통되는 원소가 없는 두 집합을 의미한다.
@@ -118,3 +119,59 @@ def find_parent(parent, x):
 
 ## 서로소 집합을 활용한 사이클 판별
 
+서로소 집합을 사용하면 사이클 판별이 가능하다.
+
+사이클 판별의 로직은 다음과 같다.
+
+<b>1번. 각 간선을 확인하며 두 노드의 루트 노드를 확인한다.
+    Ⅰ. 루트 노드가 서로 다르다면 두 노드에 대하여 union 연산을 수행한다.
+    Ⅱ. 루트 노드가 서로 같다면 사이클(Cycle)이 발생한 것이다.
+
+2번. 그래프에 포함되어 있는 모든 간선에 대하여 1번 과정을 반복한다.</b>
+
+<br>
+
+사이클 판별을 수행하는 코드는 다음과 같다.
+
+```python
+# 특정 원소가 속한 집합을 찾기
+def find_parent(parent, x):
+    # 루트 노드가 아니라면, 루트 노드를 찾을 때까지 재귀적으로 호출
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+
+# 두 원소가 속한 집합을 합치기
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+
+# 노드의 개수와 간선(union 연산)의 개수 입력 받기
+v, e = map(int, input().split())
+parent = [0] * (v + 1)  # 부모 테이블 초기화
+
+# 부모 테이블상에서, 부모를 자기 자신으로 초기화
+for i in range(1, v + 1):
+    parent[i] = i
+
+cycle = False   # 사이클 발생 여부
+
+for i in range(e):
+    a, b = map(int, input().split())
+    # 사이클이 발생한 경우 종료
+    if find_parent(parent, a) == find_parent(parent, b):
+        cycle = True
+        break
+    # 사이클이 발생하지 않았다면 합집합(union) 수행
+    else:
+        union_parent(parent, a, b)
+
+if cycle:
+    print("사이클이 발생했습니다.")
+else:
+    print("사이클이 발생하지 않았습니다.")
+```
