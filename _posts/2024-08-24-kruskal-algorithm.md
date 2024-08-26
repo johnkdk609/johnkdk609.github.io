@@ -59,3 +59,67 @@ date: 2024-08-24 18:09:00 +0900
 
 <br>
 
+최소 신장 트리는 일종의 트리(Tree) 자료구조이므로, 최종적으로 신장 트리에 포함되는 간선의 개수가 '<b>노드의 개수 - 1</b>' 과 같다는 특징이 있다. (트리 자료구조는 노드가 N 개일 때, 항상 간선의 개수그 N - 1 개이다.)
+
+따라서 크루스칼 알고리즘의 핵심 원리는 가장 거리가 짧은 간선부터 차례대로 집합에 추가하면 된다는 것이다. 다만, 사이클을 발생시키는 간선은 제외하고 연결한다.
+
+이렇게 하면 항상 최적의 해를 보장할 수 있다.
+
+<br>
+
+크루스칼 알고리즘을 코드로 구현하면 다음과 같다.
+
+```python
+# 특정 원소가 속한 집합을 찾기
+def find_parent(parent, x):
+    # 루트 노드가 아니라면, 루트 노드를 찾을 때까지 재귀적으로 호출
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+
+# 두 원소가 속한 집합을 합치기
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+
+# 노드의 개수와 간선(union 연산)의 개수 입력 받기
+v, e = map(int, input().split())
+parent = [0] * (v + 1)  # 부모 테이블 초기화
+
+# 모든 간선을 담을 리스트와 최종 비용을 담을 변수
+edges = []
+result = 0
+
+# 부모 테이블상에서, 부모를 자기 자신으로 초기화
+for i in range(1, v + 1):
+    parent[i] = i
+
+# 모든 간선에 대한 정보를 입력 받기
+for _ in range(e):
+    a, b, cost = map(int, input().split())
+    # 비용순으로 정렬하기 위해서 튜플의 첫 번째 원소를 비용으로 설정
+    edges.append((cost, a, b))
+
+# 간선을 비용순으로 정렬
+edges.sort()
+
+# 간선을 하나씩 확인하며
+for edge in edges:
+    cost, a, b = edge
+    # 사이클이 발생하지 않는 경우에만 집합에 포함
+    if find_parent(parent, a) != find_parent(parent, b):
+        union_parent(parent, a, b)
+        result += cost
+
+print(result)
+```
+
+<br>
+
+크루스칼 알고리즘은 간선의 개수가 E개일 때, O(E log E) 의 시간 복잡도를 가진다. 왜냐하면 크루스칼 알고리즘에서 시간이 가장 오래 걸리는 부분이 간선을 정렬하는 작업이며, E 개의 데이터를 정렬했을 때의 시간 복잡도는 O(E log E) 이기 때문이다.
+
+크루스칼 내부에서 사용되는 서로소 집합 알고리즘의 시간 복잡도는 정렬 알고리즘의 시간 복잡도보다 작으므로 무시한다.
