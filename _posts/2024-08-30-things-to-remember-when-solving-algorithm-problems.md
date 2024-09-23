@@ -406,3 +406,53 @@ print(exterminated)
 
 ## 런타임 에러 (Runtime Error) 에 유의한다.
 
+알고리즘 문제를 풀 때에는 런타임 에러(Runtime Error)에 유의해야 한다. 런타임 에러는 프로그램이 정상적으로 컴파일 되었지만, 실행 중에 발생하는 에러를 의미한다.
+
+즉, 프로그램이 실행되는 동안 예상치 못한 상황이 발생하여 정상적으로 동작하지 못할 때를 나타낸다. 이는 주로 프로그램이 실행되는 동안 발생하는 논리적 오류, 시스템 자원 부족, 잘못된 입력, 메모리 접근 오류 등 다양한 원인에 의해 발생할 수 있다.
+
+일반적인 런타임 에러의 예로는 다음과 같은 것들이 있다.
+
+1. <b>ZeroDivisionError</b> : 0으로 나누려 할 때 발생하는 에러
+2. <b>IndexError</b> : 리스트나 배열의 범위를 벗어난 인덱스에 접근할 때 발생하는 에러
+3. <b>MemoryError</b> : 프로그램이 사용 가능한 메모리를 초과했을 때 발생하는 에러
+4. <b>TypeError</b> : 잘못된 타입의 값에 대해 연산을 시도할 때 발생하는 에러
+5. <b>FileNotFoundError</b> : 존재하지 않는 파일을 열려고 할 때 발생하는 에러
+
+런타임 에러는 개발자가 예상하지 못한 입력이나 상황에 대비하지 않았을 때 발생할 수 있으며, 프로그램의 안정성을 높이기 위해서는 이러한 에러를 잘 처리하는 것이 중요하다.
+
+<br>
+
+알고리즘 문제를 풀면서 마주한 런타임 에러의 예시는 다음과 같은 것들이 있다.
+
+<a href="https://www.codetree.ai/training-field/frequent-problems/problems/tree-kill-all/description?page=4&pageSize=5">코드트리 나무 박멸</a> 문제에서는 IndexError 가 발생했다.
+
+```
+cnt, row, col = pesti_nomi[0][0], pesti_nomi[0][1], pesti_nomi[0][2]
+^^^^^^^^^^^^^
+IndexError: list index out of range
+```
+
+```python
+ # 이제 제초제를 뿌렸을 때 가장 나무가 많이 죽을 후보지를 찾는다.
+pesti_nomi.sort(key=lambda x: x[0], reverse=True)
+cnt, row, col = pesti_nomi[0][0], pesti_nomi[0][1], pesti_nomi[0][2]
+```
+
+위와 같이 코드를 짰는데, pesti_nomi 에 아무것도 안 담길 수 있는데 그냥 무작정 pesti_nomi 의 첫 번째 값을 꺼내고, cnt, row, col 에 담은 것이다.
+
+이렇게 되면 존재하지 않는 것을 cnt, row, col 에 담을 수 있으므로, 런타임 에러가 발생한 것이다.
+
+이를 해결하기 위해 다음과 같이 하였다.
+
+```python
+if len(pesti_nomi) != 0:
+    # 이제 제초제를 뿌렸을 때 가장 나무가 많이 죽을 후보지를 찾는다.
+    pesti_nomi.sort(key=lambda x: (-x[0], x[1], x[2]))
+    cnt, row, col = pesti_nomi[0][0], pesti_nomi[0][1], pesti_nomi[0][2]
+    exterminated += cnt
+```
+
+코드를 실행하기 전에 if 문으로 먼저 pesti_nomi 에 값이 담겨있는지 파악한 것이다.
+
+<br>
+
