@@ -456,3 +456,33 @@ if len(pesti_nomi) != 0:
 
 <br>
 
+<a href="https://www.codetree.ai/training-field/frequent-problems/problems/battle-ground/submissions?page=3&pageSize=5">코드트리 싸움땅</a> 문제에서도 IndexError 이 발생했었다.
+
+```
+  File "C:\Users\student\PycharmProjects\pythonProject\기출문제\C싸움땅.py", line 153, in players_fight
+    if gun_arr[rl][cl][i] == max(gun_arr[rl][cl]):
+       ~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+```
+
+```python
+# 만약 해당 칸에 총이 있다면, 해당 플레이어는 가장 공격력이 높은 총을 획득하고 나머지 총들은 해당 격자에 내려 놓습니다.
+if len(gun_arr[rl][cl]) > 0:
+    gl = max(gun_arr[rl][cl])   # 총 획득
+    for i in range(len(gun_arr[rl][cl])):
+        if gun_arr[rl][cl][i] == max(gun_arr[rl][cl]):
+            gun_arr[rl][cl].pop(i)
+```
+
+위와 같이 코드를 짰는데, gun_arr[rl][cl] 에서 공격력이 높은 총을 플레이어가 가져갈 때, 해당 총을 가져가고 그것을 pop 했다면 바로 break 를 해야 하는데, break를 깜빡한 것이다. 아래에 ```break``` 를 한 줄 추가하고 나니 통과되었다.
+
+<br>
+
+<u>어떤 리스트에서 값을 가져와야 한다든지</u>, 아니면 <u>반복문을 돌면서 해당되는 것을 pop() 해야 하는 경우</u>든지 런타임 에러가 발생할 위험이 있으므로 유의해야 한다.
+
+그러므로 <b>런타임 에러가 발생할 가능성은 없는지 코드를 한 줄 한 줄 짤 때마다 고민을 해야 한다.</b>
+
+<br>
+
+## 문제가 어떤 유형인지 속단하지 않는다.
+
