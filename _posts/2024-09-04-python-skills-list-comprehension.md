@@ -28,7 +28,7 @@ arr2D = [
 위 배열을 <b>리스트 컴프리헨션(list comprehension)</b>을 사용해 복사하려면 다음과 같이 하면 된다.
 
 ```python
-copied2D = [[line for line in row] for row in arr2D]
+copied2D = [row[:] for row in arr2D]
 print(*copied2d, sep='\n')
 
 # [1, 2, 3]
@@ -55,7 +55,7 @@ arr3D = [
 이때 만약 위에서 2차원 배열을 복사하듯이 그대로 해버리면 문제가 발생한다.
 
 ```python
-copied3D = [[line for line in row] for row in arr3D]
+copied3D = [row[:] for row in arr3D]
 arr3D[0][1][1] = 100
 print(*copied3D, sep='\n')
 
