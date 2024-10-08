@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 최단 경로를 반환하는 BFS
+title: 최단 경로(Shortest Path)를 반환하는 BFS
 categories: Algorithm
 date: 2024-10-08 13:35:00 +0900
 ---
