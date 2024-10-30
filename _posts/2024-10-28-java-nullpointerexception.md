@@ -39,4 +39,45 @@ public class LoginServlet extends HttpServlet {
 
 그런데 평소에 내가 코드를 작성 하던대로 했으면 ```idValue.equals("admin") && pwdValue.equals("admin")``` 의 방식으로 했을 것이다. 하지만, 위와 같이 작성함으로써 NullPointerException 의 발생 가능성을 없앴다.
 
-왜냐하면 ```request.getParameter("id");```, ```request.getParameter("pwd");``` 의 방식으로 idValue, pwdValue를 가져올 때, 경우에 따라서 해당 값이 없을 수도 있다. 
+왜냐하면 ```request.getParameter("id");```, ```request.getParameter("pwd");``` 의 방식으로 idValue, pwdValue를 가져올 때, 경우에 따라서 request에 "id" 값이나 "pwd" 값이 없어서 null 일 수 있는데, 그러면 'null 값이 "admin" 과 일치하는 경우' 를 뜻하므로 NullPointerException 이 발생하게 된다. 하지만 "admin"을 앞에 배치함으로써 이러한 NullPointerException 의 가능성을 없앤 것이다.
+
+만약 이렇게 복잡하게 고려를 하고 싶지 않다면, 아얘 처음부터 null 체크를 하는 방법이 있다.
+
+```java
+@WebServlet(value="/login")
+public class LoginServletAns extends HttpServlet {
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+
+        String id = request.getParameter("id");
+        String pwd = request.getParameter("pwd");
+        if (id == null || pwd == null || id.equals("") || pwd.equals("")) {
+            out.println("<h1>아이디, 패스워드를 입력하세요.</h1>");
+            out.println("<hr>");
+            out.println("<a href='login.html'>로그인폼</a>");
+        }
+
+        if (id.equals("admin") && pwd.equals("admin")) {
+            // 로그인 성공
+            out.println("<h3>관리자 모드로 로그인 하셨습니다.</h3>");
+            out.println("<hr>");
+        } else if (id.equals(pwd)) {
+            out.println("<h3>사용자 모드로 로그인 하셨습니다.</h3>");
+        } else {
+            // 로그인 실패
+            out.println("<h3>로그인 실패 했습니다.</h3>");
+            out.println("<a href='login.html'>다시 로그인</a>");
+        }
+    }
+}
+```
+
+위 코드를 보면, 일단 id 와 pwd 를 ```request.getParameter()``` 로 가져왔다. 그리고 먼저 조건문으로 null 체크를 했다. null 이거나 빈 값이면 다시 로그인을 하라고 명령하는 것이다.
+
+그 다음에 ```if (id.equals("admin") && pwd.equals("admin")) {``` 와 같은 방식으로 탐색을 했다.
+
+나는 이러한 방식을 더 선호한다.
