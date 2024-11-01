@@ -10,7 +10,11 @@ date: 2024-10-31 22:00:00 +0900
 
 파이참 IDE를 켜면 실행(Run) 이 무조건 main.py 를 향하고 있다. 만약 내가 temp.py 라는 새 창을 만들고 그 창에서 실행 시키고자 한다면, <kbd>Ctrl + Shift + F10</kbd> 을 사용하면 된다.
 
-#### Ctrl + Shift + F10
+<br>
+
+<h3><b>Ctrl + Shift + F10</b></h3>
+
+<br>
 
 그냥 <kbd>Shift + F10</kbd> 을 하면 '직전에 실행시킨 파일'이 실행된다. 이 경우에는 temp.py 파일이 아닌, main.py 파일이 실행되는 것이다.
 
