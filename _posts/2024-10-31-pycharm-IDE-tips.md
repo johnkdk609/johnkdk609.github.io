@@ -64,7 +64,7 @@ Redirect Input 방식을 사용하여 불필요하게 소요되는 시간을 줄
 
 만약 grid 라는 변수가 어디에서 사용되었는지 한 눈에 파악하고 싶다면, grid 를 드래그 한 다음 마우스 우클릭을 한 다음 'Find Usages' 버튼을 클릭한다. 그러면 다음과 같은 화면이 나온다.
 
-<img src="https://github.com/user-attachments/assets/6b377f5c-a090-44b5-9c50-2c9ae240fe5e" width="800px" />
+<img src="https://github.com/user-attachments/assets/6b377f5c-a090-44b5-9c50-2c9ae240fe5e" width="1000px" />
 
 위 그림을 보면 'grid in All Places' 라는 창이 생기며 그 안에서 grid 변수가 어느 지점에서 사용되었는지를 파악할 수 있다.
 
