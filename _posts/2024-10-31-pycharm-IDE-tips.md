@@ -54,3 +54,23 @@ Redirect Input 방식을 사용하여 불필요하게 소요되는 시간을 줄
 
 <br>
 
+## Find Usages
+
+알고리즘 문제를 풀다 보면 서로 다른 두 개 이상의 변수들의 변수명을 비슷하게 작성해 한 눈에 특정 변수들이 어디에 있는지 파악하기 어려울 수 있다. 또, 코드가 길고 복잡해 내가 어떤 변수에 대해 어디서 선언했고, 어디서 할당했는지를 파악하고 싶을 수 있다.
+
+이때 사용할 수 있는 파이참 IDE 의 기능이 <b>Find Usages</b> 이다.
+
+가령 <a href="https://www.codetree.ai/training-field/frequent-problems/problems/tail-catch-play/description?page=2&pageSize=20">Code Tree 꼬리잡기놀이</a> 문제에서 본인의 코드를 보겠다. 메인에서 grid를 생성하고, 그 grid 에 데이터를 받은 다음, 그 grid를 활용하여 특정한 작업을 수행하였다.
+
+만약 grid 라는 변수가 어디에서 사용되었는지 한 눈에 파악하고 싶다면, grid 를 드래그 한 다음 마우스 우클릭을 한 다음 'Find Usages' 버튼을 클릭한다. 그러면 다음과 같은 화면이 나온다.
+
+<img src="https://github.com/user-attachments/assets/6b377f5c-a090-44b5-9c50-2c9ae240fe5e" width="800px" />
+
+위 그림을 보면 'grid in All Places' 라는 창이 생기며 그 안에서 grid 변수가 어느 지점에서 사용되었는지를 파악할 수 있다.
+
+이러한 Find Usages 기능의 단축키는 <kbd>Alt + F7</kbd> 이다.
+
+<br>
+
+## Find Usages in File
+
