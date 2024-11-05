@@ -74,3 +74,21 @@ Redirect Input 방식을 사용하여 불필요하게 소요되는 시간을 줄
 
 ## Find Usages in File
 
+위에서 사용한 Find Usages 기능과 비슷한 기능으로, <b>Find Usages in File</b> 기능이 있다.
+
+마찬가지로 특정 변수에 대해 코드에서 어디서 선언을 했고, 어디서 할당했는지 파악하고 싶으면 해당 변수에 마우스로 클릭 해두고, <kbd>Ctrl + F7</kbd> 단축키를 입력한다.
+
+그러면 다음과 같은 화면이 나온다. (마찬가지로 Code Tree 꼬리잡기놀이 문제의 예시를 보겠다.)
+
+<img src="https://github.com/user-attachments/assets/bdd2f624-a6fb-458c-b16d-39a1c5342a68" width="600px" />
+
+위 사진을 보면, 변수가 선언된 경우에는 빨간색으로 음영이 생기고 값이 할당되는 경우에는 초록색으로 음영이 생긴다.
+
+<img src="https://github.com/user-attachments/assets/c3294848-a4bf-46b5-94dc-e030b11e8e99" width="470px" />
+
+또, 같은 변수에 대해 어떤 메서드에 인자로 넣어서 리턴값을 해당 이름으로 그대로 받을 때에는 위와 같이 되는 것을 볼 수 있다.
+
+어떤 변수가 어디서 사용되었는지를 빠르게 파악하려면 <kbd>Ctrl + F7</kbd> 단축키를 사용하면 되는 것이다.
+
+<br>
+
