@@ -351,34 +351,58 @@ for _ in range(M):
 
 만약 테스트 케이스를 A4 용지에 일일이 손으로 검증하려 한다면, 매우 큰 숫자만큼 반복문을 도는 경우 매우 비효율적이고 오히려 실수를 더 할 수도 있다. 프린트 디버깅을 사용하여 보다 정확하고 빠르게 검증을 할 수 있는 것이다.
 
-가령 <a href="https://www.codetree.ai/training-field/frequent-problems/problems/tree-kill-all/description?page=1&pageSize=20&name=%EB%82%98%EB%AC%B4%EB%B0%95%EB%A9%B8">코드트리 나무 박멸</a> 문제에서는 런타임 에러(Runtime Error)를 해결하기 위해 다음과 같이 프린트 디버깅을 사용하였다.
+<br>
+
+다음은 <a href="https://www.codetree.ai/training-field/frequent-problems/problems/rudolph-rebellion/description?page=1&pageSize=10" target="_blank">코드트리 루돌프의 반란</a> 문제이다. 메인 부분에서 반복문을 돌릴 때 다음과 같이 하여 프린트 디버깅을 했다.
 
 ```python
-######################################################
-# 출력
-# m년 동안 총 박멸한 나무의 그루 수를 구하세요.
+for m in range(M):
+    print(f'@@@@@ {m + 1} 번 턴 @@@@@')
+    print()
+    print('<< 루돌프 돌격! >>')
+    grid, santas = rudolf_charge(grid, santas)
+    print('그리드 출력')
+    print(*grid, sep='\n')
+    print('산타 리스트 출력:', santas)
+    print('현재 산타들 점수:', santas_score)
+    print('현재 기절한 산타:', faint_santa)
+    print('현재 사망한 산타:', dead_santa)
+    print()
+    if isover():
+        print('루돌프 돌격 후 모든 산타가 사망했으니 종료한다~~!!')
+        break
+    print('<< 산타 돌격! >>')
+    grid, santas = santa_move(grid, santas)
+    print('그리드 출력')
+    print(*grid, sep='\n')
+    print('산타 리스트 출력:', santas)
+    print('현재 산타들 점수:', santas_score)
+    print('현재 기절한 산타:', faint_santa)
+    print('현재 사망한 산타:', dead_santa)
+    print()
+    if isover():
+        print('산타 돌격 후 모든 산타가 사망했으니 종료한다~~!!')
+        break
+    print('-- 회복 --')
+    recover()
+    print('-- 보상 --')
+    reward()
+    print('<=== 최종 상태 ===>')
+    print('현재 산타들 점수:', santas_score)
+    print('현재 기절한 산타:', faint_santa)
+    print('현재 사망한 산타:', dead_santa)
+    print(f'현재 루돌프 좌표: ({rdr}, {rdc})')
+    print('==========================================================')
+    print()
 
-for i in range(M):
-    print(i + 1, "번째 해")
-    grid = grow(grid)
-    print('나무 성장 후')
-    print(*grid, sep='\n')
-    print('===================')
-    grid = reproduce(grid)
-    print('나무 번식 후')
-    print(*grid, sep='\n')
-    print('===================')
-    pest_control(grid)
-    print('제초제 뿌린 후')
-    print(*grid, sep='\n')
-    print('===================')
-    pesticide_arr = pesticide_decrease(pesticide_arr)
-    print('========================================================')
-
-print(exterminated)
+print(*santas_score)
 ```
 
-위와 같이 특정 메서드를 실행시킬 때마다 격자를 출력하고, '=====' 의 구분자를 사용하면 한 눈에 진행 상황을 파악할 수 있다. 왜 런타임 에러가 발생했는지, (혹은 다른 어떤 에러가 왜 발생했는지) 손쉽게 파악할 수 있는 것이다.
+위와 같이 한 다음, 주어진 테스트 케이스를 넣으면 다음과 같이 출력된다.
+
+<img src="https://github.com/user-attachments/assets/d691fdfc-e6c8-4b00-a8f5-e5202fa5c039" width="400px" />
+
+'@', '&#60;&#60; &#62;&#62;' 등과 같은 특수 문자들을 사용하고, 메서드 별로 한 칸을 띄워서 보다 가시성을 높였다. 한 턴이 끝났을 때에는 '=====' 와 같은 구분자를 넣어 턴이 바뀌었음을 한 번에 알아볼 수 있게 하였다. 이렇게 하면 프린트 디버깅을 좀 더 수월하게 할 수 있다. 
 
 <br>
 
