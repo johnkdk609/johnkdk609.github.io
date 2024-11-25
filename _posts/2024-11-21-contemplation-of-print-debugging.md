@@ -161,3 +161,30 @@ for r in range(len(visited)):
 
 테스트 케이스의 크기가 커질수록 프린트 디버깅을 하는 것이 쉽지 않았다. 그래서 프린트 디버깅의 가시성을 높이기 위해 다음과 같이 하였다.
 
+```python
+##############################################################
+# 출력
+# 첫째 줄에 로봇을 도착 지점에 원하는 방향으로 이동시키는데 필요한 최소 명령 횟수를 출력한다.
+
+ans, v = bfs(s_r, s_c, s_d, e_r, e_c, e_d, grid)
+print(ans - 1)
+
+for a in range(M):
+    for b in range(N):
+        for c in range(4):
+            if v[a][b][c] != INF:
+                print(f'{v[a][b][c]:3}', end='')
+            else:
+                print('  -', end='')
+        print(' |', end='')
+    print()
+```
+
+문제에서 주어진 테스트 케이스를 넣었을 때, 다음과 같이 출력된다.
+
+<img src="https://github.com/user-attachments/assets/2665fabc-d7a3-46f6-87c3-8cfc56939f1b" width="800px" />
+
+'|' 구분자도 사용하여 가시성을 한층 높였고, 프린트 디버깅을 하기 상당히 편해진 것이다.
+
+<br>
+
