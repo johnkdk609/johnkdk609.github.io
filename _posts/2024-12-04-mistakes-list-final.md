@@ -65,3 +65,51 @@ if switch_grid[ar][ac] == 1 or (ar, ac) in original_switches:       # original_s
 <br>
 <hr>
 
+### 인접 리스트 BFS 에서 정점의 번호를 1 부터 시작하게 할 때, 런타임 에러에 주의한다.
+
+<a href="https://www.acmicpc.net/problem/1389">백준 1389 케빈 베이컨의 6단계 법칙</a> 문제는 인접 리스트 BFS로 접근할 수 있다. 그런데 이 문제를 풀 때 ```런타임 에러 (IndexError)```가 발생했다. '케빈 베이컨의 수' 의 최솟값을 구하기 위해 ```nomi``` 라는 리스트에 각 정점의 케빈 베이컨의 수를 담았다.
+
+그런데 정점이 1부터 시작한다는 것을 고려했을 때 맨 앞에 더미 데이터 0 을 넣으면 ```min()``` 함수로 가장 작은 값을 구할 때 0 이 나올 것이기 때문에 그냥 더미 데이터를 빼고 담았다.
+
+```python
+nomi = []
+for a in range(1, N + 1):
+    nomi.append(adj_bfs(adj, a))
+
+for a in range(1, N + 1):       # nomi 리스트는 0 ~ N - 1 까지밖에 없는데, 1 ~ N 을 탐색하려고 하니 런타임 에러(IndexError)가 발생한 것이다.
+    if nomi[a] == min(nomi):
+        print(a + 1)
+        break
+```
+
+이런 사소한 실수를 해서는 안 된다.
+
+<br>
+<hr>
+
+### BFS 에서 목표 지점에 도달하자마자 종료하는 것이 바람직한지 생각해봐야 한다.
+
+<a href="https://www.acmicpc.net/problem/14442">백준 14442 벽 부수고 이동하기 2</a> 문제를 풀 때에는 3차원 visited 배열을 사용한다. 문제에서 최단 거리를 출력하라고 하는데, 이런 특수한 문제에서는 만약 목표 지점인 ```(N - 1, M - 1)``` 에 도달했을 때 바로 종료하는 것이 과연 맞을지 고민해봐야 한다.
+
+```python
+if oob(nr, nc):
+    continue
+if ch < K and arr[nr][nc] == 1 and visited[nr][nc][ch + 1] == 0:
+    visited[nr][nc][ch + 1] = step
+    queue.append((nr, nc, ch + 1))
+    # if nr == N - 1 and nc == M - 1:           # 목표 지점에 도달하면 바로 종료를 했는데, 이것 때문에 틀렸다.
+    #     return step
+elif arr[nr][nc] == 0 and visited[nr][nc][ch] == 0:
+    visited[nr][nc][ch] = step
+    queue.append((nr, nc, ch))
+    # if nr == N - 1 and nc == M - 1:
+    #     return step
+```
+
+위 코드에서 주석 처리된 부분을 주석을 푼 채로 제출했을 때 틀렸다. 왜냐하면 모든 벽 부순 횟수(```ch```)에 대해 최솟값을 확인해야 하는데, 아직 미처 확인하지도 못한 상황에서 바로 종료를 했기 때문이다.
+
+그러므로, <b>BFS 문제를 풀 때 목표 지점에 도달했을 때 바로 종료해도 문제가 없는지 세심하게 따져야 한다.</b>
+
+<br>
+<hr>
+
