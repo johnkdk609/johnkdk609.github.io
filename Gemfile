@@ -47,7 +47,7 @@ group :jekyll_plugins do
   gem 'github-pages', '~> 228'
 
   # Non-Github Pages plugins:
-  gem "jekyll-last-modified-at", "~> 1.0.0"
+  gem "jekyll-last-modified-at", "~> 1.3.0"
   gem "jekyll-compose", "0.12.0"
 end
 
