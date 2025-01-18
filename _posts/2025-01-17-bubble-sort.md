@@ -2,7 +2,6 @@
 layout: post
 title: 버블 정렬 (Bubble Sort)
 categories: Algorithm
-description: 나동빈, 2021, [이것이 취업을 위한 코딩 테스트다 with 파이썬], 한빛미디어
 date: 2025-01-17 23:48:00 +0900
 ---
 버블 정렬(Bubble Sort)을 코드로 구현하면 다음과 같다.
@@ -37,4 +36,4 @@ print(bubblesort(data))
 
 <br>
 
-버블 정렬의 시간 복잡도는 <b>O(N²)</b> 이다. 반복문이 두 개이기 때문이다.
+버블 정렬의 시간 복잡도는 <b>O(N²)</b> 이다. 반복문이 두 개이기 때문이다. 완전 정렬이 되어 있는 상태라면 최선은 O(N) 이다.
