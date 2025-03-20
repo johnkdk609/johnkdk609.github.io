@@ -50,3 +50,51 @@ HTTP(Hypertext Transfer Protocol)은 처음에는 서버와 브라우저 간에 
 
 SSH(Secure SHell Protocol)는 보안되지 않은 네트워크에서 네트워크 서비스를 안전하게 운영하기 위한 암호화 네트워크 프로토콜이다.
 
+클라우드 서비스 배포를 할 때 AWS EC2를 사용하는 경우가 많다. 로컬 PC를 기반으로 다른 사용자들에게 서비스를 할 수도 있다. 그런데 이것은 사실상 힘든 일이다. AWS에 나의 코드를 놓고, 여기서 배포된 것을 기반으로 사용자들에게 서빙을 한다.
+
+<img src="https://github.com/user-attachments/assets/af5b6d98-8bcd-4c46-b060-86b4d61364a4" width="450px" />
+
+그런데 이때 나의 소중한 코드가 사용자들에게 노출이 되면 안 된다. 배포된 코드가 사용자에게 보여지는 인터페이스만 노출되어야지, 내부 코드가 노출이 되면 안 된다는 것이다. 그러면 어떻게 사용자들에게 보여지지 않고 안전하게 내 PC에서 AWS로 코드를 운반할 수 있을까? 이때 사용하는 것이 SSH 이다.
+
+다음은 내 AWS 내의 EC2에 접근하는 모습이다. 보통 프라이빗 키가 있는 경로에서 이런식으로 키를 명시하고 실행한다.
+
+```
+ssh <pem> <user>@<serverIP>
+```
+
+pem 이라는 확장자를 가지는 프라이빗 키를 AWS 에게서 받는다. 이것을 기반으로 "AWS야, 이건 내 서버야. 난 xxx이고 내가 지금 접속하는 서버는 내 계정을 기반으로 만든 서버야" 라고 인증을 하는 것이다. 그래서 명령어가 위와 같은 것이다.
+
+<img src="https://github.com/user-attachments/assets/fb300942-033d-4c9b-9e4d-2087bd8bd268" width="900px" />
+
+그러면 위와 같은 검은 화면을 보게 될 것이다. 위와 같은 화면으로 접속해서 리눅스 명령어를 통해 CLI 환경에서 작업을 진행한다. 또한 SCP를 이용해서 SSH를 이용해 파일을 전송할 수 있다.
+
+```scp <source> <destination>```
+
+이런 식으로 해서 AWS에 안전하게 코드를 배포하고, 이를 기반으로 해서 사용자들에게 서빙을 할 수 있다.
+
+<br>
+<hr>
+
+## FTP
+
+FTP(File Transfer Protocol)는 노드와 노드간에 파일을 전송하는 데 사용되는 프로토콜이다. 보통 로컬 PC에서 원격 PC로 파일을 보낼 때 쓰는 것이다.
+
+지금은 파일을 암호화해서 전송하는 FTPS 또는 SFTP로 대체되고 있다.
+
+대표적인 FTP 소프트웨어로 FileZilla 같은 것이 있다.
+
+<img src="https://github.com/user-attachments/assets/0d0ec4d8-8c5c-4143-8341-aa337d35654b" width="600px" />
+
+FileZilla를 보면 다음과 같이 GUI 가 대표적이다.
+
+<img src="https://github.com/user-attachments/assets/11971055-2d45-48ad-a030-7593ed785388" width="700px" />
+
+직전에 봤던 AWS의 CLI 환경의 경우 명령어만 입력할 수 있었는데, 위 FileZilla의 경우 GUI를 사용해서 drag and drop 을 통해 파일을 보낼 수 있는 것이다.
+
+<br>
+<hr>
+
+## SMTP
+
+인터넷을 통해 메일을 보낼 때 사용되는 프로토콜(Simple Mail Transfer Protocol). 보통 서비스를 운영하면 메일링 서비스를 하게 되는데 node.js를 통해 메일을 보낸다면 이를 통해 보내야 한다.
+
