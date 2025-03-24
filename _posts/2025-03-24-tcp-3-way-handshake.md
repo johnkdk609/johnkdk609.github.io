@@ -1,0 +1,97 @@
+---
+layout: post
+title: TCP의 연결 성립 &#58; 3 Way Handshake
+categories: Network
+description: CS 지식의 정석 - 디자인패턴 네트워크 운영체제 데이터베이스 자료구조
+date: 2025-03-24 17:58:00 +0900
+---
+TCP의 연결 성립 과정 : 3-웨이 핸드셰이크(3 Way Handshake)에 대해서 얘기를 해보겠다.
+
+말 그대로 세 개의 단계를 기반으로 연결을 성립한다는 의미이다.
+
+1. <b>SYN 단계</b> : 클라이언트는 서버에 클라이언트의 ISN을 담아 SYN을 보낸다.
+2. <b>SYN + ACK 단계</b> : 서버는 클라이언트의 SYN을 수신하고 서버의 ISN을 보내며 승인번호로 클라이언트의 ISN + 1 을 보낸다.
+3. <b>ACK 단계</b> : 클라이언트는 서버의 ISN + 1 한 값인 승인번호를 담아 ACK를 서버에 보낸다.
+
+<br>
+
+3 Way Handshake를 본격적으로 알아보기 전에 ISN에 대해 잠시 알아보자.
+
+ISN : TCP(Transmission Control Protocol) 기반 데이터 통신에서 각각의 새 연결에 할당된 고유한 32비트 시퀀스 번호를 나타낸다. TCP 연결을 통해 전송되는 다른 데이터 바이트와 충돌하지 않는 시퀀스 번호를 할당하는 데 도움이 된다.
+
+<img src="https://github.com/user-attachments/assets/516d9bbe-3be5-40f7-8253-e42e0c7c3f09" width="250px" />
+
+우리가 데이터 통신을 하는데, 한 번 할 때도 있고 여러 번 할 때도 있다. 여러 번 할 때마다 고유한 ISN을 부여한다. 그래서 이 통신(파란색)과 이 통신(빨간색)이 서로 충돌되지 않게끔 하는 것이 ISN인 것이다.
+
+<br>
+
+이제 3 Way Handshake 를 그림을 통해 보겠다.
+
+<img src="https://github.com/user-attachments/assets/8fb7438d-38de-4438-ba9e-48c4e366ae46" width="600px" />
+
+클라이언트가 있고 서버가 있다.
+
+우선 1번 SYN 단계에서 ISN 번호를 부여받는다. TCP 연결을 할 때마다 고유한 번호(ISN)를 부여받는 것이다. 이 단계에서는 7001 이라는 어떤 번호를 부여받았다. 이 7001 을 기반으로 해서 SYN이라는 플래그를 보낸다.
+
+서버도 이제 받았으니 "아 응답할게" 하면서 SYN/ACK 단계로 접어들면서 자신이 응답 받은 ISN에다가 +1 한 값을 보낸다. 7001을 받았으니 7002를 보내면서 자신의 ISN인 3001 을 보낸다. (서버측에서도 고유한 번호인 ISN을 부여받는다.)
+
+그 다음에 3번 ACK 단계가 되면서 ISN:7002 를 그대로 보내면서, 클라이언트도 서버로부터 받은 ISN에 +1 을 한 값인 3002인 ACK를 보낸다.
+
+다시 정리하자면 다음과 같다. 1번 SYN 단계는 클라이언트가 서버에 ISN을 담아서 보내는 단계이다. 2번 SYN/ACK 단계는 서버가 클라이언트의 SYN을 수신해서 서버의 ISN을 보내면서 승인번호로 받은 ISN에 +1 해서 보내는 것이다. 마지막으로 3번 ACK 단계에서 클라이언트는 서버의 ISN + 1 한 값인 3002(= 3001 + 1)로 만들어서 보낸다.
+
+이 세 개의 과정을 거쳐서 연결이 되는 것이다.
+
+ISN은 고유한 32비트 시퀀스 번호이다. 연결이 여러 개 발생할 수 있기 때문에 서로 충돌되지 않도록 고유한 시퀀스 번호를 각 연결마다 하기 위해 고유한 번호를 설정한다.
+
+<br>
+
+다음은 Wireshark 라는 도구를 기반으로 해서 구글에 요청을 보내고, 그것을 기반으로 패킷 분석을 해본 것이다.
+
+<img src="https://github.com/user-attachments/assets/dfa3b207-825a-43e7-99b3-c040e501da76" width="700px" />
+
+위 사진에서 'Sequence Number (raw)' 는 ISN(Initial Sequence Number)이다. 이런 식으로 고유한 번호가 할당되는 것이다.
+
+<br>
+
+잠시 용어의 뜻을 살펴보면 다음과 같다.
+
+<b>SYN</b> : synchronization의 약자. 연결 요청 플래그
+
+<b>ACK</b> : acknowledgement의 약자. 응답 플래그
+
+<br>
+<hr>
+
+## 클라이언트와 서버의 상태
+
+이러한 요청들이 발생하게 되면서 클라이언트와 서버는 각각의 단계를 가지게 된다.
+
+TCP 연결을 하면서 클라이언트는 closed, syn_sent, established 가 되며, 서버는 closed, listen, syn_received, established 상태가 된다.
+
+<img src="https://github.com/user-attachments/assets/6f8141b8-aac6-449a-bf83-36eed30ec5ff" width="750px" />
+
+처음에 클라이언트와 서버는 아무 것도 일어나지 않는 상황인 <b>CLOSED</b> 단계이다.
+
+여기서 클라이언트가 SYN을 보내면서 클라이언트는 <b>SYN_SENT</b> 단계가 된다.
+
+서버는 <b>LISTEN</b>이라는 상태가 되어야 클라이언트의 SYN을 받을 수 있다. 받았으면 <b>SYN_RECEIVED</b> 상태가 된다.
+
+그 다음에 서버에서 클라이언트로 SYN+ACK를 보낸다. 그러면 클라이언트는 <b>ESTABLISHED</b> 상태가 된다. 이렇게 해서 클라이언트는 연결 성립이 되었다.
+
+그 다음에 클라이언트가 ACK를 보내면서 서버도 똑같이 <b>ESTABLISHED</b>가 된다.
+
+이때 중요한 것은 서버가 LISTEN 상태에서만 이게 가능하다는 것이다. <u>LISTEN은 메서드이다.</u> 서버는 클라이언트의 연락을 기다리는 상태이고, 이를 기반으로 서버 메서드의 이름이 결정된다. 
+
+다음 코드는 간단히 Node.js로 구현할 수 있는 아주 간단한 서버이다.
+
+<img src="https://github.com/user-attachments/assets/a94b28c4-a2e1-4bed-bff1-f052e3e62bb6" width="700px" />
+
+위 코드를 보면 ```app.listen(port, () => {``` 에서 listen 메서드를 기반으로 서버가 구동이 된다. 서버가 구동이 돼서 클라이언트의 요청을 받을 수 있는 상태가 되어 SYN 이라는 플래그를 받는 것이다.
+
+우리가 서버를 만든다고 했을 때 보통 listen 메서드를 사용해서 만든다. listen 메서드를 통해 '서버를 여는 것' 인데, 이게 바로 여기서 파생된 것이다.
+
+<br>
+
+이러한 SYN, SYN+ACK, ACK 과정을 거쳐서 연결을 성립한다. 이러한 과정을 거쳐서 클라이언트, 서버가 모두 ESTABLISHED 상태가 되는 것이다.
+
+이러한 서버와 클라이언트 간의 연결 설정 과정이 있기 때문에 "TCP는 신뢰성이 있다." 라고 하며 "이러한 과정이 없는 UDP는 신뢰성이 없다." 라고 말한다.
