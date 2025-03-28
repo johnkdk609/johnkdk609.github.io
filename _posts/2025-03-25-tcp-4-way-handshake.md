@@ -9,7 +9,7 @@ date: 2025-03-25 16:00:00 +0900
 
 연결 해제는 '4 Way Handshake'라는 과정을 통해 이뤄진다.
 
-<img src="https://github.com/user-attachments/assets/96927abf-ffee-4804-9141-f117a34d0bda" width="750px" />
+<img src="/assets/img/captures/96927abf-ffee-4804-9141-f117a34d0bda.png" width="750px" />
 
 일단 연결이 성립돼 있는 과정이므로 Client와 Server는 모두 ESTABLISHED 상태이다.
 
@@ -45,7 +45,7 @@ CentOS6, 우분투에는 60초로 설정되어 있으며 윈도우는 4분으로
 
 우분투 설정파일을 보면 다음과 같이 되어 있다.
 
-<img src="https://github.com/user-attachments/assets/82253b5e-f82a-4cf9-89e1-d7018d719088" width="550px" />
+<img src="/assets/img/captures/82253b5e-f82a-4cf9-89e1-d7018d719088.png" width="550px" />
 
 만약 우분투를 사용한다면 이런 식으로 설정 파일을 통해서 TIME_WAIT가 어느 정도로 설정이 되어 있는가를 볼 수 있다.
 
@@ -56,7 +56,7 @@ CentOS6, 우분투에는 60초로 설정되어 있으며 윈도우는 4분으로
 
 다음 그림은 상태를 다이어그램으로 나타낸 것이다.
 
-<img src="https://github.com/user-attachments/assets/102ebab6-a1be-4c26-bde3-ae7f27059531" width="800px" />
+<img src="/assets/img/captures/102ebab6-a1be-4c26-bde3-ae7f27059531.png" width="800px" />
 
 처음에 서버가 CLOSED 상태였다가 LISTEN이 되면서 받게 된다. 그리고 이제 SYN / SYN + ACK 등의 과정을 거쳐서 연결이 성립된다.
 
