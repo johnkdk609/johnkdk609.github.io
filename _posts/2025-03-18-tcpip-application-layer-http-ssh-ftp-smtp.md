@@ -11,7 +11,7 @@ date: 2025-03-18 23:37:00 +0900
 
 HTTP(Hypertext Transfer Protocol)은 처음에는 서버와 브라우저 간에 데이터를 주고 받기 위해 설계된 프로토콜이다. 지금은 브라우저 뿐만 아니라 서버와 서버간의 통신을 할 때에도 많이 이용한다.
 
-<img src="https://github.com/user-attachments/assets/cb5724a4-7fe4-460f-b8a9-403ffecad53d" width="700px" />
+<img src="/assets/img/captures/cb5724a4-7fe4-460f-b8a9-403ffecad53d.png" width="700px" />
 
 위 그림을 보자. 예전에는 사용자가 접속해서 브라우저가 있고, 브라우저를 통해서 "www.naver.com"를 입력하여 네이버에게 요청을 했다. 그러면 네이버에서 해당 요청에 따른 응답 데이터를 보내는 것이다. 예전에는 이렇게 할 때에만 HTTP를 사용했다.
 
@@ -23,11 +23,11 @@ HTTP(Hypertext Transfer Protocol)은 처음에는 서버와 브라우저 간에 
 
 브라우저에서 네이버를 새로고침 하면 여러 가지 데이터를 받아온다.
 
-<img src="https://github.com/user-attachments/assets/b3bdea91-71cb-40c9-947b-1c15bf34be96" width="1000px" />
+<img src="/assets/img/captures/b3bdea91-71cb-40c9-947b-1c15bf34be96.png" width="1000px" />
 
 여러 가지 데이터를 받아오는데, 그 중 하나를 클릭하고 헤더 정보를 본다. 보면 응답 헤더(Response Headers), 요청 헤더(Request Headers) 같은 것들이 있는데 요청할 때 어떤 쿠키값을 자동으로 보낸 것을 알 수 있다. 이것 뿐만 아니라 어떠한 정보를 바탕으로 네이버에 보낸다고 했을 때, 헤더에 어떤 값을 추가해서 보낼 수 있는 것이다. 그렇기 때문에 HTTP는 헤더를 통한 확장이 쉽다.
 
-<img src="https://github.com/user-attachments/assets/396146f6-fc10-4b86-8cac-bee8f66d6721" width="600px" />
+<img src="/assets/img/captures/396146f6-fc10-4b86-8cac-bee8f66d6721.png" width="600px" />
 
 헤더 값에다가 어떠한 값을 넣어서 HTTP 요청을 할 때 쉽게 다른 값을 추가할 수 있다.
 
@@ -35,11 +35,11 @@ HTTP(Hypertext Transfer Protocol)은 처음에는 서버와 브라우저 간에 
 
 동일한 연결에서 연속적으로 수행되는 두 요청 사이에 연속적인 상태(state)값은 없다.
 
-<img src="https://github.com/user-attachments/assets/c888962d-ec1a-46f4-9141-b99530892e2f" width="300px" />
+<img src="/assets/img/captures/c888962d-ec1a-46f4-9141-b99530892e2f.png" width="300px" />
 
 위 그림을 보자. 어떠한 작업도 하지 않은 상태에서 내가 요청을 해서 데이터를 받았다(연보라색). 그 다음에 다시 요청을 하고 받는다고 했을 때(하늘색) 이 서버가 내가 홍철인지 알 수 있을까? 없다는 것이다. 상태를 저장하지 않는 stateless 하기 때문이다.
 
-<img src="https://github.com/user-attachments/assets/3594c872-166a-46d8-94f3-0f6c04e6dcc6" width="500px" />
+<img src="/assets/img/captures/3594c872-166a-46d8-94f3-0f6c04e6dcc6.png" width="500px" />
 
 위 그림과 같이 클라이언트 측에서 "Hey Remember Me?"를 했을 때 서버 측에서 "Umm.......No!" 라는 반응이 나오는 것이다.
 
@@ -52,7 +52,7 @@ SSH(Secure SHell Protocol)는 보안되지 않은 네트워크에서 네트워�
 
 클라우드 서비스 배포를 할 때 AWS EC2를 사용하는 경우가 많다. 로컬 PC를 기반으로 다른 사용자들에게 서비스를 할 수도 있다. 그런데 이것은 사실상 힘든 일이다. AWS에 나의 코드를 놓고, 여기서 배포된 것을 기반으로 사용자들에게 서빙을 한다.
 
-<img src="https://github.com/user-attachments/assets/af5b6d98-8bcd-4c46-b060-86b4d61364a4" width="450px" />
+<img src="/assets/img/captures/af5b6d98-8bcd-4c46-b060-86b4d61364a4.png" width="450px" />
 
 그런데 이때 나의 소중한 코드가 사용자들에게 노출이 되면 안 된다. 배포된 코드가 사용자에게 보여지는 인터페이스만 노출되어야지, 내부 코드가 노출이 되면 안 된다는 것이다. 그러면 어떻게 사용자들에게 보여지지 않고 안전하게 내 PC에서 AWS로 코드를 운반할 수 있을까? 이때 사용하는 것이 SSH 이다.
 
@@ -64,7 +64,7 @@ ssh <pem> <user>@<serverIP>
 
 pem 이라는 확장자를 가지는 프라이빗 키를 AWS 에게서 받는다. 이것을 기반으로 "AWS야, 이건 내 서버야. 난 xxx이고 내가 지금 접속하는 서버는 내 계정을 기반으로 만든 서버야" 라고 인증을 하는 것이다. 그래서 명령어가 위와 같은 것이다.
 
-<img src="https://github.com/user-attachments/assets/fb300942-033d-4c9b-9e4d-2087bd8bd268" width="900px" />
+<img src="/assets/img/captures/fb300942-033d-4c9b-9e4d-2087bd8bd268.png" width="900px" />
 
 그러면 위와 같은 검은 화면을 보게 될 것이다. 위와 같은 화면으로 접속해서 리눅스 명령어를 통해 CLI 환경에서 작업을 진행한다. 또한 SCP를 이용해서 SSH를 이용해 파일을 전송할 수 있다.
 
@@ -83,11 +83,11 @@ FTP(File Transfer Protocol)는 노드와 노드간에 파일을 전송하는 데
 
 대표적인 FTP 소프트웨어로 FileZilla 같은 것이 있다.
 
-<img src="https://github.com/user-attachments/assets/0d0ec4d8-8c5c-4143-8341-aa337d35654b" width="600px" />
+<img src="/assets/img/captures/0d0ec4d8-8c5c-4143-8341-aa337d35654b.png" width="600px" />
 
 FileZilla를 보면 다음과 같이 GUI 가 대표적이다.
 
-<img src="https://github.com/user-attachments/assets/11971055-2d45-48ad-a030-7593ed785388" width="700px" />
+<img src="/assets/img/captures/11971055-2d45-48ad-a030-7593ed785388.png" width="700px" />
 
 직전에 봤던 AWS의 CLI 환경의 경우 명령어만 입력할 수 있었는데, 위 FileZilla의 경우 GUI를 사용해서 drag and drop 을 통해 파일을 보낼 수 있는 것이다.
 
@@ -102,10 +102,10 @@ FileZilla를 보면 다음과 같이 GUI 가 대표적이다.
 
 서비스를 운영한다고 했을 때 메일링 서비스를 구축해야 한다. 위탁 업체를 통해서도 할 수 있지만, 스스로도 구현할 수 있다. 자바스크립트 진영에서는 Nodemailer 라는 라이브러리가 있는데 JS 기반으로 SMTP를 통해 메일을 보낼 수 있는 라이브러리이다.
 
-<img src="https://github.com/user-attachments/assets/c882c17e-f5b3-49c6-b58f-da4b1cc8b0c3" width="350px" />
+<img src="/assets/img/captures/c882c17e-f5b3-49c6-b58f-da4b1cc8b0c3.png" width="350px" />
 
 이런식으로 설명을 보면 SMTP를 통해서 보낸다라고 되어 있다.
 
-<img src="https://github.com/user-attachments/assets/e822fa84-b0be-4332-952c-5d4d0edf8c79" width="450px" />
+<img src="/assets/img/captures/e822fa84-b0be-4332-952c-5d4d0edf8c79.png" width="450px" />
 
 중요한 것은 SMTP란 인터넷을 통해 메일을 보낼 때 사용되는 프로토콜이라는 것이다.
