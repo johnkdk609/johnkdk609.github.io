@@ -22,7 +22,7 @@ local area network, 근거리 통신망.
 
 MAN, WAN 보다 높은 안정성, 속도를 가진다. 보통 소규모 네트워크라고 하면 LAN 을 생각하면 된다. 집, 사무실에 있는 것을 전부 LAN 이라고 생각하면 되고, 허브나 스위치로 연결된다.
 
-<img src="https://github.com/user-attachments/assets/3f495785-9e02-4f57-b865-7b4488638d06" width="500px" />
+<img src="/assets/img/captures/3f495785-9e02-4f57-b865-7b4488638d06.jpg" width="500px" />
 
 위 그림을 보며 나의 집을 생각해보자. 허브, Wifi 를 통해서 내 컴퓨터, 노트북, 핸드폰, 프린터까지 연결이 된다.
 
@@ -38,7 +38,7 @@ LAN 이라는 것은 <b>하나의 논리적 주소인 IP를 기반으로 여러 
 
 내가 어떤 날에는 Starbucks에 가고 어떤 날에는 Twosome에 간다고 해보자. 맥북을 들고 간다. 어떤 날은 스타벅스에 있는 Wifi 에 연결하고, 어떤 날에는 투썸에 가서 Wifi 를 연결한다. 이때 각각 받는 IP는 서로 다르다. 내가 스타벅스 Wifi를 통해서 부여받은 IP와 투썸 Wifi를 통해서 부여받은 IP는 서로 다르다. 논리적 주소라서 변하는 것이다.
 
-<img src="https://github.com/user-attachments/assets/a82f5907-66ba-4859-b9c4-b84ff9329f4a" width="600px" />
+<img src="/assets/img/captures/a82f5907-66ba-4859-b9c4-b84ff9329f4a.jpg" width="600px" />
 
 위 그림의 예시를 보자. 어비스라는 회사가 IP 주소 하나를 얻었다. IP 주소가 부족하다 보니 좀 귀하다. 그래서 이 사무실에는 '121.165.151.200' 이라는 IP 가 하나만 할당이 된 것이다. 이것을 가지고 가영 대리, 홍철 팀장, 라라 팀장, 범석 대리.. 사람마다 컴퓨터가 있을 것인데 컴퓨터에 IP 를 할당해야 한다. 그런데 IP 를 하나밖에 못 받았다.
 
@@ -46,7 +46,7 @@ LAN 이라는 것은 <b>하나의 논리적 주소인 IP를 기반으로 여러 
 
 만약 외부 인터넷과 통신할 때에는 '121.165.151.200' 이라는 부여 받은 IP를 기반으로 통신을 한다. 위 그림에서 '어비스 회사'로 회색으로 경계가 쳐져 있는 것이 LAN 이다. 이 LAN 안에서는 하나의 논리적 주소인 IP 를 기반으로, 여러 개의 물리적 주소인 MAC 주소로 구별할 수 있는 네트워크이다.
 
-<img src="https://github.com/user-attachments/assets/90ae61a1-7f44-4117-a467-60c8bbd15223" width="700px" />
+<img src="/assets/img/captures/90ae61a1-7f44-4117-a467-60c8bbd15223.jpg" width="700px" />
 
 <br>
 <hr>
