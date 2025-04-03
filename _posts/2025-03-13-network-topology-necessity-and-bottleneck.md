@@ -20,7 +20,7 @@ date: 2025-03-13 09:20:00 +0900
 
 병목현상은 많은 영역에서 쓰인다. CPU 에서의 병목현상 등.. 아무튼 네트워크 한정으로 보겠다.
 
-<img src="https://github.com/user-attachments/assets/b41f9bb7-21f6-4343-9b75-5a24a956a366" width="300px" />
+<img src="/assets/img/captures/b41f9bb7-21f6-4343-9b75-5a24a956a366.jpg" width="300px" />
 
 위 그림을 보면 왼쪽과 오른쪽 모두 트래픽이 위에서 아래로 많이 몰려 오는데, 왼쪽의 경우 아랫 부분의 '병 목'과 같은 부분에서 데이터 흐름이 제한되게 된다. 이것이 병목현상이다.
 
@@ -28,7 +28,7 @@ date: 2025-03-13 09:20:00 +0900
 
 토폴로지를 배우는 이유가 이 병목현상을 해결하는 척도가 된다고 했다.
 
-<img src="https://github.com/user-attachments/assets/7da2ffee-cab5-496b-ab89-d7d65f97af2a" width="350px" />
+<img src="/assets/img/captures/7da2ffee-cab5-496b-ab89-d7d65f97af2a.jpg" width="350px" />
 
 위 그림은 노드와 링크를 기반으로 네트워크가 설계되어 있는 것이다. 여기서 병목현상이 발생할 것 같은 지점은 가운데 부분이다. 노드와 링크를 어떻게 구성하느냐에 따라 병목현상이 발생할 수도 있고 발생하지 않을 수도 있다.
 
@@ -37,7 +37,7 @@ date: 2025-03-13 09:20:00 +0900
 
 ## 병목현상의 해결 사례
 
-<img src="https://github.com/user-attachments/assets/4de2fdc6-7f0c-4a81-8500-de7056690b5e" width="500px" />
+<img src="/assets/img/captures/4de2fdc6-7f0c-4a81-8500-de7056690b5e.jpg" width="500px" />
 
 해결사례를 보자. 위 사진을 보면 Web Infrastructure 가 일반적으로 구성되어 있는 형태이다. 왼쪽에 Client 가 있고, Browser를 통해서 Router, Load Balancer, Server, Web Server, DB 의 순으로 연결돼 있다.
 
@@ -45,7 +45,7 @@ date: 2025-03-13 09:20:00 +0900
 
 간단하게 설명해 보겠다.
 
-<img src="https://github.com/user-attachments/assets/3b514ea2-d38f-475b-a75b-b4705a6e4cfb" width="400px" />
+<img src="/assets/img/captures/3b514ea2-d38f-475b-a75b-b4705a6e4cfb.jpg" width="400px" />
 
 위 그림을 보면, 위에 웹 서버가 있고 아래에 DB 서버가 구축돼 있는 방식으로 회선이 구축되어 있다고 해보자. 사용자는 오른쪽에 회선 하나로 연결돼 있다. 그런데 사용자가 연결돼 있는 한 회선 부분에 트래픽이 많아져서 서버가 다운된 것이다.
 
