@@ -57,7 +57,7 @@ metropolitan area network, 대도시 통신망.
 
 도시와 도시의 통신망을 뜻하며 2개 이상의 LAN이 연결되어 구성된다. 라우터, 브리지 등으로 연결된다. (브리지는 LAN과 LAN을 잇는 네트워크 장치이다.)
 
-<img src="https://github.com/user-attachments/assets/9dc3cf0e-16c2-4cff-a82f-8f43042dad2c" width="500px" />
+<img src="/assets/img/captures/9dc3cf0e-16c2-4cff-a82f-8f43042dad2c.jpg" width="500px" />
 
 옷 매장을 예시로 들어보자. 서울과 대전에 Nike 매장이 있다고 해보자. 서울의 Nike 매장에 가서 에어맥스를 사고 싶다고 할 때, 만약 서울에 에어맥스가 없다면 직원은 다른 지점에 재고가 있나 체크를 해보겠다고 하고 어떤 전산 시스템을 사용할 것이다. 그리고 대전 지점에 에어맥스가 있으면 이것을 택배로 보내도 될지 물어볼 것이다. 서울과 대전, 도시와 도시를 잇는 네트워크가 있기 때문에 가능한 것이다.
 
@@ -70,4 +70,4 @@ wide area network, 광역 통신망.
 
 국가와 국가와의 통신망을 뜻하며 인터넷이라고도 한다. 우리가 '인터넷으로 통신한다' 라고 하면 'WAN으로 통신한다'로 보면 되는 것이다. 서울에서 시작해서 미국까지 수많은 라우터가 있는 것이다. 많은 라우터를 거쳐 다른 국가와도 연결된다.
 
-<img src="https://github.com/user-attachments/assets/cf8bb9e7-a546-4249-8e78-2b8d6cdeccea" width="500px" />
+<img src="/assets/img/captures/cf8bb9e7-a546-4249-8e78-2b8d6cdeccea.jpg" width="500px" />
