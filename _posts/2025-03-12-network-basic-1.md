@@ -84,7 +84,7 @@ A1. 100Mbps / 100kbps = 약 1,000명
 
 앞서 설명한 트래픽, 처리량, 대역폭을 그림으로 표현하면 다음과 같다.
 
-<img src="https://github.com/user-attachments/assets/1148d25a-a896-4bfd-b33e-2f3c31b4e6cb" width="600px">
+<img src="/assets/img/captures/1148d25a-a896-4bfd-b33e-2f3c31b4e6cb.jpg" width="600px">
 
 대역폭은 '최대로 처리할 수 있는 양' 이고, 만약 이 대역폭이 낮아지면 당연히 처리량도 낮아지게 된다. 그리고 트래픽은 '흐르는 양' 이다.
 
@@ -95,10 +95,10 @@ A1. 100Mbps / 100kbps = 약 1,000명
 
 <b>RTT(Round Trip Time : 왕복 지연시간)는 신호를 전송하고 해당 신호의 수신 확인에 걸린 시간을 더한 값이자 어떤 메시지가 두 장치 사이를 왕복하는 데 걸린 시간</b>
 
-<img src="https://github.com/user-attachments/assets/0ecc5f6e-9dca-4725-a2d3-90abc2c788b4" width="400px" />
+<img src="/assets/img/captures/0ecc5f6e-9dca-4725-a2d3-90abc2c788b4.jpg" width="400px" />
 
 위와 같이 장치가 있을 때, 네트워크 통신을 하는 것은 노드와 노드, 링크를 통해서 데이터가 왔다갔다 하는 것이다. 이렇게 왕복하는 데 걸리는 시간이 바로 RTT, 왕복 지연시간이다.
 
 <br>
 
-<img src="https://github.com/user-attachments/assets/dbd50380-2a72-4d88-b358-0213bbd0ab9a" width="500px" />
+<img src="/assets/img/captures/dbd50380-2a72-4d88-b358-0213bbd0ab9a.jpg" width="500px" />
