@@ -11,7 +11,7 @@ date: 2025-03-23 23:17:00 +0900
 
 TCP는 <b>가상회선패킷교환방식</b>을 사용한다.
 
-<img src="/assets/img/captures/33b83e2e-4173-4545-a9d7-0417065e67a9.png" width="450px" />
+<img src="/assets/img/captures/33b83e2e-4173-4545-a9d7-0417065e67a9.png" width="600px" />
 
 송신 호스트에서 수신 호스트에게 데이터를 보낸다고 했을 때 위와 같이 가상 회선을 만들고, 이것을 기반으로 순서대로 보낸다. 1 → 2 → 3 순서대로 도착을 한다. 이것이 가상회선을 기반으로 패킷을 보내는 것이다.
 
@@ -26,7 +26,7 @@ TCP는 <b>오류검사 메커니즘이 다양하다.</b>
 
 또, 체크섬을 통해 무결성을 평가하는데 무결성이란 '데이터가 올바르게 왔는가' 이다. 내가 송신할 때에 동그라미를 보냈는데, 수신했을 때 반원이 오면 안 된다. 송신할 때의 데이터와 수신할 때의 데이터가 같아야 한다는 것이다. 이것을 보장하는 것이 무결성이다.
 
-<img src="/assets/img/captures/57d6a56b-9a7c-436d-88f8-8a2700e4f512.png" width="360px" />
+<img src="/assets/img/captures/57d6a56b-9a7c-436d-88f8-8a2700e4f512.png" width="500px" />
 
 위 그림을 보자. 체크섬의 경우, checksum function을 사용해 데이터를 기반으로 어떤 값을 만든다. 이 값이 '체크섬'이다. 즉 Input 값을 checksum function을 사용해서 체크섬 값으로 만드는 것이다.
 
@@ -34,7 +34,7 @@ TCP는 <b>오류검사 메커니즘이 다양하다.</b>
 
 <b>TCP Header</b> 에 대해 보자.
 
-<img src="/assets/img/captures/8ef89983-0fe6-43c6-b283-f880484c0918.png" width="500px" />
+<img src="/assets/img/captures/8ef89983-0fe6-43c6-b283-f880484c0918.png" width="600px" />
 
 이것저것 정보가 많다. 중요한 것은 TCP는 20 ~ 60 바이트로 가변적이라는 것이다.
 
@@ -45,7 +45,7 @@ TCP는 <b>오류검사 메커니즘이 다양하다.</b>
 
 UDP는 <b>데이터그램패킷교환방식</b>을 사용한다.
 
-<img src="/assets/img/captures/5276a83a-d780-4495-a252-5d2bb95c1449.png" width="450px" />
+<img src="/assets/img/captures/5276a83a-d780-4495-a252-5d2bb95c1449.png" width="600px" />
 
 이전에 TCP는 가상회선을 기반으로 '순서대로' 패킷이 이동했다. 반면 UDP는 '그냥' 보낸다. 그래서 위 그림을 보면 패킷의 도착 순서가 보장되지 않는다.
 
@@ -55,7 +55,7 @@ UDP는 <b>데이터그램패킷교환방식</b>을 사용한다.
 
 <b>UDP Header는 8바이트(32비트)로 고정 길이</b>를 가진다. TCP 헤더가 20 ~ 60 바이트의 가변 길이를 가지는 것과 차이가 있다.
 
-<img src="/assets/img/captures/feed8dd2-aed9-4814-a211-85143d800a0a.png" width="450px" />
+<img src="/assets/img/captures/feed8dd2-aed9-4814-a211-85143d800a0a.png" width="600px" />
 
 <br>
 <hr>
@@ -64,7 +64,7 @@ UDP는 <b>데이터그램패킷교환방식</b>을 사용한다.
 
 TCP와 UDP를 비교한 것을 표로 정리하면 다음과 같다.
 
-<img src="/assets/img/captures/5b03c3d1-7971-4ebd-83eb-c9a4547670b7.png" width="500px" />
+<img src="/assets/img/captures/5b03c3d1-7971-4ebd-83eb-c9a4547670b7.png" width="600px" />
 
 신뢰성의 경우 3-Way-Hanshake 라는 개념을 알아야 한다. TCP의 경우 연결을 할 때마다 3-Way-Hanshake 를 수행한다. 장치와 장치 간에 데이터를 보낼 때, 수신 측에서 무조건 받는 것이 아니다. 둘이 '연결되어 있음이 보장'되어야 한다. TCP는 3-Way-Handshake 라는 과정을 통해 송신측과 수신측의 연결을 구축한다. 그래서 TCP는 신뢰성이 있다고 하는 것이고, UDP는 이러한 과정이 없어서 신뢰성이 없다고 하는 것이다.
 

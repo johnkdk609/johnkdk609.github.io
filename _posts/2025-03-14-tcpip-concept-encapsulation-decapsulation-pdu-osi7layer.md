@@ -24,7 +24,7 @@ Application 계층(SMTP, HTTP/HTTPS, FTP, SSH), Transport 계층(UDP, TCP), Inte
 
 HTTP, SMTP, SSH, FTP가 대표적이며 웹 서비스, 이메일 등 <b>서비스를 실질적으로 사람들에게 제공하는 층</b>이다.
 
-<img src="/assets/img/captures/bbab0258-7420-4c1c-a886-1a156117a728.png" width="170px" />
+<img src="/assets/img/captures/bbab0258-7420-4c1c-a886-1a156117a728.png" width="200px" />
 
 가령 Chrome 브라우저를 켜고 내가 가고 싶은 사이트 www.naver.com 을 입력한다. (네이버 같은 경우 https 이기는 하지만) http 로 서빙되는 사이트도 있다. 즉, 이런 브라우저라는 인터페이스를 통해서 http 라는 응용 계층의 서비스를 이용하는 것이다.
 
@@ -83,7 +83,7 @@ Transport 계층은 TCP와 UDP가 대표적인데, 내가 http와 TCP를 사용�
 
 <b>비캡슐화(decapsulation)란 이 과정의 역과정</b>이다. 수신자 측에서는 이렇게 캡슐화된 데이터를 역순으로 제거하면서 응용 계층(application layer)까지 도달하는 것을 말한다.
 
-<img src="/assets/img/captures/3e7c7293-a4b4-4206-88b5-c416fd9b7a4d.png" width="900px" />
+<img src="/assets/img/captures/3e7c7293-a4b4-4206-88b5-c416fd9b7a4d.png" width="1000px" />
 
 전송 계층에서는 오류를 해결하고, 인터넷 계층에서는 주소를 해결하고...
 
@@ -111,7 +111,7 @@ Transport 계층은 TCP와 UDP가 대표적인데, 내가 http와 TCP를 사용�
 
 다음은 IP 헤더에 대한 그림이다.
 
-<img src="/assets/img/captures/2ac270e9-b85f-4230-8425-9585a21d879c.png" width="500px" />
+<img src="/assets/img/captures/2ac270e9-b85f-4230-8425-9585a21d879c.png" width="700px" />
 
 중요한 것만 보자. Source IP Address(SP), Destination IP Address(DP)가 있다. 송신자의 IP 주소, 수신자의 IP 주소가 IP header에 담긴 것이다. 데이터를 보낸다고 했을 때 주소가 필요하다.
 
@@ -121,7 +121,7 @@ Transport 계층은 TCP와 UDP가 대표적인데, 내가 http와 TCP를 사용�
 
 MAC 주소는 장치의 NIC라는 카드에 부착되는 것이다. 프레임은 MAC 주소 헤더와 CRC/체크섬 트레일러가 붙은 조각인데, 프레임은 다음과 같이 되어 있다.
 
-<img src="/assets/img/captures/057c8364-22c4-4f42-8717-1b69bc96bae7.png" width="480px" />
+<img src="/assets/img/captures/057c8364-22c4-4f42-8717-1b69bc96bae7.png" width="750px" />
 
 MAC Header, LLC Header, Layer3 Protocol Data, MAC Trailer 로 구성되어 있다. Layer3 에서 받은 데이터가 들어와서 헤더와 트레일러가 추가되는 것인데, 그림 아랫부분에 CRC / CheckSum 그리고 MAC 주소가 붙은 것을 알 수 있다.
 
@@ -145,7 +145,7 @@ CRC로 이루어진 체크섬이라는 값이 위 그림에서의 Frame Trailer�
 
 TCP/IP 4계층은 OSI 7계층 모델로 설명하기도 한다.
 
-<img src="/assets/img/captures/7f589e04-a6d0-4831-aac4-c49867373216.jpg" width="500px" />
+<img src="/assets/img/captures/7f589e04-a6d0-4831-aac4-c49867373216.jpg" width="600px" />
 
 TCP/IP 계층과 달리 OSI 계층은 애플리케이션 계층을 세 개로 쪼개고 링크 계층을 데이터 링크 계층, 물리 계층으로 나눠서 표현하는 것이 다르며 인터넷 계층을 네트워크 계층으로 부른다는 점이 다르다.
 

@@ -21,7 +21,7 @@ Ex&#41; 터널의 높이 제한을 생각하면 된다. 트럭이 높이 제한�
 
 위 그림을 볼 때, 어떤 장치의 MTU는 1,500이고, 어떤 장치의 MTU는 1,400이다. 그러면 패킷을 보낼 때 1,400짜리를 기반으로 생각해야 하는 것이다.
 
-<img src="/assets/img/captures/a1de25fb-e9eb-4945-ba1b-e8d62697c902.png" width="1000px" />
+<img src="/assets/img/captures/a1de25fb-e9eb-4945-ba1b-e8d62697c902.png" width="1100px" />
 
 위 그림을 볼 때, 처음에 1,500bytes 였던 데이터 패킷이 Router C 를 거치기 위해 Router B 에서 100bytes 와 1,400bytes 로 쪼개졌다(Fragmenting packet).
 
@@ -31,7 +31,7 @@ Ex&#41; 터널의 높이 제한을 생각하면 된다. 트럭이 높이 제한�
 
 <b>IPv6 는 분할을 허용하지 않는다.</b>
 
-<img src="/assets/img/captures/e101d488-5f1e-4b2f-857a-cd71f4755e0c.png" width="600px" />
+<img src="/assets/img/captures/e101d488-5f1e-4b2f-857a-cd71f4755e0c.png" width="700px" />
 
 위 그림은 IPv4 의 헤더이다. 보면 Flags 라는 필드가 있는데, 이 필드에 만약 bit 가 1 이 되면 "Don't Fragment" 플래그가 활성화 된다. 이때 분할은 불가능하다.
 
@@ -44,7 +44,7 @@ MTU는 IP 헤더와 TCP 헤더의 크기까지 합치지만 <b>MSS(Maximum Segme
 
 <u>일반적으로 MTU는 1,500바이트이며 MSS는 1,460바이트이다.</u> 그렇기 때문에 MTU가 1,500이라도 데이터는 보통 1,460바이트 이하의 크기로 보내야 전달이 된다.
 
-<img src="/assets/img/captures/365544c5-5545-4e22-b4ff-a5e243a4902f.png" width="700px" />
+<img src="/assets/img/captures/365544c5-5545-4e22-b4ff-a5e243a4902f.png" width="750px" />
 
 위 그림을 보면, MTU(1,500 byte)에서 IP Header(20 byte), TCP Header(20 byte)를 빼서 MSS가 1,460 byte 가 되는 것을 알 수 있다.
 

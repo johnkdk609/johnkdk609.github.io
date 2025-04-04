@@ -11,7 +11,7 @@ date: 2025-03-12 15:34:00 +0900
 
 ## 버스 토폴로지
 
-<img src="/assets/img/captures/f7156a6f-b254-4537-bc52-aa3b654874af.jpg" width="500px" />
+<img src="/assets/img/captures/f7156a6f-b254-4537-bc52-aa3b654874af.jpg" width="600px" />
 
 버스 토폴로지는 위와 같은 형태를 보인다. 하나의 회선, 하나의 링크에 노드가 부착이 되어 있는 것이다.
 
@@ -33,7 +33,7 @@ date: 2025-03-12 15:34:00 +0900
 
 ## 스타 토폴로지
 
-<img src="/assets/img/captures/ccab2ca9-a78a-41a8-a6b4-6ca030e70942.jpg" width="500px" />
+<img src="/assets/img/captures/ccab2ca9-a78a-41a8-a6b4-6ca030e70942.jpg" width="600px" />
 
 <br>
 
@@ -54,7 +54,7 @@ date: 2025-03-12 15:34:00 +0900
 
 ## 트리 토폴로지
 
-<img src="/assets/img/captures/8f83ebb1-7d99-4648-abc2-ed30496d098e.jpg" width="600px" />
+<img src="/assets/img/captures/8f83ebb1-7d99-4648-abc2-ed30496d098e.jpg" width="700px" />
 
 <br>
 
@@ -82,7 +82,7 @@ date: 2025-03-12 15:34:00 +0900
 
 ## 링형 토폴로지
 
-<img src="/assets/img/captures/5cdc9f81-3f0a-4d53-b745-a51ca9eaf0f8.jpg" width="600px" />
+<img src="/assets/img/captures/5cdc9f81-3f0a-4d53-b745-a51ca9eaf0f8.jpg" width="700px" />
 
 <br>
 
@@ -112,7 +112,7 @@ date: 2025-03-12 15:34:00 +0900
 
 ## 메시 토폴로지
 
-<img src="/assets/img/captures/a779ccd5-0347-4733-827b-c850e76ea619.jpg" width="300px" />
+<img src="/assets/img/captures/a779ccd5-0347-4733-827b-c850e76ea619.jpg" width="400px" />
 
 <br>
 

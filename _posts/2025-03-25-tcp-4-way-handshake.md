@@ -9,7 +9,7 @@ date: 2025-03-25 16:00:00 +0900
 
 연결 해제는 '4 Way Handshake'라는 과정을 통해 이뤄진다.
 
-<img src="/assets/img/captures/96927abf-ffee-4804-9141-f117a34d0bda.png" width="750px" />
+<img src="/assets/img/captures/96927abf-ffee-4804-9141-f117a34d0bda.png" width="800px" />
 
 일단 연결이 성립돼 있는 과정이므로 Client와 Server는 모두 ESTABLISHED 상태이다.
 

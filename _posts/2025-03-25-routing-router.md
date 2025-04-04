@@ -13,7 +13,7 @@ date: 2025-03-25 17:22:00 +0900
 
 데이터는 보통 출발지에서 목적지로 가는 동안 여러개의 라우터를 거치며 여러번의 라우팅을 수행한다. (라우팅은 보통 초당 수백만번 일어난다.)
 
-<img src="/assets/img/captures/c47a02a2-111e-453e-9d18-ffa974d0989d.png" width="700px" />
+<img src="/assets/img/captures/c47a02a2-111e-453e-9d18-ffa974d0989d.png" width="800px" />
 
 위 그림을 보자. Computer A 에서 Computer B 로 어떤 데이터를 보낸다고 했을 때 Router와 여러개의 네트워크를 거쳐서 데이터가 전달되는 것이다.
 
@@ -23,7 +23,7 @@ date: 2025-03-25 17:22:00 +0900
 
 Starbucks에 들어가서 맥북을 켜고 주소창에 "www.naver.com" 를 입력하였다. 이때 어떤 과정을 통해서 나는 네이버라는 화면을 받게 되는 것일까? 바로 라우팅(routing)을 통해서 받게 된다.
 
-<img src="/assets/img/captures/bfd80a79-fe16-48fd-b2d5-0b17df7b7d04.png" width="500px" />
+<img src="/assets/img/captures/bfd80a79-fe16-48fd-b2d5-0b17df7b7d04.png" width="600px" />
 
 네이버의 서버에 요청을 보냈을 때 바로 가는 것이 아니다. 사실 이 중간 중간에 여러 개의 네트워크 장치들이 있고, 이 장치들은 서로 연결되어 있다. 그리고 이 연결된 회선 중에서 최적의 경로(어떤 것이 가장 빠를까)를 찾아서 내 요청이 빠르게 전달되는 것이다. 
 
@@ -37,7 +37,7 @@ Starbucks에 들어가서 맥북을 켜고 주소창에 "www.naver.com" 를 입�
 
 대중교통을 타고 다닐 때, 네이버 지도에 업비트라는 곳에서 부산역 경부선으로 간다고 해보자.
 
-<img src="/assets/img/captures/97e4c366-87fb-4300-a54f-b435f595d3ad.png" width="500px" />
+<img src="/assets/img/captures/97e4c366-87fb-4300-a54f-b435f595d3ad.png" width="600px" />
 
 업비트라는 곳에서 부산역으로 간다고 했을 때 6분 정도 걸어야 하고, 서면역에 도착해서 지하철을 타고 부산역까지 10분 정도 이동해야 한다. 그리고 4분 정도 걸어서 최종적으로 20분만에 갈 수 있다.
 

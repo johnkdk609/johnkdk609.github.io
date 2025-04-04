@@ -19,7 +19,7 @@ TCP의 연결 성립 과정 : 3-웨이 핸드셰이크(3 Way Handshake)에 대�
 
 ISN : TCP(Transmission Control Protocol) 기반 데이터 통신에서 각각의 새 연결에 할당된 고유한 32비트 시퀀스 번호를 나타낸다. TCP 연결을 통해 전송되는 다른 데이터 바이트와 충돌하지 않는 시퀀스 번호를 할당하는 데 도움이 된다.
 
-<img src="/assets/img/captures/516d9bbe-3be5-40f7-8253-e42e0c7c3f09.png" width="250px" />
+<img src="/assets/img/captures/516d9bbe-3be5-40f7-8253-e42e0c7c3f09.png" width="350px" />
 
 우리가 데이터 통신을 하는데, 한 번 할 때도 있고 여러 번 할 때도 있다. 여러 번 할 때마다 고유한 ISN을 부여한다. 그래서 이 통신(파란색)과 이 통신(빨간색)이 서로 충돌되지 않게끔 하는 것이 ISN인 것이다.
 
@@ -27,7 +27,7 @@ ISN : TCP(Transmission Control Protocol) 기반 데이터 통신에서 각각의
 
 이제 3 Way Handshake 를 그림을 통해 보겠다.
 
-<img src="/assets/img/captures/8fb7438d-38de-4438-ba9e-48c4e366ae46.png" width="600px" />
+<img src="/assets/img/captures/8fb7438d-38de-4438-ba9e-48c4e366ae46.png" width="700px" />
 
 클라이언트가 있고 서버가 있다.
 
@@ -47,7 +47,7 @@ ISN은 고유한 32비트 시퀀스 번호이다. 연결이 여러 개 발생할
 
 다음은 Wireshark 라는 도구를 기반으로 해서 구글에 요청을 보내고, 그것을 기반으로 패킷 분석을 해본 것이다.
 
-<img src="/assets/img/captures/dfa3b207-825a-43e7-99b3-c040e501da76.png" width="700px" />
+<img src="/assets/img/captures/dfa3b207-825a-43e7-99b3-c040e501da76.png" width="800px" />
 
 위 사진에서 'Sequence Number (raw)' 는 ISN(Initial Sequence Number)이다. 이런 식으로 고유한 번호가 할당되는 것이다.
 
@@ -68,7 +68,7 @@ ISN은 고유한 32비트 시퀀스 번호이다. 연결이 여러 개 발생할
 
 TCP 연결을 하면서 클라이언트는 closed, syn_sent, established 가 되며, 서버는 closed, listen, syn_received, established 상태가 된다.
 
-<img src="/assets/img/captures/6f8141b8-aac6-449a-bf83-36eed30ec5ff.png" width="750px" />
+<img src="/assets/img/captures/6f8141b8-aac6-449a-bf83-36eed30ec5ff.png" width="800px" />
 
 처음에 클라이언트와 서버는 아무 것도 일어나지 않는 상황인 <b>CLOSED</b> 단계이다.
 
