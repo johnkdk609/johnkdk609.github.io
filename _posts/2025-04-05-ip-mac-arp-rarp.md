@@ -48,9 +48,13 @@ MAC 주소는 쉽게 테스팅할 수 있다. CMD를 켜고 ```ipconfig/add```�
 
 이러한 MAC 주소는 네트워크 통신을 위해 존재하는 것이다. 그래서 이러한 것을 IEEE라는 네트워크 관련 단체가 관리한다.
 
+<br>
+
 IEEE(Institute of Electrical and Electronics Engineers)는 전기/전자/전산 분야의 국제 기구 및 학회이다. 관련 전문가들이 합병해서 창설한 국제조직이며, 관련 기술 공유와 표준 정의 등의 활동을 한다.
 
 <img src="/assets/img/captures/ieee-logo.jpg" width="300px" />
+
+<br>
 
 <a href="https://regauth.standards.ieee.org/standards-ra-web/pub/view.html#registries">https://regauth.standards.ieee.org/standards-ra-web/pub/view.html#registries</a>
 
@@ -86,13 +90,17 @@ ARP의 과정은 다음과 같다.
 1. <b>해당 IP주소에 맞는 MAC주소를 찾기 위해 해당 데이터를 '브로드캐스팅'을 통해 연결된 네트워크에 있는 장치한테 모두 보낸다.</b>
 2. <b>맞는 장치가 있다면 해당 장치는 보낸 장치에게 유니캐스트로 데이터를 전달해 주소를 찾게 된다.</b>
 
+<br>
+
 다음 그림은 ARP의 주소를 찾는 과정이다.
 
-<img src="/assets/img/captures/arp-broadcast-unicast.jpg" width="800px" />
+<img src="/assets/img/captures/arp-broadcast-unicast.jpg" width="700px" />
 
 A라는 컴퓨터가 '120.70.80.3'에 해당하는 주소가 뭔지 연결된 B, C, D에 모두 브로드캐스트로 보낸다. 그러면 이 중에 그러한 IP를 갖는 MAC주소를 가진 장치가 "어 난데?"라고 하면서 유니캐스트로 자신의 MAC주소를 반환하게 된다.
 
 이런 방식으로 IP주소를 기반으로 MAC주소를 찾는 것이다. 그리고 이 반대 과정이 RARP 이다.
+
+<br>
 
 <img src="/assets/img/captures/arp-rarp-finding-mac-address.jpg" width="1100px" />
 
