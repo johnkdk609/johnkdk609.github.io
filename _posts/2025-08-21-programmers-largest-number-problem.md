@@ -53,6 +53,8 @@ class Solution {
 ```
 
 <br>
+<hr>
+<br>
 
 ## Java의 compareTo 메서드
 
@@ -91,6 +93,8 @@ System.out.println(a.compareTo("apple"));   // 0
 * ```equals()``` 와 일관성 유지해야 함 (같으면 0 반환)
 
 <br>
+<hr>
+<br>
 
 ## 추가 설명
 
@@ -119,3 +123,8 @@ System.out.println(a.compareTo("apple"));   // 0
 * ```(a + b) = "330"```, ```(b + a) = "303"```
 * ```"303".compareTo("330")``` → 음수 → ```b(30)```는 뒤로 밀리고 ```a(3)```이 앞으로 온다.
 * 따라서 ```[3, 30]``` 의 순서로, 내가 원하는 결과가 나온다.
+
+### 정리
+
+* ```(a + b).compareTo(b + a)``` → 오름차순 → "가장 큰 수" 문제에서는 틀린 접근
+* ```(b + a).compareTo(a + b)``` → 내림차순 → 적절
