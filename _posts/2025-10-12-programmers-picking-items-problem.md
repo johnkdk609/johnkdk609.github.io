@@ -9,7 +9,6 @@ date: 2025-10-12 00:30:00 +0900
 
 <br>
 <hr>
-<br>
 
 ## Java에서의 해시 기반 컬렉션 비교
 
@@ -117,7 +116,6 @@ hash = a * prime + b;
 
 <br>
 <hr>
-<br>
 
 ## 변형 BFS
 
@@ -133,9 +131,7 @@ hash = a * prime + b;
 
 예를 들어, 다음과 같이 두 직사각형이 위치해 있는 경우가 있겠다.
 
-<img src="/assets/img/captures/programmers_item_picking_example.png" width="600px" />
-
-<br>
+<img src="/assets/img/captures/programmers_item_picking_example.png" width="450px" />
 
 위 예시를 보면, 두 직사각형이 딱 1의 길이로 서로 면이 접하고 있다. 이렇게 되면, BFS를 할 때 '테두리를 따라 이동'하는 점에서 문제가 발생할 수 있다. 내 로직에서는 일단 테두리 값들을 따로 추출한 다음, 해당 좌표값들을 격자(grid)에 담아두고 거기서 BFS를 하는 것이었는데, 위와 같은 케이스에서는 테두리를 따라 이동하는 게 아닌, '가로지르는' 문제가 발생할 수 있는 것이다.
 
